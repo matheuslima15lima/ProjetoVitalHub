@@ -7,10 +7,29 @@ import { AntDesign } from '@expo/vector-icons';
 import { ContainerApp, ContainerCenter } from "../../components/Container/style";
 import { Button, ButtonGoogle } from "../../components/Button/styled";
 import { LinkSemiBold } from "../../components/Link/style";
+import { useState } from "react";
+import api from "../../services/service";
 
 export const Login = ({ navigation }) => {
+    const [email, setEmail] = useState("")
+    const [senha, setSenha] = useState("")
+
     const Login = async () => {
-        navigation.replace("Main")
+        try {
+            await api.post('/Login', {
+                email: email,
+                senha: senha
+            }).then(
+                response => {
+                    console.log(response.data)
+                }
+            )
+        } catch (error) {
+            console.log(error)
+        }
+
+
+        //navigation.replace("Main")
     }
 
     return (
@@ -20,11 +39,14 @@ export const Login = ({ navigation }) => {
             <BoxInput>
                 <Input
                     placeholderText={"Usuário ou email"}
-
+                    onChangeText={(text) => setEmail(text)}
+                    editable
                 />
                 <Input
                     placeholderText={"Senha"}
-
+                    onChangeText={(txt) => setSenha(txt)}
+                    editable
+                    secure
                 />
                 <LinkRedefinirSenha onPress={() => navigation.navigate("ReceberEmail")}>Esqueceu sua senha?</LinkRedefinirSenha>
             </BoxInput>
