@@ -41,7 +41,11 @@ export default function App() {
     //Container de Navegação - envolve toda a estrutura de navegação
       <NavigationContainer>
         {/* Navigator - componente que realiza a navegação */}
-        <Stack.Navigator>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false
+          }}
+        >
           {/* Telas - a tela a ser carregada
                 name: nome da tela
                 component: o componente que será carregado como tela

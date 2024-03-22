@@ -7,6 +7,6 @@ export const TitleSelecao = styled(Title)`
 `
 
 export const ContainerSelectPage = styled(ContainerApp)`
-    padding: 30px 5%;
+    padding: 65px 5% 30px;
     margin: 0 auto;
 `

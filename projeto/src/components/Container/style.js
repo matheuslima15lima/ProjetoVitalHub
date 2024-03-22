@@ -10,20 +10,26 @@ export const ContainerApp = styled.SafeAreaView`
     /* justify-content: center; */
 `
 
+export const ContainerCenter = styled(ContainerApp)`
+    justify-content: center;
+    margin: 0;
+    padding: 0 5%;
+`
+
 export const ContainerHeader = styled(LinearGradient).attrs({
     colors: ["#60BFC5", "#496BBA"],
     start: {x: -0.05, y: 1.08},
     end: {x: 1, y: 0}
 })`
     width: 100%;
-    padding: 20px 0 22px;
+    padding: 55px 0 22px;
     border-radius: 0 0 15px 15px;
 `
 
 export const ContainerPerfilPage = styled.ScrollView`
     position: relative;
     background-color: #FBFBFB;
-    padding-bottom: 40px;
+    padding: 35px 0 40px;
     flex: 1;
 `
 

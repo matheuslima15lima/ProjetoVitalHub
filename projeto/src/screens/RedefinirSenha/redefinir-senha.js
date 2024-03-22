@@ -1,13 +1,13 @@
 import { BoxInput } from "../../components/Box/style";
 import { Button } from "../../components/Button/styled";
-import { ContainerApp } from "../../components/Container/style";
+import { ContainerCenter } from "../../components/Container/style";
 import { Input } from "../../components/Input";
 import { LogoVitalHub } from "../../components/Logo";
 import { IconContainer, IconImage } from "../../components/NavigationIcons/style";
 import { ButtonTitle, TextRegular, TitleRedefinirSenha } from "../../components/Text/style";
 
 export const RedefinirSenha = ({navigation}) => 
-    <ContainerApp>
+    <ContainerCenter>
         <IconContainer
             onPress={() => navigation.replace("Login")}
         >
@@ -29,4 +29,4 @@ export const RedefinirSenha = ({navigation}) =>
         <Button onPress={() => navigation.navigate("Login")}>
             <ButtonTitle>Confirmar nova senha</ButtonTitle>
         </Button>
-    </ContainerApp>
+    </ContainerCenter>

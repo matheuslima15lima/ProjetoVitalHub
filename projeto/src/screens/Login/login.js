@@ -4,7 +4,7 @@ import { BoxButton, BoxInput, ContentAccount } from "../../components/Box/style"
 import { Input } from "../../components/Input";
 import { LinkAccount, LinkRedefinirSenha } from "../../components/Link";
 import { AntDesign } from '@expo/vector-icons';
-import { ContainerApp } from "../../components/Container/style";
+import { ContainerApp, ContainerCenter } from "../../components/Container/style";
 import { Button, ButtonGoogle } from "../../components/Button/styled";
 import { LinkSemiBold } from "../../components/Link/style";
 
@@ -14,7 +14,7 @@ export const Login = ({ navigation }) => {
     }
 
     return (
-        <ContainerApp>
+        <ContainerCenter>
             <LogoVitalHub />
             <TitleLogin>Entrar ou criar conta</TitleLogin>
             <BoxInput>
@@ -41,6 +41,6 @@ export const Login = ({ navigation }) => {
                 <TextAccount>Não tem conta?</TextAccount>
                 <LinkSemiBold onPress={() => navigation.replace("Cadastro")} > Crie sua conta aqui</LinkSemiBold>
             </ContentAccount>
-        </ContainerApp>
+        </ContainerCenter>
     )
 }
