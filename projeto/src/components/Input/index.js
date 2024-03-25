@@ -18,6 +18,7 @@ export const Input = ({
                 maxLength={maxLength}
                 value={fieldvalue}
                 editable={editable}
+                secureTextEntry={secure}
 
             />
         )
@@ -31,6 +32,7 @@ export const Input = ({
                 value={fieldvalue}
                 editable={editable}
                 fieldHeight={fieldHeight}
+                secureTextEntry={secure}
             />
         )
     } else if (apointment) {
@@ -44,6 +46,7 @@ export const Input = ({
                 editable={editable}
                 fieldHeight={fieldHeight}
                 center={center}
+                secureTextEntry={secure}
             />
         )
     } else {

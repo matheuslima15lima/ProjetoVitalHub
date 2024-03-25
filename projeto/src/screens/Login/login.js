@@ -10,6 +10,8 @@ import { LinkSemiBold } from "../../components/Link/style";
 import { useState } from "react";
 import api from "../../services/service";
 
+import AsyncStorage from "@react-native-async-storage/async-storage"
+
 export const Login = ({ navigation }) => {
     const [email, setEmail] = useState("")
     const [senha, setSenha] = useState("")
@@ -19,17 +21,15 @@ export const Login = ({ navigation }) => {
             await api.post('/Login', {
                 email: email,
                 senha: senha
-            }).then(
-                response => {
-                    console.log(response.data)
+            }).then( async (response) => {
+                    await AsyncStorage.setItem("token", JSON.stringify(response.data))
+                    
+                    navigation.replace("Main")
                 }
             )
         } catch (error) {
             console.log(error)
-        }
-
-
-        //navigation.replace("Main")
+        } 
     }
 
     return (
@@ -46,7 +46,7 @@ export const Login = ({ navigation }) => {
                     placeholderText={"Senha"}
                     onChangeText={(txt) => setSenha(txt)}
                     editable
-                    secure
+                    secure={true}
                 />
                 <LinkRedefinirSenha onPress={() => navigation.navigate("ReceberEmail")}>Esqueceu sua senha?</LinkRedefinirSenha>
             </BoxInput>

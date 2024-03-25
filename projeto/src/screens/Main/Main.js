@@ -4,7 +4,8 @@ import { PerfilDeMedico, PerfilDeUsuario } from "../PerfilDeUsuario/perfil-de-us
 import { ContentIcon, TextIcon } from "./style";
 
 import { FontAwesome, FontAwesome5 } from "@expo/vector-icons"
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { UserDecodeToken } from "../../utils/Auth";
 
 const BottomTab = createBottomTabNavigator();
 
@@ -12,6 +13,18 @@ const Main = ({route}) => {
     const ativado = route.params
 
     const [perfil, setPerfil] = useState("paciente")
+
+    const ProfileLoad = async () => {
+        const token = await UserDecodeToken()
+
+        if(token){
+            setPerfil(token.perfil)
+        }
+    }
+
+    useEffect(() => {
+        ProfileLoad()
+    }, [])
 
     return (
         <BottomTab.Navigator
@@ -57,7 +70,7 @@ const Main = ({route}) => {
                 name="Home"
                 component={Home}
             /> */}
-            {(perfil === "paciente") ? (
+            {(perfil === "Paciente") ? (
                 <BottomTab.Screen
                     name="PaginaHomePaciente"
                     component={HomePaciente}

@@ -4,13 +4,29 @@ import { UserImagePerfil } from "../../components/UserImage/styled";
 import { BoxInputRow, UserContentBox } from "../../components/Box/style";
 import { BoxInputField } from "../../components/Box";
 import { Button } from "../../components/Button/styled";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LinkCancel } from "../../components/Link";
 import { View } from "react-native";
+import { UserDecodeToken } from "../../utils/Auth";
 
 export const PerfilDeUsuario = () => {
     const [editavel, setEditavel] = useState(false) 
+    const [nome, setNome] = useState("")
+    const [email, setEmail] = useState("")
 
+    const ProfileLoad = async () => {
+        const token = await UserDecodeToken()
+
+        if(token){
+            console.log(token);
+            setNome(token.nome)
+            setEmail(token.email)
+        }
+    }
+
+    useEffect(() => {
+        ProfileLoad()
+    },[])
     return (
         <ContainerPerfilPage>
             <UserImagePerfil
@@ -19,8 +35,8 @@ export const PerfilDeUsuario = () => {
             <UserContentBox
                 editavel={editavel}
             >
-                <UserNamePerfilText editavel={editavel}>Nome do Usuário</UserNamePerfilText>
-                <EmailUserText editavel={editavel}>exemplo.email@gmail.com</EmailUserText>
+                <UserNamePerfilText editavel={editavel}>{nome}</UserNamePerfilText>
+                <EmailUserText editavel={editavel}>{email}</EmailUserText>
             </UserContentBox>
 
 
