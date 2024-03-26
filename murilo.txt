@@ -1,1 +1,0 @@
-IPV4: 172.16.6.249 (alterar no pasta Properties e nasconfigurações do http do launchSettings)
