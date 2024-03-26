@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 export const Link = styled.Text`
     text-decoration: underline;
@@ -23,6 +23,7 @@ export const LinkSemiBold = styled.Text`
 
 export const LinkSemiBoldCancel = styled(LinkSemiBold)`
     margin-top: 30px;
+    ${(props) => props.perfil && css`margin-top: 0;` }
     font-size: 14px;
     text-align: center;
     /* border: 1px solid black; */

@@ -7,17 +7,18 @@ import { Button } from "../../components/Button/styled";
 import { useEffect, useState } from "react";
 import { LinkCancel } from "../../components/Link";
 import { View } from "react-native";
-import { UserDecodeToken } from "../../utils/Auth";
+import { UserDecodeToken, UserLogout } from "../../utils/Auth";
+import { BoxCancelPerfil } from "./style";
 
-export const PerfilDeUsuario = () => {
-    const [editavel, setEditavel] = useState(false) 
+export const PerfilDeUsuario = ({ navigation }) => {
+    const [editavel, setEditavel] = useState(false)
     const [nome, setNome] = useState("")
     const [email, setEmail] = useState("")
 
     const ProfileLoad = async () => {
         const token = await UserDecodeToken()
 
-        if(token){
+        if (token) {
             console.log(token);
             setNome(token.nome)
             setEmail(token.email)
@@ -26,7 +27,7 @@ export const PerfilDeUsuario = () => {
 
     useEffect(() => {
         ProfileLoad()
-    },[])
+    }, [])
     return (
         <ContainerPerfilPage>
             <UserImagePerfil
@@ -75,20 +76,24 @@ export const PerfilDeUsuario = () => {
                         inputPerfil
                     />
                 </BoxInputRow>
-                {editavel ? 
-                <>
-                    <Button onPress={() => setEditavel(false)}>
-                        <ButtonTitle>Salvar Edições</ButtonTitle>
-                    </Button> 
-                </>
-                : <Button onPress={() => setEditavel(true)}>
-                    <ButtonTitle>Editar</ButtonTitle>
-                </Button>}
-                    
+                {editavel ?
+                    <>
+                        <Button onPress={() => setEditavel(false)}>
+                            <ButtonTitle>Salvar Edições</ButtonTitle>
+                        </Button>
+                    </>
+                    : <Button onPress={() => setEditavel(true)}>
+                        <ButtonTitle>Editar</ButtonTitle>
+                    </Button>}
+
             </ContainerForm>
-            {editavel ? <LinkCancel manipulationFunction={setEditavel}>Cancelar</LinkCancel> : null}
-            
-            <View style={{height: 30}}></View>
+            <BoxCancelPerfil>
+                {editavel ?
+                    (
+                        <LinkCancel perfil onPress={() => setEditavel(false)}>Cancelar</LinkCancel>
+                    ) : <LinkCancel perfil onPress={() => UserLogout(navigation)}>Deslogar</LinkCancel>
+                }
+            </BoxCancelPerfil>
         </ContainerPerfilPage>
     )
 }

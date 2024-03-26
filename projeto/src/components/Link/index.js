@@ -32,11 +32,12 @@ export const LinkAccount = ({ url, children }) =>
         {children}
     </LinkSemiBold>
 
-export const LinkCancel = ({ onPress, children }) =>
+export const LinkCancel = ({ onPress, children, perfil = false }) =>
     <LinkSemiBoldCancel
+        perfil={perfil}
         onPress={onPress}
     >
-        Cancelar
+        {children}
     </LinkSemiBoldCancel>
 
 export const LinkVerifyEmail = ({ url, children }) =>

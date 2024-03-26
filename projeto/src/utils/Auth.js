@@ -30,3 +30,10 @@ export const UserDecodeToken = async () => {
 
     return informacoes
 }
+
+export const UserLogout = async (navigation) => {
+    await AsyncStorage.removeItem("token")
+    .then(() => {
+        navigation.replace("Login")
+    })
+}

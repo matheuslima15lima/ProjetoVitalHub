@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BoxInputSelect, ButtonContinuarBox } from "../../components/Box";
 import { CalendarioCompleto } from "../../components/Calendario";
 import { ListaClinicas, ListaMedicos } from "../../components/FlatList";
 import { InputSelect } from "../../components/Input";
 import { ConfirmarConsultaModal } from "../../components/Modal";
 import { ContainerSelectPage, TitleSelecao } from "./style";
+import api from "../../services/service";
+import { ActivityIndicator } from "react-native";
 
 export const SelecionarClinica = ({navigation}) => {
     const listaClinicas = [
@@ -53,33 +55,50 @@ export const SelecionarClinica = ({navigation}) => {
 }
 
 export const SelecionarMedico = ({navigation}) => {
-    const listaMedicos = [
-        {
-            id: 1,
-            nome: "Dra.Alessandra",
-            especialidades: "Dermatologia, Eletricista",
-            foto: "../../assets/images/doctor_image_select.png"
-        },{
-            id: 2,
-            nome: "Dr. Kumushiro",
-            especialidades: "Cirurgião, Cardiologista",
-            foto: "../../assets/images/doctor_image_select.png"
-        },{
-            id: 3,
-            nome: "Dr. Rodrigo Santos",
-            especialidades: "Clínica, Pediatra",
-            foto: "../../assets/images/doctor_image_select.png"
+    const [listaDeMedicos, setListaDeMedicos] = useState([])
+
+    const loadMedicosList = async () => {
+        try{
+            const retornoApi = await api.get("/Medicos")
+
+            setListaDeMedicos(retornoApi.data)
+        }catch(erro){
+            console.log(erro);
         }
-    ]
+    }
+
+    useEffect(() => {
+        loadMedicosList()
+    },[])
+
+    // const listaMedicos = [
+    //     {
+    //         id: 1,
+    //         nome: "Dra.Alessandra",
+    //         especialidades: "Dermatologia, Eletricista",
+    //         foto: "../../assets/images/doctor_image_select.png"
+    //     },{
+    //         id: 2,
+    //         nome: "Dr. Kumushiro",
+    //         especialidades: "Cirurgião, Cardiologista",
+    //         foto: "../../assets/images/doctor_image_select.png"
+    //     },{
+    //         id: 3,
+    //         nome: "Dr. Rodrigo Santos",
+    //         especialidades: "Clínica, Pediatra",
+    //         foto: "../../assets/images/doctor_image_select.png"
+    //     }
+    // ]
 
     return (
+        listaDeMedicos == null ? <ActivityIndicator/> : 
         <ContainerSelectPage>
             <TitleSelecao>Selecionar Médico</TitleSelecao>
             {/* <ListaSelectPages
             
             /> */}
             <ListaMedicos
-                dados={listaMedicos}
+                dados={listaDeMedicos}
             />
             <ButtonContinuarBox
                 manipulationFunction={() => navigation.navigate("SelecionarData")}
