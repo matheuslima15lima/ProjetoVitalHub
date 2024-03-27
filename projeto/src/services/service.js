@@ -4,11 +4,10 @@ import axios from "axios"
 const portaApi = "4466";
 
 //Declarar o IP da máquina
-<<<<<<< HEAD
-const ip = "192.168.223.248";
-=======
-const ip = "172.16.39.79";
->>>>>>> 9cd70b5 (salvamento do token no async storage da aplicação)
+
+const ip = "192.168.19.137";
+
+
 
 //Definir a URL padrão da api
 

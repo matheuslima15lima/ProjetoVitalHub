@@ -11,11 +11,12 @@ import { useState } from "react";
 import api from "../../services/service";
 
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { ErrorModal } from "../../components/Modal";
 
 export const Login = ({ navigation }) => {
     const [email, setEmail] = useState("")
     const [senha, setSenha] = useState("")
-
+    const [showModalError, setShowModalError]= useState(false)
     const Login = async () => {
         try {
             await api.post('/Login', {
@@ -23,17 +24,22 @@ export const Login = ({ navigation }) => {
                 senha: senha
             }).then( async (response) => {
                     await AsyncStorage.setItem("token", JSON.stringify(response.data))
-<<<<<<< HEAD
-                    
-=======
+
+                  
+
                     console.log(response.data)
->>>>>>> 9cd70b5 (salvamento do token no async storage da aplicação)
                     navigation.replace("Main")
                 }
             )
         } catch (error) {
             console.log(error)
+
+            setShowModalError(true);
         } 
+    }
+
+    const focarInput = () => {
+        return null
     }
 
     return (
@@ -67,6 +73,12 @@ export const Login = ({ navigation }) => {
                 <TextAccount>Não tem conta?</TextAccount>
                 <LinkSemiBold onPress={() => navigation.replace("Cadastro")} > Crie sua conta aqui</LinkSemiBold>
             </ContentAccount>
+
+            <ErrorModal
+                visible={showModalError}
+                setShowModalError={setShowModalError}
+                focarInput={focarInput}
+            />
         </ContainerCenter>
     )
 }

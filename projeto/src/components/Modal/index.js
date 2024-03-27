@@ -274,6 +274,36 @@ export const ModalCamera = ({ visible, setShowModal = null, enviarFoto, ...resto
     )
 }
 
+
+export const ErrorModal = ({ visible, setShowModalError, focarInput, ...rest }) => {
+    return (
+        <Modal {...rest}
+            visible={visible}
+            transparent={true}
+            animationType="fade"
+        >
+            <PatientModal>
+                <ModalContent>
+                    <Title>Email ou senha incorretos</Title>
+                    <ModalText>email ou senha icorretos, digite novamente</ModalText>
+
+
+
+                    <ButtonModal onPress={() => setShowModalError(false)}>
+                        <ButtonTitle onPress={() => setShowModalError(false)}>Tentar novamente</ButtonTitle>
+                    </ButtonModal>
+
+                    <LinkCancel onPress={() => {
+                        
+                        setShowModalError(false)
+                        focarInput()
+                    }}>fechar </LinkCancel>
+                </ModalContent>
+            </PatientModal>
+        </Modal>
+    )
+}
+
 const styles = StyleSheet.create({
     camera: {
         width: "100%",

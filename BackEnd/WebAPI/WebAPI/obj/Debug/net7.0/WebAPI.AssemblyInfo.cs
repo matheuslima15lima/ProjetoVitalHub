@@ -14,11 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WebAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-<<<<<<< HEAD
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0ef21dc401bf16f22391baeac77f9d25817146e8")]
-=======
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3ad9395158ff276f6b16b69351582dbf1a23af4c")]
->>>>>>> 9cd70b5 (salvamento do token no async storage da aplicação)
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cabb5fd92023e689484bf7e13a066b77494dfb7a")]
 [assembly: System.Reflection.AssemblyProductAttribute("WebAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WebAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

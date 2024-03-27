@@ -62,6 +62,7 @@ export const SelecionarMedico = ({navigation}) => {
             const retornoApi = await api.get("/Medicos")
 
             setListaDeMedicos(retornoApi.data)
+            console.log(listaDeMedicos);
         }catch(erro){
             console.log(erro);
         }
