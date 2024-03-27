@@ -65,6 +65,16 @@ export const SelecionarMedico = ({navigation}) => {
         }catch(erro){
             console.log(erro);
         }
+
+        // Jeito do professor (usando o requisicao.then(() => {}).catch(() => {}))
+        // api.get("/Medicos")
+        // .then(Response => {
+        //     setListaDeMedicos(Response.data)
+
+        //     console.log(listaDeMedicos);
+        // }).catch(error => {
+        //     console.log(error);
+        // })
     }
 
     useEffect(() => {
