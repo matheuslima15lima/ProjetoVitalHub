@@ -36,5 +36,5 @@ export const ListaMedicos = ({ dados }) =>
     <FlatListStyle
         data={dados}
         keyExtractor={item => item.id}
-        renderItem={({ item, index }) => <CardMedico firstItem={index === 0 ? true : false} dados={item} />}
+        renderItem={({ item, index }) => <CardMedico firstItem={index === 0 ? true : false} dados={item}  />}
     />
