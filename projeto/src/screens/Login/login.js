@@ -23,7 +23,11 @@ export const Login = ({ navigation }) => {
                 senha: senha
             }).then( async (response) => {
                     await AsyncStorage.setItem("token", JSON.stringify(response.data))
+<<<<<<< HEAD
                     
+=======
+                    console.log(response.data)
+>>>>>>> 9cd70b5 (salvamento do token no async storage da aplicação)
                     navigation.replace("Main")
                 }
             )
