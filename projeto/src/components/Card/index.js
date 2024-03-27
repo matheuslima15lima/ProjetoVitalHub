@@ -71,8 +71,8 @@ export const CardMedico = ({dados, firstItem}) =>{
             source={require("../../assets/images/doctor_image_select.png")}
         />
         <CardSelectContent>
-            <TitleSelectCard>{dados.nome}</TitleSelectCard>
-            <CardSelectDescription>{dados.especialidades}</CardSelectDescription>
+            <TitleSelectCard>{dados.idNavigation.nome}</TitleSelectCard>
+            <CardSelectDescription>{dados.especialidade.especialidade1}</CardSelectDescription>
         </CardSelectContent>
     </CardBox>)
 }

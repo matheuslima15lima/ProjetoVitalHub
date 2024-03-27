@@ -29,6 +29,7 @@ export const Login = ({ navigation }) => {
             )
         } catch (error) {
             console.log(error)
+            console.warn(error.status);
         } 
     }
 
