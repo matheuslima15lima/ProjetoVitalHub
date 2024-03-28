@@ -59,7 +59,7 @@ export const Input = ({
                 value={fieldvalue}
                 editable={editable}
                 center={center}
-                secure={secure}
+                secureTextEntry={secure}
                 inputError={inputError}
                 autoFocus={autoFocus}
             />

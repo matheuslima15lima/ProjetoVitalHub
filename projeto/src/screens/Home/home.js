@@ -8,8 +8,15 @@ import { useEffect, useState } from "react";
 import { ListaConsultas } from "../../components/FlatList";
 import { AgendarConsultaModal, ApointmentModal, CancelattionModal, MedicoModal } from "../../components/Modal";
 import { AgendarConsultaButton, HomeContent } from "./style";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import api from "../../services/service";
 
 export const Home = ({navigation}) => {
+
+    const [listaDeConsultas, setListaDeConsultas] = useState([]);
+
+    const [idUsuarioLogado, setIdUsuarioLogado] = useState('');
+
     //state para o estado da lista
     const [statusFiltro, setStatusFiltro] = useState("agendada")
 
@@ -19,6 +26,30 @@ export const Home = ({navigation}) => {
 
     //state para guardar os dados da consulta e renderizar no modal
     const [infoConsulta, setInfoConsulta] = useState({})
+
+    const ProfileLoad = async () => {
+        const token = await UserDecodeToken()
+    
+        if(token){
+            console.log(token);
+            setIdUsuarioLogado(token.idUsuario);
+        }
+    }
+    
+    const LoadListaConsultas = async (idUsuario) => {
+        dataAtual = new Date(Date.now())
+        try {
+            const retornoApi = await api.get(`/Pacientes/BuscarPorData?data=${dataAtual.getFullYear()}-${dataAtual.getMonth()}-${dataAtual.getDate()}&id=${idUsuario}`)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    
+    
+    
+    useEffect(() => {
+        ProfileLoad()
+    }, [])
 
     const consultasAgendadas = [
         {
@@ -204,6 +235,10 @@ export const Home = ({navigation}) => {
 export const HomePaciente = ({navigation, route}) => {
     const {ativado} = route.params
 
+    const [listaDeConsultas, setListaDeConsultas] = useState([]);
+
+    const [idUsuarioLogado, setIdUsuarioLogado] = useState('');
+
     //state para o estado da lista
     const [statusFiltro, setStatusFiltro] = useState("agendada")
 
@@ -280,7 +315,28 @@ export const HomePaciente = ({navigation, route}) => {
         }
     ]
 
+    const ProfileLoad = async () => {
+        const token = await UserDecodeToken()
+    
+        if(token){
+            console.log(token);
+            setIdUsuarioLogado(token.idUsuario);
+        }
+    }
+    
+    const LoadListaConsultas = async (idUsuario) => {
+        dataAtual = new Date(Date.now())
+        try {
+            const retornoApi = await api.get(`/Pacientes/BuscarPorData?data=${dataAtual.getFullYear()}-${dataAtual.getMonth()}-${dataAtual.getDate()}&id=${idUsuario}`);
+
+            set
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     useEffect(() => {
+        ProfileLoad()
         if(ativado){
             setShowAgendarConsulta(true)
         }

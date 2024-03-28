@@ -2,8 +2,7 @@ import styled, { css } from "styled-components";
 
 export const InputField = styled.TextInput.attrs({
     placeholderTextColor: props => props.inputError ? '#F54A45' : "#49B3BA",
-    multiline: true,
-    secureTextEntry: props => props.secure ? true : false
+    multiline: true
 })`
     border: 2px solid #49B3BA;
     border-radius: 5px;
