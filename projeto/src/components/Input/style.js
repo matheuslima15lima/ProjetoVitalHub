@@ -1,8 +1,9 @@
 import styled, { css } from "styled-components";
 
 export const InputField = styled.TextInput.attrs({
-    placeholderTextColor: '#34898F',
-    multiline: true
+    placeholderTextColor: props => props.inputError ? '#F54A45' : "#49B3BA",
+    multiline: true,
+    secureTextEntry: props => props.secure ? true : false
 })`
     border: 2px solid #49B3BA;
     border-radius: 5px;
@@ -11,6 +12,9 @@ export const InputField = styled.TextInput.attrs({
     ${props => props.center && css`
         justify-content: center;
         align-items: center;
+    `}
+    ${props => props.inputError && css`
+        border-color: #F54A45;
     `}
 `
 

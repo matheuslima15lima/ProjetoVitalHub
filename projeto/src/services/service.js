@@ -5,7 +5,7 @@ const portaApi = "4466";
 
 //Declarar o IP da máquina
 
-const ip = "192.168.19.137";
+const ip = "172.16.39.79";
 
 
 

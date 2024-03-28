@@ -275,7 +275,7 @@ export const ModalCamera = ({ visible, setShowModal = null, enviarFoto, ...resto
 }
 
 
-export const ErrorModal = ({ visible, setShowModalError, focarInput, ...rest }) => {
+export const ErrorModal = ({ visible, setShowModalError, ...rest }) => {
     return (
         <Modal {...rest}
             visible={visible}
@@ -296,7 +296,6 @@ export const ErrorModal = ({ visible, setShowModalError, focarInput, ...rest }) 
                     <LinkCancel onPress={() => {
                         
                         setShowModalError(false)
-                        focarInput()
                     }}>fechar </LinkCancel>
                 </ModalContent>
             </PatientModal>
