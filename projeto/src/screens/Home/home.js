@@ -197,6 +197,10 @@ export const Home = ({navigation}) => {
     )
 }
 
+
+
+
+
 export const HomePaciente = ({navigation, route}) => {
     const {ativado} = route.params
 

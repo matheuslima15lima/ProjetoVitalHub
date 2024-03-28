@@ -49,11 +49,10 @@ export const Login = ({ navigation }) => {
         setActivity(false)
     }
 
-    const redefinirStates = () => {
-        setEmail("")
-        setSenha("")
-        setInputError(false)
-        setShowModalError(false)
+    const focarInput = () => {
+        return null
+
+        
     }
 
     useEffect(()=>{
