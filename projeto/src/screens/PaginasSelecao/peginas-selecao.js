@@ -9,36 +9,55 @@ import api from "../../services/service";
 import { ActivityIndicator } from "react-native";
 
 export const SelecionarClinica = ({navigation}) => {
-    const listaClinicas = [
-        {
-            id: 1,
-            nome: "Clínica Natureh",
-            localizacao: "São Paulo, SP",
-            avaliacao: "4,5",
-            disponibilidade: "Seg-Sex"
-        },
-        {
-            id: 2,
-            nome: "Diamond Pró-Mulher",
-            localizacao: "São Paulo, SP",
-            avaliacao: "4,8",
-            disponibilidade: "Seg-Sex"
-        },
-        {
-            id: 3,
-            nome: "Clinica Villa Lobos",
-            localizacao: "Taboão, SP",
-            avaliacao: "4,2",
-            disponibilidade: "Seg-Sab"
-        },
-        {
-            id: 4,
-            nome: "SP Oncologia Clínica",
-            localizacao: "Taboão, SP",
-            avaliacao: "4,2",
-            disponibilidade: "Seg-Sab"
+    // const listaClinicas = [
+    //     {
+    //         id: 1,
+    //         nome: "Clínica Natureh",
+    //         localizacao: "São Paulo, SP",
+    //         avaliacao: "4,5",
+    //         disponibilidade: "Seg-Sex"
+    //     },
+    //     {
+    //         id: 2,
+    //         nome: "Diamond Pró-Mulher",
+    //         localizacao: "São Paulo, SP",
+    //         avaliacao: "4,8",
+    //         disponibilidade: "Seg-Sex"
+    //     },
+    //     {
+    //         id: 3,
+    //         nome: "Clinica Villa Lobos",
+    //         localizacao: "Taboão, SP",
+    //         avaliacao: "4,2",
+    //         disponibilidade: "Seg-Sab"
+    //     },
+    //     {
+    //         id: 4,
+    //         nome: "SP Oncologia Clínica",
+    //         localizacao: "Taboão, SP",
+    //         avaliacao: "4,2",
+    //         disponibilidade: "Seg-Sab"
+    //     }
+    // ]
+
+
+    const [listaClinicas, setListaClinicas] = useState([]);
+
+    const loadClinicasList= async()=>{
+        try {
+
+            const retornoApi= await api.get("/Clinica/ListarTodas")
+            setListaClinicas(retornoApi.data)
+            console.log(listaClinicas);
+            
+        } catch (error) {
+            console.log(error);
         }
-    ]
+    }
+
+    useEffect(()=>{
+        loadClinicasList();
+    },[])
 
     return (
         <ContainerSelectPage>

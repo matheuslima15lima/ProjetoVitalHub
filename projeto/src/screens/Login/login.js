@@ -40,6 +40,8 @@ export const Login = ({ navigation }) => {
 
     const focarInput = () => {
         return null
+
+        
     }
 
     return (

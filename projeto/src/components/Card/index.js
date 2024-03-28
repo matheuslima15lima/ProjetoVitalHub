@@ -47,17 +47,17 @@ export const CardClinica = ({dados, firstItem}) => {
     return (
         <CardSelectBox firstItem={firstItem}>
             <CardSelectContent>
-                <TitleSelectCard>{dados.nome}</TitleSelectCard>
-                <CardSelectDescription>{dados.localizacao}</CardSelectDescription>
+                <TitleSelectCard>{dados.nomeFantasia}</TitleSelectCard>
+                <CardSelectDescription>{dados.endereco.cidade}</CardSelectDescription>
             </CardSelectContent>
             <CardSelectContentEnd>
                 <AvaliacaoClinicaBox>
                     <AntDesign name="star" size={20} color="#F9A620" />
-                    <NotaAvaliacao>{dados.avaliacao}</NotaAvaliacao>
+                    <NotaAvaliacao>4,7</NotaAvaliacao>
                 </AvaliacaoClinicaBox>
                 <HorarioClinicaBox>
                     <MaterialCommunityIcons name="calendar" size={14} color="#49B3BA" />
-                    <DisponibilidadeClinicaText>{dados.disponibilidade}</DisponibilidadeClinicaText>
+                    <DisponibilidadeClinicaText>Seg-Sex</DisponibilidadeClinicaText>
                 </HorarioClinicaBox>
             </CardSelectContentEnd>
         </CardSelectBox>
