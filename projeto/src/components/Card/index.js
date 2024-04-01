@@ -28,14 +28,14 @@ export const CardConsulta = ({ consulta, statusConsulta, onPressCancel, onPressA
                 </DataCard>
                 <ViewRow>
                     <HorarioBox statusConsulta={statusConsulta}>
-                        <AntDesign name="clockcircle" size={14} color={statusConsulta == "agendada" ? "#49B3BA" : "#4E4B59"} />
+                        <AntDesign name="clockcircle" size={14} color={statusConsulta == "Agendada" ? "#49B3BA" : "#4E4B59"} />
                         <HorarioText statusConsulta={statusConsulta}>{consulta.horario}</HorarioText>
                     </HorarioBox>
                     <CardTextCancelApointment
                         statusConsulta={statusConsulta}
-                        onPress={statusConsulta == "agendada" ? (onPressCancel) : (abrirModalProntuario)}
+                        onPress={statusConsulta == "Agendada" ? (onPressCancel) : (abrirModalProntuario)}
                     >
-                        {statusConsulta == "agendada" ? "Cancelar" : (statusConsulta == "realizada" ? "Ver Prontuário" : null)}
+                        {statusConsulta == "Agendada" ? "Cancelar" : (statusConsulta == "Realizada" ? "Ver Prontuário" : null)}
                     </CardTextCancelApointment>
                 </ViewRow>
             </CardContent>

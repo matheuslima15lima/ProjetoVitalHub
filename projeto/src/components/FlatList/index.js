@@ -8,7 +8,7 @@ export const ListaConsultas = ({ dados, statusConsulta, onPressCancel, onPressAp
             data={dados}
             keyExtractor={item => item.id}
             renderItem={({ item }) =>
-                statusConsulta == item.situacao ? (
+                statusConsulta == item.situacao.situacao ? (
                     <CardConsulta
                         consulta={item}
                         imageSource={item.foto}

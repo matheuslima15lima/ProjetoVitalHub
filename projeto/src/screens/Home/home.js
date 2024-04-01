@@ -10,6 +10,7 @@ import { AgendarConsultaModal, ApointmentModal, CancelattionModal, MedicoModal }
 import { AgendarConsultaButton, HomeContent } from "./style";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../../services/service";
+import { UserDecodeToken } from "../../utils/Auth";
 
 export const Home = ({navigation}) => {
 
@@ -18,7 +19,7 @@ export const Home = ({navigation}) => {
     const [idUsuarioLogado, setIdUsuarioLogado] = useState('');
 
     //state para o estado da lista
-    const [statusFiltro, setStatusFiltro] = useState("agendada")
+    const [statusFiltro, setStatusFiltro] = useState("Agendada")
 
     //state para a exibição dos modais
     const [showModalCancel, setShowModalCancel] = useState(false)
@@ -37,9 +38,11 @@ export const Home = ({navigation}) => {
     }
     
     const LoadListaConsultas = async (idUsuario) => {
-        dataAtual = new Date(Date.now())
+        const dataAtual = new Date(Date.now())
         try {
-            const retornoApi = await api.get(`/Pacientes/BuscarPorData?data=${dataAtual.getFullYear()}-${dataAtual.getMonth()}-${dataAtual.getDate()}&id=${idUsuario}`)
+            const retornoApi = await api.get(`/Pacientes/BuscarPorData?data=${dataAtual.getFullYear()}-${dataAtual.getMonth()}-${dataAtual.getDate()}&id=${idUsuario}`);
+
+            setListaDeConsultas(retornoApi.data)
         } catch (error) {
             console.log(error);
         }
@@ -49,6 +52,7 @@ export const Home = ({navigation}) => {
     
     useEffect(() => {
         ProfileLoad()
+        LoadListaConsultas(idUsuarioLogado)
     }, [])
 
     const consultasAgendadas = [
@@ -180,25 +184,25 @@ export const Home = ({navigation}) => {
                 <BoxButtonRow>
                     <ButtonHome
                         buttonText={"Agendadas"}
-                        situacao={"agendada"}
-                        actived={statusFiltro === "agendada"}
+                        situacao={"Agendada"}
+                        actived={statusFiltro === "Agendada"}
                         manipulationFunction={setStatusFiltro}
                     />
                     <ButtonHome
                         buttonText={"Realizadas"}
-                        situacao={"realizada"}
-                        actived={statusFiltro === "realizada"}
+                        situacao={"Realizada"}
+                        actived={statusFiltro === "Realizada"}
                         manipulationFunction={setStatusFiltro}
                     />
                     <ButtonHome
                         buttonText={"Canceladas"}
-                        situacao={"cancelada"}
-                        actived={statusFiltro === "cancelada"}
+                        situacao={"Cancelada"}
+                        actived={statusFiltro === "Cancelada"}
                         manipulationFunction={setStatusFiltro}
                     />
                 </BoxButtonRow>
                 <ListaConsultas
-                    dados={consultasAgendadas}
+                    dados={listaDeConsultas}
                     statusConsulta={statusFiltro}
                     onPressCancel={() => setShowModalCancel(true)}
                     onPressApointment={() => setShowModalApointment(true)}
@@ -240,7 +244,7 @@ export const HomePaciente = ({navigation, route}) => {
     const [idUsuarioLogado, setIdUsuarioLogado] = useState('');
 
     //state para o estado da lista
-    const [statusFiltro, setStatusFiltro] = useState("agendada")
+    const [statusFiltro, setStatusFiltro] = useState("Agendada")
 
     //state para a exibição dos modais
     const [showModalAgendarConsulta, setShowAgendarConsulta] = useState(false)
@@ -325,22 +329,40 @@ export const HomePaciente = ({navigation, route}) => {
     }
     
     const LoadListaConsultas = async (idUsuario) => {
-        dataAtual = new Date(Date.now())
-        try {
-            const retornoApi = await api.get(`/Pacientes/BuscarPorData?data=${dataAtual.getFullYear()}-${dataAtual.getMonth()}-${dataAtual.getDate()}&id=${idUsuario}`);
+        const dataAtual = new Date(Date.now())
+        const anoAtual = dataAtual.getFullYear()
+        const mesAtual = dataAtual.getMonth() + 1;
+        const diaAtual = dataAtual.getDay();
 
-            set
+        try {
+            console.log(dataAtual);
+            console.log(anoAtual);
+            console.log(mesAtual);
+            console.log(diaAtual);
+            console.log(idUsuario);
+
+            const retornoApi = await api.get(`/Pacientes/BuscarPorData?data=${anoAtual}-${mesAtual}-${diaAtual}&id=${idUsuario}`);
+            
+            console.log(retornoApi.data);
+
+            setListaDeConsultas(retornoApi.data)
+
+            console.log(listaDeConsultas);
         } catch (error) {
             console.log(error);
+            log(idUsuario)
         }
     }
 
     useEffect(() => {
         ProfileLoad()
+
         if(ativado){
             setShowAgendarConsulta(true)
         }
-    }, [])
+
+        LoadListaConsultas(idUsuarioLogado)
+    }, [idUsuarioLogado])
 
     return (
         <ContainerHome>
@@ -350,25 +372,25 @@ export const HomePaciente = ({navigation, route}) => {
                 <BoxButtonRow>
                     <ButtonHome
                         buttonText={"Agendadas"}
-                        situacao={"agendada"}
-                        actived={statusFiltro === "agendada"}
+                        situacao={"Agendada"}
+                        actived={statusFiltro === "Agendada"}
                         manipulationFunction={setStatusFiltro}
                     />
                     <ButtonHome
                         buttonText={"Realizadas"}
-                        situacao={"realizada"}
-                        actived={statusFiltro === "realizada"}
+                        situacao={"Realizada"}
+                        actived={statusFiltro === "Realizada"}
                         manipulationFunction={setStatusFiltro}
                     />
                     <ButtonHome
                         buttonText={"Canceladas"}
-                        situacao={"cancelada"}
-                        actived={statusFiltro === "cancelada"}
+                        situacao={"Cancelada"}
+                        actived={statusFiltro === "Cancelada"}
                         manipulationFunction={setStatusFiltro}
                     />
                 </BoxButtonRow>
                 <ListaConsultas
-                    dados={consultasAgendadas}
+                    dados={listaDeConsultas}
                     statusConsulta={statusFiltro}
                     onPressCancel={() => setShowModalCancel(true)}
                     onPressApointment={() => navigation.navigate("VisualizarPrescricao")}
