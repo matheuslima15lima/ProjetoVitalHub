@@ -2,7 +2,7 @@ import { View } from "react-native"
 import { FlatListStyle } from "./style"
 import { CardClinica, CardConsulta, CardMedico } from "../Card"
 
-export const ListaConsultas = ({ dados, statusConsulta, onPressCancel, onPressApointment, loadInfoConsulta }) => {
+export const ListaConsultas = ({ dados, statusConsulta, onPressCancel, onPressApointment, loadInfoConsulta, permissaoUsuario }) => {
     return (
         <FlatListStyle
             data={dados}
@@ -11,7 +11,11 @@ export const ListaConsultas = ({ dados, statusConsulta, onPressCancel, onPressAp
                 statusConsulta == item.situacao.situacao ? (
                     <CardConsulta
                         consulta={item}
-                        imageSource={item.foto}
+                        permissaoUsuario={permissaoUsuario}
+                        dadosUsuario={permissaoUsuario == "Paciente" ? item.medicoClinica.medico : item.paciente }
+                        dataConsulta={item.dataConsulta}
+                        prioridade={item.prioridade.prioridade}
+                        // imageSource={item.foto}
                         statusConsulta={statusConsulta}
                         onPressCancel={onPressCancel}
                         onPressApointment={onPressApointment}

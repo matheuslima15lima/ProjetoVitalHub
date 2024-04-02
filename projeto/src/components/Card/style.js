@@ -80,7 +80,7 @@ export const HorarioBox = styled.View`
     flex-direction: row;
     gap: 6px;
     border-radius: 5px;
-    background-color: ${props => props.statusConsulta == "agendada" ? `#E8FCFD` : `#F1F0F5`};
+    background-color: ${props => props.statusConsulta == "Agendada" ? `#E8FCFD` : `#F1F0F5`};
     padding: 4px;
     align-items: center;
     justify-content: center;
@@ -88,13 +88,13 @@ export const HorarioBox = styled.View`
 `
 
 export const HorarioText = styled(TextTipoConsulta)`
-    color: ${props => props.statusConsulta == "agendada" ? `#49B3BA` : `#4E4B59`};
+    color: ${props => props.statusConsulta == "Agendada" ? `#49B3BA` : `#4E4B59`};
 
 `
 
 export const CardTextCancelApointment = styled(LinkSemiBoldCancel)`
     text-decoration: none;
-    color: ${props => props.statusConsulta == "agendada" ? "#C81D25" : "#344F8F"};
+    color: ${props => props.statusConsulta == "Agendada" ? "#C81D25" : "#344F8F"};
     margin-top: -0px;
 `
 

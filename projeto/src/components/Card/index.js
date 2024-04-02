@@ -2,16 +2,15 @@ import { CancelText, CardBox, CardContent, CardTextCancelApointment, DataCard, H
 import { AntDesign } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { UserImageCart } from "../UserImage/styled";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { UserDecodeToken } from "../../utils/Auth";
 
-export const CardConsulta = ({ consulta, statusConsulta, onPressCancel, onPressApointment, loadInfoConsulta }) => {
+export const CardConsulta = ({ consulta, statusConsulta, onPressCancel, onPressApointment, loadInfoConsulta, permissaoUsuario, dadosUsuario, dataConsulta, prioridade }) => {
 
     const abrirModalProntuario = () => {
         onPressApointment();
         loadInfoConsulta(consulta);
     }
-
-    // const [perfil, setPerfil] = useState("paciente")
 
     return (
         <CardBox>
@@ -20,16 +19,18 @@ export const CardConsulta = ({ consulta, statusConsulta, onPressCancel, onPressA
             />
             <CardContent>
                 <DataCard>
-                    <TitleCard>{consulta.nome}</TitleCard>
+                    <TitleCard>
+                        {dadosUsuario.idNavigation.nome}
+                    </TitleCard>
                     <ProfileData>
-                        <TextAge>{consulta.idade}</TextAge>
+                        <TextAge>{permissaoUsuario == "Paciente" ? `CRM ${dadosUsuario.crm}` : "22 anos"}</TextAge>
                         <TextTipoConsulta>{consulta.nivel}</TextTipoConsulta>
                     </ProfileData>
                 </DataCard>
                 <ViewRow>
                     <HorarioBox statusConsulta={statusConsulta}>
                         <AntDesign name="clockcircle" size={14} color={statusConsulta == "Agendada" ? "#49B3BA" : "#4E4B59"} />
-                        <HorarioText statusConsulta={statusConsulta}>{consulta.horario}</HorarioText>
+                        <HorarioText statusConsulta={statusConsulta}>14:00</HorarioText>
                     </HorarioBox>
                     <CardTextCancelApointment
                         statusConsulta={statusConsulta}
