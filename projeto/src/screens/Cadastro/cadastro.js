@@ -16,33 +16,38 @@ import {
 } from "../../components/Text/style";
 import api from "../../services/service";
 export const Cadastro = ({ navigation }) => {
-  const [conta, setConta] = useState([]);
+  const [conta, setConta] = useState({
+    email: "",
+    senha: "",
+    nome:""
+  });
+
+  const [senhaConfirma, setSenhaConfirma] = useState("")
 
   const CriarConta = async () => {
+    if(senhaConfirma != conta.senha){
+      alert("Senhas não são iguais")
+      return null
+    }else{
     try {
-      const retornoApi = await api.post("Pacientes", {
-        rg,
-        cpf,
-        dataNascimento,
-        cep,
-        logradouro,
-        numero,
-        cidade,
-        nome,
-        email,
-        senha,
+      await api.post("/Pacientes", {
+        nome: conta.nome,
+        email: conta.email,
+        senha: conta.senha,
+        idTipoUsuario:"42EAB83A-A42C-4C0D-AE47-2C7D47468164"
       });
 
-      setConta(retornoApi.data);
-
-      if (retornoApi.status == 201) {
-        alert("usuário criado");
-      } else {
-        alert("erro ao criar");
-      }
+      navigation.replace("Login")
+      
+      // if (retornoApi.status == 201) {
+      //   alert("usuário criado");
+      // } else {
+      //   alert("erro ao criar");
+      // }
     } catch (error) {
       console.log(error);
     }
+  }
   };
 
   return (
@@ -53,6 +58,12 @@ export const Cadastro = ({ navigation }) => {
         Insira seu endereço de e-mail e senha para realizar seu cadastro.
       </TextRegular>
       <BoxInput>
+        <Input
+          placeholderText={"Digite seu nome:"}
+          value={conta.email}
+          editable
+          onChangeText={(text) => setConta({ ...conta, nome: text })}
+        />
         <Input
           placeholderText={"Usuário ou email"}
           value={conta.email}
@@ -67,44 +78,10 @@ export const Cadastro = ({ navigation }) => {
         />
         <Input
           editable
-          placeholderText={"Confirmar senha"}
+          placeholderText={"Confirmar Senha"}
           value={conta.senha}
-          onChangeText={(text) => setConta({ ...conta, senha: text })}
+          onChangeText={(text) => setSenhaConfirma(text)}
         />
-          <Input
-            editable
-            placeholderText={"Nome"}
-            value={conta.nome}
-            onChangeText={(text) => setConta({ ...conta, nome: text })}
-            />
-            <Input
-            editable
-            placeholderText={"RG"}
-            value={conta.nome}
-            onChangeText={(text) => setConta({ ...conta, rg: text })}
-          />
-        <Input
-          editable
-          placeholderText={"CPF"}
-          value={conta.cpf}
-          onChangeText={(text) => setConta({ ...conta, cpf: text })}
-        />
-        <BoxInputRow>
-          <Input
-            editable
-            placeholderText={"CEP"}
-            value={conta.cep}
-            onChangeText={(text) => setConta({ ...conta, cep: text })}
-            fieldWidth={60}
-          />
-          <Input
-            editable
-            placeholderText={"Nº"}
-            value={conta.numero}
-            onChangeText={(text) => setConta({ ...conta, numero: text })}
-            fieldWidth={30}
-          />
-        </BoxInputRow>
       </BoxInput>
       <Button //</ContainerCenter>onPress={() => navigation.replace("Login")}
         onPress={()=> CriarConta()}

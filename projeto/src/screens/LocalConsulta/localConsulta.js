@@ -18,8 +18,24 @@ import {
 
 import { mapsKey } from "../../utils/MapsKey";
 import MapViewDirections from "react-native-maps-directions";
+import api from "../../services/service";
 
 export const LocalConsulta = () => {
+
+        const [dataClinic ,setDataClinic] = useState({});
+
+        //DADOS DA CLINICA
+    const ClinicaInfo = async ()=>{
+        try {
+            const id= '4ca5872c-e27d-42dc-81cb-0185b57940c9'
+     retornoGet= await api.get(`/Clinica/BuscarPorId?id=${id}`)
+            console.log('AQUIIIIIIII');
+            console.log(retornoGet.data.nomeFantasia);
+            setDataClinic(retornoGet.data);
+        } catch (error) {
+                console.log(error);
+        }
+    }
     const mapReference = useRef(null)
 
     const [finalPosition, setFinalPosition] = useState({
@@ -55,7 +71,7 @@ export const LocalConsulta = () => {
 
     useEffect(() => {
         CapturarLocalizacao()
-
+            ClinicaInfo()
         watchPositionAsync({
             accuracy: LocationAccuracy.High,
             timeInterval: 1000,
@@ -145,8 +161,9 @@ export const LocalConsulta = () => {
             <ClinicaContentBox
                 editavel={true}
             >
-                <UserNamePerfilText editavel={true}>Clinica Natureh</UserNamePerfilText>
-                <EmailUserText editavel={true}>São Paulo, SP</EmailUserText>
+                <UserNamePerfilText editavel={true}>{dataClinic.nomeFantasia}</UserNamePerfilText>
+                <EmailUserText editavel={true}>{dataClinic.endereco.cidade}
+                </EmailUserText>
             </ClinicaContentBox>
 
             <ContainerForm>
@@ -154,18 +171,20 @@ export const LocalConsulta = () => {
                     labelText={"Endereço:"}
                     placeholderText={"Rua Vicenso Silva, 987"}
                     inputPerfil
+                  
                 />
 
                 <BoxInputRow>
                     <BoxInputField
                         labelText={"Número:"}
-                        placeholderText={"578"}
+                        placeholderText='...'
                         fieldWidth={47}
                         inputPerfil
+                        fieldValue={dataClinic.endereco.numero}
                     />
                     <BoxInputField
                         labelText={"Bairro:"}
-                        placeholderText={"Moema-SP"}
+                        placeholderText={dataClinic.endereco.logradouro}
                         fieldWidth={47}
                         inputPerfil
                     />
