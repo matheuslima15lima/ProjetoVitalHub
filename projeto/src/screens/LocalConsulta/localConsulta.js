@@ -20,9 +20,12 @@ import { mapsKey } from "../../utils/MapsKey";
 import MapViewDirections from "react-native-maps-directions";
 import api from "../../services/service";
 
-export const LocalConsulta = () => {
+export const LocalConsulta = ({navigation, route}) => {
 
         const [dataClinic ,setDataClinic] = useState({});
+        const [numero, setNumero] = useState({});
+        const [cidade , setCidade] = useState({});
+        const [logradouro, setLogradouro] = useState({});
 
         //DADOS DA CLINICA
     const ClinicaInfo = async ()=>{
@@ -30,8 +33,11 @@ export const LocalConsulta = () => {
             const id= '4ca5872c-e27d-42dc-81cb-0185b57940c9'
      retornoGet= await api.get(`/Clinica/BuscarPorId?id=${id}`)
             console.log('AQUIIIIIIII');
-            console.log(retornoGet.data.nomeFantasia);
+            setNumero(retornoGet.data.endereco.numero);
+            setCidade(retornoGet.data.endereco.cidade);
+            setCidade(retornoGet.data.endereco.logradouro);
             setDataClinic(retornoGet.data);
+            
         } catch (error) {
                 console.log(error);
         }
@@ -70,21 +76,15 @@ export const LocalConsulta = () => {
     }
 
     useEffect(() => {
+        ClinicaInfo()
         CapturarLocalizacao()
-            ClinicaInfo()
-        watchPositionAsync({
-            accuracy: LocationAccuracy.High,
-            timeInterval: 1000,
-            distanceInterval: 1
-        }, async (response) => {
-            await setInitialPosition(response)
-        })
-    }, [1000])
-
-    useEffect(() => {
         RecarregarVisualizacaoMapa();
-    }, [initialPosition])
+        console.log(route);
+    }, [route.params])
 
+
+
+    
     return (
         <ContainerLocalConsulta>
 
@@ -162,8 +162,7 @@ export const LocalConsulta = () => {
                 editavel={true}
             >
                 <UserNamePerfilText editavel={true}>{dataClinic.nomeFantasia}</UserNamePerfilText>
-                <EmailUserText editavel={true}>{dataClinic.endereco.cidade}
-                </EmailUserText>
+                {/* <EmailUserText editavel={true}>{cidade}</EmailUserText> */}
             </ClinicaContentBox>
 
             <ContainerForm>
@@ -180,11 +179,11 @@ export const LocalConsulta = () => {
                         placeholderText='...'
                         fieldWidth={47}
                         inputPerfil
-                        fieldValue={dataClinic.endereco.numero}
+                        // fieldValue={numero}
                     />
                     <BoxInputField
                         labelText={"Bairro:"}
-                        placeholderText={dataClinic.endereco.logradouro}
+                        // placeholderText={logradouro}
                         fieldWidth={47}
                         inputPerfil
                     />
