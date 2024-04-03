@@ -31,7 +31,6 @@ export const LocalConsulta = ({navigation, route}) => {
         //DADOS DA CLINICA
     const ClinicaInfo = async ()=>{
         try {
-            const id= '4ca5872c-e27d-42dc-81cb-0185b57940c9'
      retornoGet= await api.get(`/Clinica/BuscarPorId?id=${route.params.clinicaId}`)
             console.log('AQUIIIIIIII');
             setNumero(retornoGet.data.endereco.numero);

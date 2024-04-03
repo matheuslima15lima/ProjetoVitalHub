@@ -174,7 +174,7 @@ export const HomePaciente = ({navigation, route}) => {
 
     const MostrarModal = (modal, consulta) => {
         setConsultaSelecionada(consulta)
-
+        
         if(modal === 'cancelar'){
             setShowModalCancel(true)
         }else if (modal === 'prontuario'){

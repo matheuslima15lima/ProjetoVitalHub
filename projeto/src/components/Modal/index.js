@@ -42,10 +42,6 @@ export const CancelattionModal = ({ visible, setShowModalCancel, ...rest }) => {
 }
 
 export const ApointmentModal = ({ visible, setShowModalApointment, informacoes, navigation, perfilUsuario, ...resto }) => {
-    
-    const HandlePress = (rota) => {
-        navigation.replace(rota, {clinicaId : informacoes.medicoClinia.clinicaId})
-    }
 
     return (
         <Modal {...resto}
@@ -189,37 +185,44 @@ export const ConfirmarConsultaModal = ({ visible, setShowModal = null, navigatio
     )
 }
 
-export const MedicoModal = ({ visible, setShowModal = null, informacoes, perfilUsuario, navigation, ...resto }) => (
-    <Modal
-        {...resto}
-        visible={visible}
-        transparent
-        animationType="fade"
-    >
-        <PatientModal>
-            <ModalContent>
-                <UserImageModal
-                    source={require("../../assets/images/doctor_image_modal.png")}
-                />
+export const MedicoModal = ({ visible, setShowModal = null, informacoes, perfilUsuario, navigation, ...resto }) => {
 
-                <Title>Dr. Fulano</Title>
+    const HandlePress = (rota) => {
+        navigation.replace(rota, {clinicaId : informacoes.medicoClinica.clinicaId})
+    }
 
-                <ModalTextRow>
-                    <ModalText>Clínico Geral</ModalText>
-                    <ModalText>CRM-11204</ModalText>
-                </ModalTextRow>
+    return (
+        <Modal
+            {...resto}
+            visible={visible}
+            transparent
+            animationType="fade"
+        >
+            <PatientModal>
+                <ModalContent>
+                    <UserImageModal
+                        source={require("../../assets/images/doctor_image_modal.png")}
+                    />
 
-                <ButtonModal onPress={() => navigation.navigate("LocalConsulta")}>
-                    <ButtonTitle onPress={() => navigation.navigate("LocalConsulta")}>Ver Local da Consulta</ButtonTitle>
-                </ButtonModal>
+                    <Title>Dr. Fulano</Title>
 
-                <LinkCancel onPress={() => setShowModal(false)}>Cancelar</LinkCancel>
-            </ModalContent>
-        </PatientModal>
-    </Modal>
-)
+                    <ModalTextRow>
+                        <ModalText>Clínico Geral</ModalText>
+                        <ModalText>CRM-11204</ModalText>
+                    </ModalTextRow>
 
-export const ModalCamera = ({ visible, setShowModal = null, enviarFoto, ...resto  }) => {
+                    <ButtonModal onPress={() => HandlePress("LocalConsulta")}>
+                        <ButtonTitle onPress={() => HandlePress("LocalConsulta")}>Ver Local da Consulta</ButtonTitle>
+                    </ButtonModal>
+
+                    <LinkCancel onPress={() => setShowModal(false)}>Cancelar</LinkCancel>
+                </ModalContent>
+            </PatientModal>
+        </Modal>
+    )
+}
+
+export const ModalCamera = ({ visible, setShowModal = null, enviarFoto, ...resto }) => {
     const cameraRef = useRef(null)
 
     useEffect(() => {
@@ -230,16 +233,16 @@ export const ModalCamera = ({ visible, setShowModal = null, enviarFoto, ...resto
     }, [])
 
     const CapturarFoto = async () => {
-        if(cameraRef){
+        if (cameraRef) {
             const captura = await cameraRef.current.takePictureAsync()
 
             enviarFoto(captura.uri)
 
-            .then(() => {
-                console.warn("Foto capturada com sucesso")
-            }).catch( erro => {
-                console.warn(erro)
-            })
+                .then(() => {
+                    console.warn("Foto capturada com sucesso")
+                }).catch(erro => {
+                    console.warn(erro)
+                })
         }
     }
 
@@ -260,11 +263,11 @@ export const ModalCamera = ({ visible, setShowModal = null, enviarFoto, ...resto
                             style={styles.camera}
                         />
                     </View>
-                    <View style={{width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 30}}>
+                    <View style={{ width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 30 }}>
                         <ButtonCamera onPress={() => CapturarFoto()}>
                             <AntDesign name="camera" size={24} color="white" />
                         </ButtonCamera>
-                        <ButtonCamera 
+                        <ButtonCamera
                             onPress={() => setShowModal(false)}
                             close
                         >
@@ -297,7 +300,7 @@ export const ErrorModal = ({ visible, setShowModalError, ...rest }) => {
                     </ButtonModal>
 
                     <LinkCancel onPress={() => {
-                        
+
                         setShowModalError(false)
                     }}>fechar </LinkCancel>
                 </ModalContent>
