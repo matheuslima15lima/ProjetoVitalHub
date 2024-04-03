@@ -94,8 +94,7 @@
               "RelativeToolTip": "WebAPI\\Controllers\\ClinicaController.cs",
               "ViewState": "AQIAABAAAAAAAAAAAAAQwAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-02T19:43:21.35Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-02T19:43:21.35Z"
             },
             {
               "$type": "Document",
@@ -105,7 +104,7 @@
               "RelativeDocumentMoniker": "WebAPI\\Repositories\\ClinicaRepository.cs",
               "ToolTip": "C:\\Users\\46447568812\\Desktop\\ProjetoVitalHub\\BackEnd\\WebAPI\\WebAPI\\Repositories\\ClinicaRepository.cs",
               "RelativeToolTip": "WebAPI\\Repositories\\ClinicaRepository.cs",
-              "ViewState": "AQIAAAYAAAAAAAAAAAAAAA8AAAAdAAAA",
+              "ViewState": "AQIAAAYAAAAAAAAAAAAAABkAAAAeAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-04-02T19:43:11.159Z",
               "EditorCaption": ""
@@ -120,8 +119,7 @@
               "RelativeToolTip": "WebAPI\\Controllers\\PacientesController.cs",
               "ViewState": "AQIAAD0AAAAAAAAAAAAwwFcAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-21T19:50:56.258Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-03-21T19:50:56.258Z"
             },
             {
               "$type": "Document",
@@ -133,8 +131,7 @@
               "RelativeToolTip": "WebAPI\\Repositories\\PacienteRepository.cs",
               "ViewState": "AQIAAEYAAAAAAAAAAAAawFgAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-20T19:42:00.335Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-03-20T19:42:00.335Z"
             },
             {
               "$type": "Document",
@@ -146,8 +143,7 @@
               "RelativeToolTip": "WebAPI\\Properties\\launchSettings.json",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAAFAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2024-03-27T18:04:53.424Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-03-27T18:04:53.424Z"
             },
             {
               "$type": "Document",
@@ -159,8 +155,7 @@
               "RelativeToolTip": "WebAPI\\Interfaces\\IMedicoRepository.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAABAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-21T19:47:10.707Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-03-21T19:47:10.707Z"
             },
             {
               "$type": "Document",
@@ -172,8 +167,7 @@
               "RelativeToolTip": "WebAPI\\Contexts\\VitalContext.cs",
               "ViewState": "AQIAACMAAAAAAAAAAAAIwC4AAABkAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-20T19:44:35.209Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-03-20T19:44:35.209Z"
             },
             {
               "$type": "Document",
@@ -197,8 +191,7 @@
               "RelativeToolTip": "WebAPI\\ViewModels\\PacienteViewModel.cs",
               "ViewState": "AQIAAAsAAAAAAAAAAAAgwBUAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-20T19:42:00.337Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-03-20T19:42:00.337Z"
             },
             {
               "$type": "Document",
@@ -210,8 +203,7 @@
               "RelativeToolTip": "WebAPI\\Domains\\Especialidade.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAAhAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-20T19:52:32.456Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-03-20T19:52:32.456Z"
             },
             {
               "$type": "Document",
@@ -235,8 +227,7 @@
               "RelativeToolTip": "WebAPI\\Domains\\Paciente.cs",
               "ViewState": "AQIAAAUAAAAAAAAAAAAxwBUAAAAaAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-02T19:14:31.361Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-02T19:14:31.361Z"
             },
             {
               "$type": "Document",
