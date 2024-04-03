@@ -7,17 +7,25 @@ import { AntDesign } from '@expo/vector-icons';
 import { ContainerApp, ContainerCenter } from "../../components/Container/style";
 import { Button, ButtonGoogle } from "../../components/Button/styled";
 import { LinkSemiBold } from "../../components/Link/style";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import api from "../../services/service";
 
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { ErrorModal } from "../../components/Modal";
+import { ActivityIndicator } from "react-native";
+import { LoadIcon } from "./style";
 
 export const Login = ({ navigation }) => {
     const [email, setEmail] = useState("")
     const [senha, setSenha] = useState("")
     const [showModalError, setShowModalError]= useState(false)
+
+    const [activity, setActivity] = useState(false)
+
+    const [inputError, setInputError] = useState(false);
+
     const Login = async () => {
+        setActivity(true)
         try {
             await api.post('/Login', {
                 email: email,
@@ -28,21 +36,29 @@ export const Login = ({ navigation }) => {
                   
 
                     console.log(response.data)
+                    setInputError(false);
                     navigation.replace("Main")
                 }
             )
         } catch (error) {
             console.log(error)
 
+            setInputError(true);
             setShowModalError(true);
         } 
+        setActivity(false)
     }
 
-    const focarInput = () => {
-        return null
-
-        
+    const redefinirStates = () => {
+        setEmail("")
+        setSenha("")
+        setInputError(false)
+        setShowModalError(false)
     }
+
+    useEffect(()=>{
+        redefinirStates()
+    },[])
 
     return (
         <ContainerCenter>
@@ -53,18 +69,27 @@ export const Login = ({ navigation }) => {
                     placeholderText={"Usuário ou email"}
                     onChangeText={(text) => setEmail(text)}
                     editable
+                    inputError={inputError}
+                    autoFocus={inputError}
                 />
                 <Input
                     placeholderText={"Senha"}
                     onChangeText={(txt) => setSenha(txt)}
                     editable
                     secure={true}
+                    inputError={inputError}
+                    autoFocus={false}
                 />
                 <LinkRedefinirSenha onPress={() => navigation.navigate("ReceberEmail")}>Esqueceu sua senha?</LinkRedefinirSenha>
             </BoxInput>
             <BoxButton>
                 <Button onPress={() => Login()}>
                     <ButtonTitle>Entrar</ButtonTitle>
+                    <LoadIcon
+                        animating={activity}
+                        color={"#FFFFFF"}
+                        size={"small"}
+                    />
                 </Button>
                 <ButtonGoogle onPress={() => navigation.navigate("LocalConsulta")}>
                     <AntDesign name="google" size={20} color={"#496BBA"} />
@@ -79,7 +104,6 @@ export const Login = ({ navigation }) => {
             <ErrorModal
                 visible={showModalError}
                 setShowModalError={setShowModalError}
-                focarInput={focarInput}
             />
         </ContainerCenter>
     )

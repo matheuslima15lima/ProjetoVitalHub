@@ -41,8 +41,11 @@ export const CancelattionModal = ({ visible, setShowModalCancel, ...rest }) => {
     )
 }
 
-export const ApointmentModal = ({ visible, setShowModalApointment, informacoes, navigation, ...resto }) => {
-
+export const ApointmentModal = ({ visible, setShowModalApointment, informacoes, navigation, perfilUsuario, ...resto }) => {
+    
+    const HandlePress = (rota) => {
+        navigation.replace(rota, {clinicaId : informacoes.medicoClinia.clinicaId})
+    }
 
     return (
         <Modal {...resto}
@@ -186,7 +189,7 @@ export const ConfirmarConsultaModal = ({ visible, setShowModal = null, navigatio
     )
 }
 
-export const MedicoModal = ({ visible, setShowModal = null, ...resto }) => (
+export const MedicoModal = ({ visible, setShowModal = null, informacoes, perfilUsuario, navigation, ...resto }) => (
     <Modal
         {...resto}
         visible={visible}
@@ -206,11 +209,11 @@ export const MedicoModal = ({ visible, setShowModal = null, ...resto }) => (
                     <ModalText>CRM-11204</ModalText>
                 </ModalTextRow>
 
-                <ButtonModal>
-                    <ButtonTitle>Ver Local da Consulta</ButtonTitle>
+                <ButtonModal onPress={() => navigation.navigate("LocalConsulta")}>
+                    <ButtonTitle onPress={() => navigation.navigate("LocalConsulta")}>Ver Local da Consulta</ButtonTitle>
                 </ButtonModal>
 
-                <LinkCancel manipulationFunction={() => setShowModal(false)}>Cancelar</LinkCancel>
+                <LinkCancel onPress={() => setShowModal(false)}>Cancelar</LinkCancel>
             </ModalContent>
         </PatientModal>
     </Modal>
@@ -275,7 +278,7 @@ export const ModalCamera = ({ visible, setShowModal = null, enviarFoto, ...resto
 }
 
 
-export const ErrorModal = ({ visible, setShowModalError, focarInput, ...rest }) => {
+export const ErrorModal = ({ visible, setShowModalError, ...rest }) => {
     return (
         <Modal {...rest}
             visible={visible}
@@ -296,7 +299,6 @@ export const ErrorModal = ({ visible, setShowModalError, focarInput, ...rest }) 
                     <LinkCancel onPress={() => {
                         
                         setShowModalError(false)
-                        focarInput()
                     }}>fechar </LinkCancel>
                 </ModalContent>
             </PatientModal>
@@ -310,3 +312,4 @@ const styles = StyleSheet.create({
         height: "100%"
     }
 })
+

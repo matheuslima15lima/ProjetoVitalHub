@@ -2,19 +2,28 @@ import { View } from "react-native"
 import { FlatListStyle } from "./style"
 import { CardClinica, CardConsulta, CardMedico } from "../Card"
 
-export const ListaConsultas = ({ dados, statusConsulta, onPressCancel, onPressApointment, loadInfoConsulta }) => {
+export const ListaConsultas = ({ dados, statusConsulta, loadInfoConsulta, permissaoUsuario, MostrarModal = null }) => {
     return (
         <FlatListStyle
             data={dados}
             keyExtractor={item => item.id}
             renderItem={({ item }) =>
-                statusConsulta == item.situacao ? (
+                statusConsulta == item.situacao.situacao ? (
                     <CardConsulta
                         consulta={item}
-                        imageSource={item.foto}
+                        permissaoUsuario={permissaoUsuario}
+                        dadosUsuario={permissaoUsuario == "Paciente" ? item.medicoClinica.medico : item.paciente }
+                        dataConsulta={item.dataConsulta}
+                        prioridade={item.prioridade.prioridade}
+                        // imageSource={item.foto}
                         statusConsulta={statusConsulta}
-                        onPressCancel={onPressCancel}
-                        onPressApointment={onPressApointment}
+
+                        onPressCancel={() => MostrarModal('cancelar', item)}
+                        onPressApointment={() => MostrarModal('prontuario', item)}
+                        onPressCard = {() => MostrarModal('medico', item)}
+
+                        // onPressCancel={onPressCancel}
+                        // onPressApointment={onPressApointment}
                         loadInfoConsulta={loadInfoConsulta}
                     />)
                     : null

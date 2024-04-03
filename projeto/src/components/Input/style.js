@@ -1,7 +1,7 @@
 import styled, { css } from "styled-components";
 
 export const InputField = styled.TextInput.attrs({
-    placeholderTextColor: '#34898F',
+    placeholderTextColor: props => props.inputError ? '#F54A45' : "#49B3BA",
     multiline: true
 })`
     border: 2px solid #49B3BA;
@@ -11,6 +11,9 @@ export const InputField = styled.TextInput.attrs({
     ${props => props.center && css`
         justify-content: center;
         align-items: center;
+    `}
+    ${props => props.inputError && css`
+        border-color: #F54A45;
     `}
 `
 

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Calendar, LocaleConfig } from "react-native-calendars";
 import moment from "moment";
 
-export const Calendario = () => {
+export const Calendario = ({setDataConsulta}) => {
 
     const dataAtual = new Date()
 
@@ -20,6 +20,10 @@ export const Calendario = () => {
 
     return (
         <StyledCalendarStrip
+            /*Receber a data atual*/
+            /* quando uma data for selecionada vai ser passada */
+            onDateSelected={date => setDataConsulta(moment(date).format("YYYY-MM-DD"))}
+
             /* animação e seleção de cada data */
             calendarAnimation={{ type: "sequence", duration: 30 }}
             daySelectionAnimation={styles.selectedAnimationStyle}
