@@ -64,7 +64,7 @@ export const Login = ({ navigation }) => {
         <ContainerCenter>
             <LogoVitalHub />
             <TitleLogin>Entrar ou criar conta</TitleLogin>
-            <BoxInput>
+             <BoxInput>
                 <Input
                     placeholderText={"Usuário ou email"}
                     onChangeText={(text) => setEmail(text)}
@@ -79,7 +79,7 @@ export const Login = ({ navigation }) => {
                     secure={true}
                     inputError={inputError}
                     autoFocus={false}
-                />
+                /> 
                 <LinkRedefinirSenha onPress={() => navigation.navigate("ReceberEmail")}>Esqueceu sua senha?</LinkRedefinirSenha>
             </BoxInput>
             <BoxButton>
@@ -95,7 +95,7 @@ export const Login = ({ navigation }) => {
                     <AntDesign name="google" size={20} color={"#496BBA"} />
                     <ButtonTitleLight>Entrar com Google</ButtonTitleLight>
                 </ButtonGoogle>
-            </BoxButton>
+            </BoxButton> 
             <ContentAccount>
                 <TextAccount>Não tem conta?</TextAccount>
                 <LinkSemiBold onPress={() => navigation.replace("Cadastro")} > Crie sua conta aqui</LinkSemiBold>

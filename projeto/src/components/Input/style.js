@@ -6,7 +6,7 @@ export const InputField = styled.TextInput.attrs({
 })`
     border: 2px solid #49B3BA;
     border-radius: 5px;
-    width: 100%;
+    width: ${props => `${props.fieldWidth}%`};
     padding: 16px;
     ${props => props.center && css`
         justify-content: center;
