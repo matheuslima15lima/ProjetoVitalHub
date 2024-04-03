@@ -2,7 +2,7 @@ import styled, { css } from "styled-components";
 import { InputLabel, MediumText, SemiBoldText, TextLight } from "../Text/style";
 import { LinkSemiBoldCancel } from "../Link/style";
 
-export const CardBox = styled.View`
+export const CardBox = styled.TouchableOpacity`
     padding: 10px;
     flex-direction: row;
     ${props => props.firstItem && css`

@@ -144,6 +144,8 @@ export const HomePaciente = ({navigation, route}) => {
     //state para guardar os dados da consulta e renderizar no modal
     const [infoConsulta, setInfoConsulta] = useState({})
 
+    const [consultaSelecionada, setConsultaSelecionada] = useState({})
+
     const ProfileLoad = async () => {
         const token = await UserDecodeToken()
     
@@ -167,6 +169,18 @@ export const HomePaciente = ({navigation, route}) => {
         } catch (error) {
             console.log(error);
             console.log(idUsuario)
+        }
+    }
+
+    const MostrarModal = (modal, consulta) => {
+        setConsultaSelecionada(consulta)
+
+        if(modal === 'cancelar'){
+            setShowModalCancel(true)
+        }else if (modal === 'prontuario'){
+            setShowModalApointment(true)
+        }else if (modal === 'medico'){
+            setShowModalMedico(true)
         }
     }
 
@@ -212,10 +226,11 @@ export const HomePaciente = ({navigation, route}) => {
                 <ListaConsultas
                     dados={listaDeConsultas}
                     statusConsulta={statusFiltro}
-                    onPressCancel={() => setShowModalCancel(true)}
-                    onPressApointment={() => navigation.navigate("VisualizarPrescricao")}
+                    // onPressCancel={() => setShowModalCancel(true)}
+                    // onPressApointment={() => navigation.navigate("VisualizarPrescricao")}
                     loadInfoConsulta={setInfoConsulta}
                     permissaoUsuario={permissaoUsuario}
+                    MostrarModal={MostrarModal}
                 />
             </HomeContent>
 
@@ -237,12 +252,17 @@ export const HomePaciente = ({navigation, route}) => {
             <ApointmentModal
                 setShowModalApointment={setShowModalApointment}
                 visible={showModalApointment}
-                informacoes={infoConsulta}
+                informacoes={consultaSelecionada}
+                perfilUsuario ={permissaoUsuario}
+                navigation={navigation}
             />
 
             <MedicoModal
                 visible={showModalMedico}
                 setShowModal={setShowModalMedico}
+                informacoes={consultaSelecionada}
+                perfilUsuario ={permissaoUsuario}
+                navigation={navigation}
             />
 
             {/* Modal de Agendar Consulta */}

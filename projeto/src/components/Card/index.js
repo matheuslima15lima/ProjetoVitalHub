@@ -5,7 +5,7 @@ import { UserImageCart } from "../UserImage/styled";
 import { useEffect, useState } from "react";
 import { UserDecodeToken } from "../../utils/Auth";
 
-export const CardConsulta = ({ consulta, statusConsulta, onPressCancel, onPressApointment, loadInfoConsulta, permissaoUsuario, dadosUsuario, dataConsulta, prioridade }) => {
+export const CardConsulta = ({ consulta, statusConsulta, onPressCancel, onPressApointment, loadInfoConsulta, permissaoUsuario, dadosUsuario, dataConsulta, prioridade, onPressCard = null }) => {
 
     const abrirModalProntuario = () => {
         onPressApointment();
@@ -13,7 +13,7 @@ export const CardConsulta = ({ consulta, statusConsulta, onPressCancel, onPressA
     }
 
     return (
-        <CardBox>
+        <CardBox onPress={onPressCard}>
             <UserImageCart
                 source={require(`../../assets/images/nicolle_image.png`)}
             />

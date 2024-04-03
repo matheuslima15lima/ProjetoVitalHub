@@ -14,6 +14,13 @@ export const PerfilDeUsuario = ({ navigation }) => {
     const [editavel, setEditavel] = useState(false)
     const [nome, setNome] = useState("")
     const [email, setEmail] = useState("")
+    const [idUsuario, setIdUsuario] = useState("");
+    const [dataNascimento, setDataNascimento] = useState("")
+    const [cpf, setCpf] = useState("")
+    const [endereco, setEndereco] = useState("")
+    const [cep, setCep] = useState("")
+    const [cidade, setCidade] = useState("")
+    
 
     const ProfileLoad = async () => {
         const token = await UserDecodeToken()
@@ -22,6 +29,15 @@ export const PerfilDeUsuario = ({ navigation }) => {
             console.log(token);
             setNome(token.nome)
             setEmail(token.email)
+            setIdUsuario(token.idUsuario)
+        }
+    }
+
+    const BuscarDadosUsuario = async () => {
+        try {
+            
+        } catch (error) {
+            console.log(error);
         }
     }
 
