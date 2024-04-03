@@ -19,6 +19,7 @@ import {
 import { mapsKey } from "../../utils/MapsKey";
 import MapViewDirections from "react-native-maps-directions";
 import api from "../../services/service";
+import { LinkCancel } from "../../components/Link";
 
 export const LocalConsulta = ({navigation, route}) => {
 
@@ -31,7 +32,7 @@ export const LocalConsulta = ({navigation, route}) => {
     const ClinicaInfo = async ()=>{
         try {
             const id= '4ca5872c-e27d-42dc-81cb-0185b57940c9'
-     retornoGet= await api.get(`/Clinica/BuscarPorId?id=${id}`)
+     retornoGet= await api.get(`/Clinica/BuscarPorId?id=${route.params.clinicaId}`)
             console.log('AQUIIIIIIII');
             setNumero(retornoGet.data.endereco.numero);
             setCidade(retornoGet.data.endereco.cidade);
@@ -79,7 +80,8 @@ export const LocalConsulta = ({navigation, route}) => {
         ClinicaInfo()
         CapturarLocalizacao()
         RecarregarVisualizacaoMapa();
-        console.log(route);
+        console.log("Id da Clinicaaaaaaaaaaaaaaaaa");
+        console.log(route.params);
     }, [route.params])
 
 
@@ -188,9 +190,9 @@ export const LocalConsulta = ({navigation, route}) => {
                         inputPerfil
                     />
                 </BoxInputRow>
-                <LinkVoltar>
+                <LinkCancel onPress={() => navigation.navigate("Main")}>
                     Voltar
-                </LinkVoltar>
+                </LinkCancel>
             </ContainerForm>
         </ContainerLocalConsulta>
     )
