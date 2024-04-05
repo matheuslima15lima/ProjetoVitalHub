@@ -12,6 +12,16 @@ export const CardConsulta = ({ consulta, statusConsulta, onPressCancel, onPressA
         loadInfoConsulta(consulta);
     }
 
+
+    // const ProfileLoad = async ()=>{
+    //     const token = await UserDecodeToken()
+
+    //     if (token){
+    //         setNome(token.nome)
+    //         setEmail(token.email)
+    //         console.log(token);
+    //     }
+    // }
     return (
         <CardBox onPress={onPressCard}>
             <UserImageCart

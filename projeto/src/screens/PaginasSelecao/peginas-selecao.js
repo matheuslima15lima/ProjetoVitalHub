@@ -48,7 +48,6 @@ export const SelecionarClinica = ({navigation}) => {
 
             const retornoApi= await api.get("/Clinica/ListarTodas")
             setListaClinicas(retornoApi.data)
-            console.log(listaClinicas);
             
         } catch (error) {
             console.log(error);
@@ -81,7 +80,6 @@ export const SelecionarMedico = ({navigation}) => {
             const retornoApi = await api.get("/Medicos")
 
             setListaDeMedicos(retornoApi.data)
-            console.log(listaDeMedicos);
         }catch(erro){
             console.log(erro);
         }

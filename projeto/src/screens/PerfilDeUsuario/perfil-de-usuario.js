@@ -26,7 +26,6 @@ export const PerfilDeUsuario = ({ navigation }) => {
         const token = await UserDecodeToken()
 
         if (token) {
-            console.log(token);
             setNome(token.nome)
             setEmail(token.email)
             setIdUsuario(token.idUsuario)

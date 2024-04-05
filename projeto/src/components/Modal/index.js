@@ -189,35 +189,42 @@ export const ConfirmarConsultaModal = ({ visible, setShowModal = null, navigatio
     )
 }
 
-export const MedicoModal = ({ visible, setShowModal = null, informacoes, perfilUsuario, navigation, ...resto }) => (
-    <Modal
-        {...resto}
-        visible={visible}
-        transparent
-        animationType="fade"
-    >
-        <PatientModal>
-            <ModalContent>
-                <UserImageModal
-                    source={require("../../assets/images/doctor_image_modal.png")}
-                />
+export const MedicoModal = ({ visible, setShowModal = null, informacoes, perfilUsuario, navigation, ...resto }) => {
+    
+    function handleClose(){
+        navigation.navigate("LocalConsulta", { clinicaId : informacoes.medicoClinica.clinicaId })
+    }
+    
+    return (
+        <Modal
+            {...resto}
+            visible={visible}
+            transparent
+            animationType="fade"
+        >
+            <PatientModal>
+                <ModalContent>
+                    <UserImageModal
+                        source={require("../../assets/images/doctor_image_modal.png")}
+                    />
 
-                <Title>Dr. Fulano</Title>
+                    <Title>Dr. Fulano</Title>
 
-                <ModalTextRow>
-                    <ModalText>Clínico Geral</ModalText>
-                    <ModalText>CRM-11204</ModalText>
-                </ModalTextRow>
+                    <ModalTextRow>
+                        <ModalText>Clínico Geral</ModalText>
+                        <ModalText>CRM-11204</ModalText>
+                    </ModalTextRow>
 
-                <ButtonModal onPress={() => navigation.navigate("LocalConsulta")}>
-                    <ButtonTitle onPress={() => navigation.navigate("LocalConsulta")}>Ver Local da Consulta</ButtonTitle>
-                </ButtonModal>
+                    <ButtonModal onPress={() => handleClose()}>
+                        <ButtonTitle>Ver Local da Consulta</ButtonTitle>
+                    </ButtonModal>
 
-                <LinkCancel onPress={() => setShowModal(false)}>Cancelar</LinkCancel>
-            </ModalContent>
-        </PatientModal>
-    </Modal>
-)
+                    <LinkCancel onPress={() => setShowModal(false)}>Cancelar</LinkCancel>
+                </ModalContent>
+            </PatientModal>
+        </Modal>
+    )
+}
 
 export const ModalCamera = ({ visible, setShowModal = null, enviarFoto, ...resto  }) => {
     const cameraRef = useRef(null)
