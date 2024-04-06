@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ContainerApp } from "../../components/Container/style/"
 import { AgeUserText, ButtonTitle, EmailUserText, Title, UserNamePerfilText } from "../../components/Text/style"
 import { UserImagePerfil } from "../../components/UserImage/styled"
@@ -8,10 +8,39 @@ import { ApointmentFormBox, ProntuarioBox, UserDataApointment } from "./style"
 import { BoxInputField } from "../../components/Box"
 import { Button } from "../../components/Button/styled"
 import { LinkCancel } from "../../components/Link"
+import { UserDecodeToken } from "../../utils/Auth"
 
 export const PaginaDeProntuario = ({navigation}) => {
 
     const [editavel, setEditavel] = useState(false)
+
+    const [nome , setNome] = useState("")
+
+    const [email, setEmail] = useState("")
+
+    const ProfileLoad = async ()=>{
+        const token = await UserDecodeToken()
+
+        if (token){
+            setNome(token.nome)
+            setEmail(token.email)
+            console.log(token);
+        }
+    }
+
+
+    // const ProntuarioInfo = async ()=>{
+    //     try {
+    //         const retornoGet = await api.get(``)
+    //     } catch (error) {
+            
+    //     }
+    // }
+
+    useEffect(()=>{
+            ProfileLoad()
+           
+    },[])
 
     return (
         <ContainerProntuario>
@@ -19,10 +48,10 @@ export const PaginaDeProntuario = ({navigation}) => {
                 source={require("../../assets/images/user1-image.png")}
             />
             <ProntuarioBox>
-                <UserNamePerfilText editavel={true}>Nome do Usuário</UserNamePerfilText>
+                <UserNamePerfilText editavel={true}>{nome}</UserNamePerfilText>
                 <UserDataApointment>
                     <AgeUserText>18 anos</AgeUserText>
-                    <EmailUserText editavel={true}>exemplo.email@gmail.com</EmailUserText>
+                    <EmailUserText editavel={true}>{email}</EmailUserText>
                 </UserDataApointment>
                 <ApointmentFormBox>
                     <BoxInputField

@@ -186,11 +186,11 @@ export const ConfirmarConsultaModal = ({ visible, setShowModal = null, navigatio
 }
 
 export const MedicoModal = ({ visible, setShowModal = null, informacoes, perfilUsuario, navigation, ...resto }) => {
-
-    const HandlePress = (rota) => {
-        navigation.replace(rota, {clinicaId : informacoes.medicoClinica.clinicaId})
+    
+    function handleClose(){
+        navigation.navigate("LocalConsulta", { clinicaId : informacoes.medicoClinica.clinicaId })
     }
-
+    
     return (
         <Modal
             {...resto}
@@ -210,6 +210,17 @@ export const MedicoModal = ({ visible, setShowModal = null, informacoes, perfilU
                         <ModalText>Clínico Geral</ModalText>
                         <ModalText>CRM-11204</ModalText>
                     </ModalTextRow>
+
+                    <ButtonModal onPress={() => handleClose()}>
+                        <ButtonTitle>Ver Local da Consulta</ButtonTitle>
+                    </ButtonModal>
+
+                    <LinkCancel onPress={() => setShowModal(false)}>Cancelar</LinkCancel>
+                </ModalContent>
+            </PatientModal>
+        </Modal>
+    )
+}
 
                     <ButtonModal onPress={() => HandlePress("LocalConsulta")}>
                         <ButtonTitle onPress={() => HandlePress("LocalConsulta")}>Ver Local da Consulta</ButtonTitle>

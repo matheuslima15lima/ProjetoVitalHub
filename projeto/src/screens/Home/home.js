@@ -33,7 +33,6 @@ export const Home = ({navigation}) => {
         const token = await UserDecodeToken()
     
         if(token){
-            console.log(token);
             setIdUsuarioLogado(token.idUsuario);
         }
     }
@@ -43,8 +42,6 @@ export const Home = ({navigation}) => {
             const retornoApi = await api.get(`/Medicos/BuscarPorData?data=${dataConsulta}&id=${idUsuario}`);
 
             setListaDeConsultas(retornoApi.data)
-            console.log(listaDeConsultas);
-            console.log(idUsuario);
         } catch (error) {
             console.log(error);
         }
@@ -150,7 +147,6 @@ export const HomePaciente = ({navigation, route}) => {
         const token = await UserDecodeToken()
     
         if(token){
-            console.log(token);
             setIdUsuarioLogado(token.idUsuario);
             setPermissaoUsuario(token.perfil);
         }
@@ -160,15 +156,10 @@ export const HomePaciente = ({navigation, route}) => {
         try {
 
             const retornoApi = await api.get(`/Pacientes/BuscarPorData?data=${dataConsulta}&id=${idUsuario}`);
-            
-            console.log(retornoApi.data);
 
             setListaDeConsultas(retornoApi.data)
-
-            console.log(listaDeConsultas);
         } catch (error) {
             console.log(error);
-            console.log(idUsuario)
         }
     }
 
@@ -191,9 +182,7 @@ export const HomePaciente = ({navigation, route}) => {
             setShowAgendarConsulta(true)
         }
 
-        LoadListaConsultas(idUsuarioLogado)
-
-        console.log(dataConsulta);
+        LoadListaConsultas(idUsuarioLogado);
     }, [idUsuarioLogado, dataConsulta])
 
     return (

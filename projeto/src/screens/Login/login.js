@@ -16,8 +16,9 @@ import { ActivityIndicator } from "react-native";
 import { LoadIcon } from "./style";
 
 export const Login = ({ navigation }) => {
-    const [email, setEmail] = useState("")
-    const [senha, setSenha] = useState("")
+    const [email, setEmail] = useState("carlos@email.com")
+    const [senha, setSenha] = useState("carlos123")
+
     const [showModalError, setShowModalError]= useState(false)
 
     const [activity, setActivity] = useState(false)
@@ -32,10 +33,7 @@ export const Login = ({ navigation }) => {
                 senha: senha
             }).then( async (response) => {
                     await AsyncStorage.setItem("token", JSON.stringify(response.data))
-
-                  
-
-                    console.log(response.data)
+                    
                     setInputError(false);
                     navigation.replace("Main")
                 }
@@ -68,6 +66,7 @@ export const Login = ({ navigation }) => {
                 <Input
                     placeholderText={"Usuário ou email"}
                     onChangeText={(text) => setEmail(text)}
+                    value={email}
                     editable
                     inputError={inputError}
                     autoFocus={inputError}
@@ -75,6 +74,7 @@ export const Login = ({ navigation }) => {
                 <Input
                     placeholderText={"Senha"}
                     onChangeText={(txt) => setSenha(txt)}
+                    value={senha}
                     editable
                     secure={true}
                     inputError={inputError}
