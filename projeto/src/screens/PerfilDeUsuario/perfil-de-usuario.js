@@ -9,12 +9,15 @@ import { LinkCancel } from "../../components/Link";
 import { View } from "react-native";
 import { UserDecodeToken, UserLogout } from "../../utils/Auth";
 import { BoxCancelPerfil } from "./style";
+import api from "../../services/service";
+import moment from "moment";
 
 export const PerfilDeUsuario = ({ navigation }) => {
     const [editavel, setEditavel] = useState(false)
     const [nome, setNome] = useState("")
     const [email, setEmail] = useState("")
     const [idUsuario, setIdUsuario] = useState("");
+    const [perfilUsuario, setPerfilUsuario] = useState("")
     const [dataNascimento, setDataNascimento] = useState("")
     const [cpf, setCpf] = useState("")
     const [endereco, setEndereco] = useState("")
@@ -29,12 +32,20 @@ export const PerfilDeUsuario = ({ navigation }) => {
             setNome(token.nome)
             setEmail(token.email)
             setIdUsuario(token.idUsuario)
+            setPerfilUsuario(token.perfil)
         }
     }
 
     const BuscarDadosUsuario = async () => {
         try {
-            
+            const retornoApi = await api.get(`/${perfilUsuario == "Paciente" ? "Pacientes" : "Medicos"}/BuscarPorId?id=${idUsuario}`);
+
+            setDataNascimento(retornoApi.data.dataNascimento);
+            setCpf(retornoApi.data.cpf);
+            setEndereco(retornoApi.data.endereco.logradouro)
+            setCep(retornoApi.data.endereco.cep);
+            setCidade(retornoApi.data.endereco.cidade);
+
         } catch (error) {
             console.log(error);
         }
@@ -42,7 +53,16 @@ export const PerfilDeUsuario = ({ navigation }) => {
 
     useEffect(() => {
         ProfileLoad()
-    }, [])
+        console.log(idUsuario)
+        BuscarDadosUsuario()
+
+
+        console.log(dataNascimento);
+        console.log(cpf);
+    }, [idUsuario]) 
+
+
+    
     return (
         <ContainerPerfilPage>
             <UserImagePerfil
@@ -64,17 +84,20 @@ export const PerfilDeUsuario = ({ navigation }) => {
                     placeholderText={"12/11/2005"}
                     editable={editavel}
                     inputPerfil
+                    fieldValue={moment(dataNascimento).format("DD/MM/YYYY")}
                 />
                 <BoxInputField
                     labelText={"CPF:"}
                     placeholderText={"470.150.038/05"}
                     editable={editavel}
                     inputPerfil
+                    fieldValue={cpf}
                 />
                 <BoxInputField
                     labelText={"Endereço:"}
                     placeholderText={"Rua Das Goiabeiras, n16 - Pilar Velho"}
                     inputPerfil
+                    fieldValue={endereco}
                 />
                 <BoxInputRow>
                     <BoxInputField
@@ -83,12 +106,14 @@ export const PerfilDeUsuario = ({ navigation }) => {
                         fieldWidth={47}
                         editable={editavel}
                         inputPerfil
+                        fieldValue={cep}
                     />
                     <BoxInputField
                         labelText={"Cidade:"}
                         placeholderText={"Ribeirão Pires"}
                         fieldWidth={47}
                         inputPerfil
+                        fieldValue={cidade}
                     />
                 </BoxInputRow>
                 {editavel ?

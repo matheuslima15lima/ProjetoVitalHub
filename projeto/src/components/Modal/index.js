@@ -211,8 +211,8 @@ export const MedicoModal = ({ visible, setShowModal = null, informacoes, perfilU
                         <ModalText>CRM-11204</ModalText>
                     </ModalTextRow>
 
-                    <ButtonModal onPress={() => handleClose()}>
-                        <ButtonTitle>Ver Local da Consulta</ButtonTitle>
+                    <ButtonModal onPress={() => handleClose("LocalConsulta")}>
+                        <ButtonTitle onPress={() => handleClose("LocalConsulta")}>Ver Local da Consulta</ButtonTitle>
                     </ButtonModal>
 
                     <LinkCancel onPress={() => setShowModal(false)}>Cancelar</LinkCancel>
@@ -222,16 +222,6 @@ export const MedicoModal = ({ visible, setShowModal = null, informacoes, perfilU
     )
 }
 
-                    <ButtonModal onPress={() => HandlePress("LocalConsulta")}>
-                        <ButtonTitle onPress={() => HandlePress("LocalConsulta")}>Ver Local da Consulta</ButtonTitle>
-                    </ButtonModal>
-
-                    <LinkCancel onPress={() => setShowModal(false)}>Cancelar</LinkCancel>
-                </ModalContent>
-            </PatientModal>
-        </Modal>
-    )
-}
 
 export const ModalCamera = ({ visible, setShowModal = null, enviarFoto, ...resto }) => {
     const cameraRef = useRef(null)
