@@ -9,8 +9,9 @@ import { BoxInputField } from "../../components/Box"
 import { Button } from "../../components/Button/styled"
 import { LinkCancel } from "../../components/Link"
 import { UserDecodeToken } from "../../utils/Auth"
+import api from "../../services/service"
 
-export const PaginaDeProntuario = ({navigation}) => {
+export const PaginaDeProntuario = ({navigation, route}) => {
 
     const [editavel, setEditavel] = useState(false)
 
@@ -18,29 +19,39 @@ export const PaginaDeProntuario = ({navigation}) => {
 
     const [email, setEmail] = useState("")
 
-    const ProfileLoad = async ()=>{
-        const token = await UserDecodeToken()
+    const [consulta, setConsulta] = useState({})
 
-        if (token){
-            setNome(token.nome)
-            setEmail(token.email)
-            console.log(token);
-        }
-    }
+    // const ProfileLoad = async ()=>{
+    //     const token = await UserDecodeToken()
 
-
-    // const ProntuarioInfo = async ()=>{
-    //     try {
-    //         const retornoGet = await api.get(``)
-    //     } catch (error) {
-            
+    //     if (token){
+    //         setNome(token.nome)
+    //         setEmail(token.email)
+    //         console.log(token);
     //     }
     // }
 
+
+    const ProntuarioInfo = async ()=>{
+        try {
+            const id = "8E942765-8128-4948-966B-45550C15962E"
+            const retornoGet = await api.get(`/Pacientes/BuscarPorId?id=${route.params.pacienteId}`)
+
+            console.log(retornoGet.data.idNavigation.nome);
+            setNome(retornoGet.data.idNavigation.nome)
+            setEmail(retornoGet.data.idNavigation.email);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     useEffect(()=>{
-            ProfileLoad()
+        setConsulta(route.params.consulta)
+        console.log(consulta); 
+
+            // ProntuarioInfo()
            
-    },[])
+    },[1000])
 
     return (
         <ContainerProntuario>
@@ -48,10 +59,10 @@ export const PaginaDeProntuario = ({navigation}) => {
                 source={require("../../assets/images/user1-image.png")}
             />
             <ProntuarioBox>
-                <UserNamePerfilText editavel={true}>{nome}</UserNamePerfilText>
+                <UserNamePerfilText editavel={true}>{consulta.paciente.idNavigation.nome}</UserNamePerfilText>
                 <UserDataApointment>
                     <AgeUserText>18 anos</AgeUserText>
-                    <EmailUserText editavel={true}>{email}</EmailUserText>
+                    <EmailUserText editavel={true}>{consulta.paciente.idNavigation.email}</EmailUserText>
                 </UserDataApointment>
                 <ApointmentFormBox>
                     <BoxInputField
@@ -59,19 +70,22 @@ export const PaginaDeProntuario = ({navigation}) => {
                         fieldHeight="84"
                         placeholderText={"Descrição"}
                         labelText={"Descrição da consulta"}
+                        fieldValue={consulta.descricao}
                         editable
                     />
                     <BoxInputField
                         apointment
                         placeholderText={"Diagnóstico"}
                         labelText={"Diagnóstico do paciente"}
+                        fieldValue={consulta.diagnostico}
                         editable
                     />
                     <BoxInputField
-                        apointment
+                        apointment 
                         fieldHeight="84"
                         placeholderText={"Prescrição médica"}
                         labelText={"Prescrição médica"}
+                        fieldValue={consulta.receita.medicamento}
                         editable
                     />
                 </ApointmentFormBox>

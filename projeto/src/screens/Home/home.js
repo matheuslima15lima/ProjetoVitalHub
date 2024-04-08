@@ -18,16 +18,23 @@ export const Home = ({navigation}) => {
     const [listaDeConsultas, setListaDeConsultas] = useState([]);
 
     const [idUsuarioLogado, setIdUsuarioLogado] = useState('');
+    const [permissaoUsuario, setPermissaoUsuario] = useState("")
 
     //state para o estado da lista
     const [statusFiltro, setStatusFiltro] = useState("Agendada")
 
     //state para a exibição dos modais
+    const [showModalAgendarConsulta, setShowAgendarConsulta] = useState(false)
+    
+    //state para a exibição dos modais
     const [showModalCancel, setShowModalCancel] = useState(false)
+    const [showModalMedico, setShowModalMedico] = useState(false)
     const [showModalApointment, setShowModalApointment] = useState(false)
 
     //state para guardar os dados da consulta e renderizar no modal
     const [infoConsulta, setInfoConsulta] = useState({})
+
+    const [consultaSelecionada, setConsultaSelecionada] = useState({})
 
     const ProfileLoad = async () => {
         const token = await UserDecodeToken()
@@ -47,6 +54,17 @@ export const Home = ({navigation}) => {
         }
     }
     
+    MostrarModal = (modal, consulta) => {
+        setConsultaSelecionada(consulta)
+
+        if(modal === 'cancelar'){
+            setShowModalCancel(true)
+        }else if (modal === 'prontuario'){
+            setShowModalApointment(true)
+        }else if (modal === 'medico'){
+            setShowModalMedico(true)
+        }
+    }
     
     
     useEffect(() => {
@@ -85,9 +103,11 @@ export const Home = ({navigation}) => {
                 <ListaConsultas
                     dados={listaDeConsultas}
                     statusConsulta={statusFiltro}
-                    onPressCancel={() => setShowModalCancel(true)}
-                    onPressApointment={() => setShowModalApointment(true)}
+                    // onPressCancel={() => setShowModalCancel(true)}
+                    // onPressApointment={() => navigation.navigate("VisualizarPrescricao")}
                     loadInfoConsulta={setInfoConsulta}
+                    permissaoUsuario={permissaoUsuario}
+                    MostrarModal={MostrarModal}
                 />
             </HomeContent>
 
@@ -105,10 +125,18 @@ export const Home = ({navigation}) => {
             <ApointmentModal
                 setShowModalApointment={setShowModalApointment}
                 visible={showModalApointment}
-                informacoes={infoConsulta}
+                informacoes={consultaSelecionada}
+                perfilUsuario ={permissaoUsuario}
                 navigation={navigation}
             />
 
+            <MedicoModal
+                visible={showModalMedico}
+                setShowModal={setShowModalMedico}
+                informacoes={consultaSelecionada}
+                perfilUsuario ={permissaoUsuario}
+                navigation={navigation}
+            />
         </ContainerHome>
     )
 }
@@ -158,12 +186,13 @@ export const HomePaciente = ({navigation, route}) => {
             const retornoApi = await api.get(`/Pacientes/BuscarPorData?data=${dataConsulta}&id=${idUsuario}`);
 
             setListaDeConsultas(retornoApi.data)
+            console.log(retornoApi.data.paciente.nome);
         } catch (error) {
             console.log(error);
         }
     }
 
-    const MostrarModal = (modal, consulta) => {
+    MostrarModal = (modal, consulta) => {
         setConsultaSelecionada(consulta)
 
         if(modal === 'cancelar'){
@@ -217,7 +246,7 @@ export const HomePaciente = ({navigation, route}) => {
                     statusConsulta={statusFiltro}
                     // onPressCancel={() => setShowModalCancel(true)}
                     // onPressApointment={() => navigation.navigate("VisualizarPrescricao")}
-                    loadInfoConsulta={setInfoConsulta}
+                    loadInfoConsulta={setConsultaSelecionada}
                     permissaoUsuario={permissaoUsuario}
                     MostrarModal={MostrarModal}
                 />

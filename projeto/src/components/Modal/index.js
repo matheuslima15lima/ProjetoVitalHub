@@ -15,6 +15,7 @@ import { AntDesign } from '@expo/vector-icons';
 import * as MediaLibrary from 'expo-media-library'
 
 import { Camera, CameraType } from 'expo-camera'
+import api from "../../services/service"
 
 export const CancelattionModal = ({ visible, setShowModalCancel, ...rest }) => {
     return (
@@ -43,8 +44,16 @@ export const CancelattionModal = ({ visible, setShowModalCancel, ...rest }) => {
 
 export const ApointmentModal = ({ visible, setShowModalApointment, informacoes, navigation, perfilUsuario, ...resto }) => {
     
+
+   
     const HandlePress = (rota) => {
-        navigation.replace(rota, {clinicaId : informacoes.medicoClinia.clinicaId})
+        navigation.replace(rota, {clinicaId : informacoes.paciente.clinicaId})
+    }
+
+    const HandlePront = (rota) =>{
+    // navigation.replace(rota,{pacienteId: informacoes.consulta.pacienteId})
+    navigation.navigate("PaginaDeProntuario" ,{consulta: informacoes})
+    setShowModalApointment(false)
     }
 
     return (
@@ -59,20 +68,18 @@ export const ApointmentModal = ({ visible, setShowModalApointment, informacoes, 
                         source={require("../../assets/images/nicolle_image_modal.png")}
                     />
 
-                    <Title>{informacoes.nome}</Title>
+                    <Title>{informacoes.paciente.idNavigation.nome}</Title>
 
                     <ModalTextRow>
-                        <ModalText>{informacoes.idade} anos</ModalText>
-                        <ModalText>{informacoes.email}</ModalText>
+                        <ModalText>22 anos</ModalText>
+                        <ModalText>{informacoes.paciente.idNavigation.email}</ModalText>
                     </ModalTextRow>
 
                     <ButtonModal onPress={() => {
-                        navigation.navigate("PaginaDeProntuario")
-                        setShowModalApointment(false)
+                       HandlePront()
                     }}>
                         <ButtonTitle onPress={() => {
-                            navigation.navigate("PaginaDeProntuario")
-                            setShowModalApointment(false)
+                           HandlePront()
                         }}>Inserir Prontuário</ButtonTitle>
                     </ButtonModal>
 
