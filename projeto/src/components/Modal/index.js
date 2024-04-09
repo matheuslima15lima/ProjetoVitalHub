@@ -1,4 +1,4 @@
-import { Modal, StyleSheet, View } from "react-native"
+import { Modal, StyleSheet, Text, View } from "react-native"
 import { BoxInputConsulta, CameraContent, ConsultaModal, DadosConsultaBox, DadosConsultaText, DadosConsultaTitle, LinhaDadosConsulta, ModalConsultaForm, ModalContent, ModalSubtitle, ModalText, ModalTextRow, PatientModal, ResumoConsultaBox } from "./style"
 import { ButtonTitle, SemiBoldText, TextRegular, Title } from "../Text/style"
 import { ButtonCamera, ButtonModal } from "../Button/styled"
@@ -16,6 +16,7 @@ import * as MediaLibrary from 'expo-media-library'
 
 import { Camera, CameraType } from 'expo-camera'
 import api from "../../services/service"
+import { ActivityIndicator } from "react-native-web"
 
 export const CancelattionModal = ({ visible, setShowModalCancel, ...rest }) => {
     return (
@@ -42,7 +43,7 @@ export const CancelattionModal = ({ visible, setShowModalCancel, ...rest }) => {
     )
 }
 
-export const ApointmentModal = ({ visible, setShowModalApointment, informacoes, navigation, perfilUsuario, ...resto }) => {
+export const ApointmentModal = ({ visible, setShowModalApointment, informacoes=null, navigation, perfilUsuario, ...resto }) => {
     
 
    
@@ -56,8 +57,9 @@ export const ApointmentModal = ({ visible, setShowModalApointment, informacoes, 
     setShowModalApointment(false)
     }
 
-    return (
-        <Modal {...resto}
+    return informacoes !== null ?
+         (
+            <Modal {...resto}
             visible={visible}
             transparent={true}
             animationType="fade"
@@ -67,28 +69,46 @@ export const ApointmentModal = ({ visible, setShowModalApointment, informacoes, 
                     <UserImageModal
                         source={require("../../assets/images/nicolle_image_modal.png")}
                     />
+                       
+                                    
+                                    
+                                   
+                                    {/* <Title>{informacoes.paciente.idNavigation.nome}</Title> */}
 
-                    <Title>{informacoes.paciente.idNavigation.nome}</Title>
+                                    <ModalTextRow>
+                                        <ModalText>22 anos</ModalText>
+                                        {/* <ModalText>{informacoes.paciente.idNavigation.email}</ModalText> */}
+                                    </ModalTextRow>
+                
+                                    <ButtonModal onPress={() => {
+                                       HandlePront()
+                                    }}>
+                                        <ButtonTitle onPress={() => {
+                                           HandlePront()
+                                        }}>Inserir Prontuário</ButtonTitle>
+                                    </ButtonModal>
+                
+                                    <LinkCancel onPress={() => setShowModalApointment(false)}>Cancelar</LinkCancel>
+                                    
+                                {/* // ): */}
 
-                    <ModalTextRow>
-                        <ModalText>22 anos</ModalText>
-                        <ModalText>{informacoes.paciente.idNavigation.email}</ModalText>
-                    </ModalTextRow>
-
-                    <ButtonModal onPress={() => {
-                       HandlePront()
-                    }}>
-                        <ButtonTitle onPress={() => {
-                           HandlePront()
-                        }}>Inserir Prontuário</ButtonTitle>
-                    </ButtonModal>
-
-                    <LinkCancel onPress={() => setShowModalApointment(false)}>Cancelar</LinkCancel>
+                             
+                              
+                       
+                  
                 </ModalContent>
             </PatientModal>
         </Modal>
+         ):(
+                
+                                   <>
+                                   <Text>Carregando...</Text>
+                                    {/* <ActivityIndicator/> */}
+                            </>
+                                
     )
 }
+      
 
 export const AgendarConsultaModal = ({ visible, setShowModal, navigation, ...resto }) => {
 

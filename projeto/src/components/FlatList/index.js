@@ -2,7 +2,7 @@ import { View } from "react-native"
 import { FlatListStyle } from "./style"
 import { CardClinica, CardConsulta, CardMedico } from "../Card"
 
-export const ListaConsultas = ({ dados, statusConsulta, loadInfoConsulta, permissaoUsuario, MostrarModal = null }) => {
+export const ListaConsultas = ({ dados, statusConsulta, permissaoUsuario, MostrarModal = null }) => {
     return (
         <FlatListStyle
             data={dados}
@@ -24,7 +24,6 @@ export const ListaConsultas = ({ dados, statusConsulta, loadInfoConsulta, permis
 
                         // onPressCancel={onPressCancel}
                         // onPressApointment={onPressApointment}
-                        loadInfoConsulta={loadInfoConsulta}
                     />)
                     : null
 
