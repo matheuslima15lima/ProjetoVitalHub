@@ -8,7 +8,7 @@ import { ContainerApp, ContainerCenter } from "../../components/Container/style"
 import { Button, ButtonGoogle } from "../../components/Button/styled";
 import { LinkSemiBold } from "../../components/Link/style";
 import { useEffect, useState } from "react";
-import api from "../../services/service";
+import { api } from "../../services/service";
 
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { ErrorModal } from "../../components/Modal";
@@ -29,8 +29,8 @@ export const Login = ({ navigation }) => {
         setActivity(true)
         try {
             await api.post('/Login', {
-                email: email,
-                senha: senha
+                email: "murilo.familia.sa@gmail.com",
+                senha: "caua123"
             }).then( async (response) => {
                     await AsyncStorage.setItem("token", JSON.stringify(response.data))
                     

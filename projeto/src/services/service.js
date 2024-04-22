@@ -10,9 +10,7 @@ const ip = "192.168.19.134";
 
 const apiUrlLocal = `http://${ip}:${portaApi}/api`;
 
-const api = axios.create({
+export const api = axios.create({
     //passa um objeto com a baseURL como chave e a Url da api como valor
     baseURL: apiUrlLocal
 });
-
-export default api;

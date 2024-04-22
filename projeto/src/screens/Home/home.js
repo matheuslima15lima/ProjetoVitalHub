@@ -9,7 +9,7 @@ import { ListaConsultas } from "../../components/FlatList";
 import { AgendarConsultaModal, ApointmentModal, CancelattionModal, MedicoModal } from "../../components/Modal";
 import { AgendarConsultaButton, HomeContent } from "./style";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import api from "../../services/service";
+import { api } from "../../services/service";
 import { UserDecodeToken } from "../../utils/Auth";
 
 export const Home = ({navigation}) => {

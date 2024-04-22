@@ -6,8 +6,10 @@ import { LogoVitalHub } from "../../components/Logo";
 import { IconContainer, IconImage } from "../../components/NavigationIcons/style";
 import { ButtonTitle, TextRegular, TitleRedefinirSenha } from "../../components/Text/style";
 
-export const RedefinirSenha = ({navigation}) => 
-    <ContainerCenter>
+export const RedefinirSenha = ({navigation}) => {
+
+    return (
+        <ContainerCenter>
         <IconContainer
             onPress={() => navigation.replace("Login")}
         >
@@ -30,3 +32,5 @@ export const RedefinirSenha = ({navigation}) =>
             <ButtonTitle>Confirmar nova senha</ButtonTitle>
         </Button>
     </ContainerCenter>
+    )
+}

@@ -14,7 +14,7 @@ import {
   TextRegular,
   TitleCadastro,
 } from "../../components/Text/style";
-import api from "../../services/service";
+import { api } from "../../services/service";
 export const Cadastro = ({ navigation }) => {
   const [conta, setConta] = useState({
     email: "",

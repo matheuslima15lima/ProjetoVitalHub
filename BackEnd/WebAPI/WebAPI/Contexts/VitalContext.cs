@@ -244,7 +244,6 @@ public partial class VitalContext : DbContext
             entity.Property(e => e.Medicamento)
                 .HasMaxLength(100)
                 .IsUnicode(false);
-            entity.Property(e => e.Observacoes).HasColumnType("text");
         });
 
         modelBuilder.Entity<SituacaoConsulta>(entity =>

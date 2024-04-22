@@ -28,7 +28,7 @@ const Main = ({route}) => {
 
     return (
         <BottomTab.Navigator
-            initialRouteName="Home"
+            initialRouteName="PerfilDeUsuario"
             screenOptions={({ route }) => ({
                 tabBarStyle: {
                     backgroundColor: "#FFFFFF",
