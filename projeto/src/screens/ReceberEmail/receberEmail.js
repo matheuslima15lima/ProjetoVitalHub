@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { BoxInput } from "../../components/Box/style";
 import { Button } from "../../components/Button/styled";
 import { ContainerCenter } from "../../components/Container/style";
@@ -6,8 +7,21 @@ import { LogoVitalHub } from "../../components/Logo";
 import { IconContainer, IconImage } from "../../components/NavigationIcons/style";
 import { ButtonTitle, TextRegular, TitleRedefinirSenha } from "../../components/Text/style";
 
-export const ReceberEmail = ({ navigation }) =>
-    <ContainerCenter>
+
+
+export const ReceberEmail = ({ navigation }) =>{
+    const [email, setEmail] = useState("limalmatheus7@gmail.com")
+async function EnviarEmail(){
+    await api.post(`/RecuperarSenha?email=${email}`)
+    .then(()=>{
+        navigation.replace("VerificarEmail",{emailRecuperacao: email})
+    } ).catch(error=>{
+            console.log(error);
+        })
+   
+}
+    return(
+        <ContainerCenter>
         <IconContainer
             onPress={() => navigation.replace("Login")}
         >
@@ -22,9 +36,12 @@ export const ReceberEmail = ({ navigation }) =>
             <Input
                 placeholderText={"Insira seu email aqui"}
                 editable
+                fieldValue = {email}
             />
         </BoxInput>
-        <Button onPress={() => navigation.navigate("VerificarEmail")}>
+        <Button onPress={() =>EnviarEmail()}>
             <ButtonTitle>Confirmar</ButtonTitle>
         </Button>
     </ContainerCenter>
+    )
+}

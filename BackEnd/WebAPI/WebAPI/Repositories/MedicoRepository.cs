@@ -50,9 +50,12 @@ namespace WebAPI.Repositories
         {
             //fazer logica para trazer medico e dados de seu usuario
             Medico medicoBuscado = ctx.Medicos.
-                Include(m => m.IdNavigation).
-                FirstOrDefault(m => m.Id == Id)!;
 
+                Include(m => m.IdNavigation).
+                Include(m=> m.Endereco)
+                .Include(m=> m.Especialidade).
+                FirstOrDefault(m => m.Id == Id)!;
+                
             return medicoBuscado;
 
         }
@@ -116,6 +119,7 @@ namespace WebAPI.Repositories
                 .Include(x => x.Prioridade)
                 .Include(x => x.MedicoClinica!.Medico!.IdNavigation)
                 .Include(x => x.Paciente!.IdNavigation)
+                .Include(x => x.Receita)
                 .Where(x => x.MedicoClinica!.Medico!.IdNavigation.Id == idMedico && EF.Functions.DateDiffDay(x.DataConsulta, data) == 0)
                 .ToList();
         }

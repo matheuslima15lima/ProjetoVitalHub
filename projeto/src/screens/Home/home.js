@@ -19,6 +19,7 @@ import { UserDecodeToken } from "../../utils/Auth";
 import { FlatListStyle } from "../../components/FlatList/style";
 import { Text } from "react-native";
 import moment from "moment";
+import { CardConsulta } from "../../components/Card";
 
 export const Home = ({ navigation }) => {
   const [dataConsulta, setDataConsulta] = useState("");
@@ -211,7 +212,7 @@ export const HomePaciente = ({ navigation, route }) => {
     if (modal === "cancelar") {
       setShowModalCancel(true);
     } else if (modal === "prontuario") {
-    //   setShowModalApointment(true);
+       setShowModalApointment(true);
     console.log("Abir modal apointment");
     } else if (modal === "medico") {
       setShowModalMedico(true);

@@ -26,10 +26,21 @@ namespace WebAPI.Repositories
         public void EditarProntuario(Consulta consulta)
         {
             Consulta buscada = ctx.Consultas.Find(consulta.Id)!;
+            Receita receita = ctx.Receitas.FirstOrDefault(receita => receita.Medicamento == consulta.Receita.Medicamento)!;
 
-            buscada.Descricao = consulta.Descricao;
-            buscada.Diagnostico = consulta.Diagnostico;
-            ctx.Update(buscada);
+            if(buscada.Descricao != null) {
+                buscada.Descricao = consulta.Descricao;
+            }
+
+            if(buscada.Diagnostico != null) {
+                buscada.Diagnostico = consulta.Diagnostico;
+            }
+
+            if(receita != null)
+            {
+                buscada.ReceitaId = receita.Id;
+            }
+            ctx.Consultas.Update(buscada);
             ctx.SaveChanges();
         }
 

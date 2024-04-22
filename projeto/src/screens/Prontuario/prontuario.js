@@ -10,6 +10,7 @@ import { Button } from "../../components/Button/styled"
 import { LinkCancel } from "../../components/Link"
 import { UserDecodeToken } from "../../utils/Auth"
 import api from "../../services/service"
+import { ActivityIndicator } from "react-native"
 
 export const PaginaDeProntuario = ({navigation, route}) => {
 
@@ -21,20 +22,31 @@ export const PaginaDeProntuario = ({navigation, route}) => {
 
     const [consulta, setConsulta] = useState({})
 
-    // const ProfileLoad = async ()=>{
-    //     const token = await UserDecodeToken()
+    const ProfileLoad = async ()=>{
+        const token = await UserDecodeToken()
 
-    //     if (token){
-    //         setNome(token.nome)
-    //         setEmail(token.email)
-    //         console.log(token);
-    //     }
+        if (token){
+            setNome(token.nome)
+            setEmail(token.email)
+            console.log(token);
+        }
+    }
+
+    // const [prontuario, setProntuario] = useState({
+    //     descricao:"",
+    //     diagnostico:"",
+
+    // })
+    // const EditProntuario = async ()=>{
+    //         const retronoApi = await api.put("/Consultas/Prontuario",{
+
+    //         })
     // }
 
 
     const ProntuarioInfo = async ()=>{
         try {
-            const id = "8E942765-8128-4948-966B-45550C15962E"
+            // const id = "8E942765-8128-4948-966B-45550C15962E"
             const retornoGet = await api.get(`/Pacientes/BuscarPorId?id=${route.params.pacienteId}`)
 
             console.log(retornoGet.data.idNavigation.nome);
@@ -46,14 +58,15 @@ export const PaginaDeProntuario = ({navigation, route}) => {
     }
 
     useEffect(()=>{
+        ProfileLoad()
+        .then(() => {
+            ProntuarioInfo()
+        })
         setConsulta(route.params.consulta)
-        console.log(consulta); 
+        console.log(consulta);  
+    },[nome])
 
-            // ProntuarioInfo()
-           
-    },[1000])
-
-    return (
+    return nome !== "" ? (
         <ContainerProntuario>
             <UserImagePerfil
                 source={require("../../assets/images/user1-image.png")}
@@ -104,5 +117,7 @@ export const PaginaDeProntuario = ({navigation, route}) => {
             }>Cancelar</LinkCancel>
             </ProntuarioBox>
         </ContainerProntuario>
+    ) : (
+        <ActivityIndicator/>
     )
 }

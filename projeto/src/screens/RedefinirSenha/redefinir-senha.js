@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { BoxInput } from "../../components/Box/style";
 import { Button } from "../../components/Button/styled";
 import { ContainerCenter } from "../../components/Container/style";
@@ -7,6 +8,9 @@ import { IconContainer, IconImage } from "../../components/NavigationIcons/style
 import { ButtonTitle, TextRegular, TitleRedefinirSenha } from "../../components/Text/style";
 
 export const RedefinirSenha = ({navigation}) => 
+
+
+
     <ContainerCenter>
         <IconContainer
             onPress={() => navigation.replace("Login")}
@@ -19,6 +23,7 @@ export const RedefinirSenha = ({navigation}) =>
         <TitleRedefinirSenha>Redefinir senha</TitleRedefinirSenha>
         <TextRegular>Insira e confirme a sua nova senha</TextRegular>
         <BoxInput>
+          
             <Input
                 placeholderText={"Nova senha"}
             />
