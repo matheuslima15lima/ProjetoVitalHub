@@ -10,7 +10,7 @@ import api from "../../services/service";
 
 
 
-export const RedefinirSenha = ({navigation}) => {
+export const RedefinirSenha = ({navigation, route}) => {
 
     const[senha, setSenha] = useState("");
 
@@ -53,13 +53,13 @@ return(
           
             <Input
                 placeholderText={"Nova senha"}
-
+                editable
                 fieldvalue= {senha}
                 onChangeText={(txt)=> setSenha(txt)}
             />
             <Input
                 placeholderText={"confirmar nova senha"}
-
+                editable
                 value= {confirmaSenha}
                 onChangeText={(txt)=> setConfirmaSenha(txt)}
             />

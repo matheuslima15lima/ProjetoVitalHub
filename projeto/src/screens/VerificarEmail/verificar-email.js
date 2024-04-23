@@ -1,4 +1,4 @@
-import { TouchableOpacity } from "react-native";
+import { Alert, TouchableOpacity } from "react-native";
 import { BoxInputRow } from "../../components/Box/style";
 import { Button } from "../../components/Button/styled";
 import { ContainerCenter } from "../../components/Container/style";
@@ -14,7 +14,8 @@ import api from "../../services/service";
 export const VerificarEmail = ({ navigation, route }) =>{
     const [load , setLoad] = useState(false);
     const inputs = [useRef(null), useRef(null), useRef(null), useRef(null)]
-    const [codigo, setCodigo] = useState("")
+    const [codigo, setCodigo] = useState("");
+    const [codigoInput, setCodigoInput] = useState("");
     function focusNextInput(index){
         //verificar se o index e menor que a quantidade  de campos
         if (index < inputs.length - 1){
@@ -31,7 +32,9 @@ export const VerificarEmail = ({ navigation, route }) =>{
     async function ValidarCodigo(){
         await api.post(`RecuperarSenha/ValidarCodigoRecuperacaoSenha?email=${route.params.emailRecuperacao}&codigo=${codigo}`)
         .then(()=>{
-            navigation.replace("RedefinirSenha", {emailRecupecacao: route.params.emailRecupecacao})
+            navigation.replace("RedefinirSenha", {emailRecuperacao: route.params.emailRecuperacao})
+        }).catch(erro =>{
+            console.log(erro);
         })
     }
     return(
@@ -50,37 +53,34 @@ export const VerificarEmail = ({ navigation, route }) =>{
         <TextRegular>Digite o código de 4 dígitos enviado para</TextRegular>
         <LinkVerifyEmail url={"https://www.google.com/intl/pt-BR/gmail/about/"}>{route.params.emailRecupecacao}</LinkVerifyEmail>
         <BoxInputRow>
-            <Input
-                placeholderText={"0"}
-                fieldWidth={"20"}
-                verifyEmail={true}
-                maxLength={1}
-                keyType="numeric"
-            />
+          
 
             {
                 [0, 1, 2, 3].map((index)=>(
                <Input
                key={index}
-               ref={inputs[index]}
+            //    ref={inputs[index]}
                 placeholderText={"0"}
                 fieldWidth={"20"}
                 verifyEmail={true}
                 maxLength={1}
                 keyType="numeric"
-
+                editable
+                fieldvalue={codigoInput}
                 onChangeText={(txt)=>{
                     //verificar se o campo e vazio
-                    if(txt == ""){
-                        focusPrevInput(index)
-                    }
-                    //verificar se o campo foi prenchido
-                    else{
+                    if(txt != ""){
+                        // focusPrevInput(index)
                         const codigoInformado=[...codigo]
                         codigoInformado[index]= txt
                         setCodigo(codigoInformado.join(''))
-                        focusNextInput(index)
+
+                       
+                        
+                        // focusNextInput(index)
                     }
+                    //verificar se o campo foi prenchido
+                  
                 }}  
             />      
                 ))
