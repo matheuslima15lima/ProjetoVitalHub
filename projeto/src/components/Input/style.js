@@ -18,8 +18,7 @@ export const InputField = styled.TextInput.attrs({
 `
 
 export const InputVirifyEmail = styled(InputField).attrs({
-    placeholderTextColor: "#34898F",
-    ref: props => props.ref
+    placeholderTextColor: "#34898F"
 })`
     align-items: center;
     justify-content: center;

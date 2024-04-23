@@ -7,12 +7,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons'
 
 export const Input = ({
-    placeholderText, keyType = "default", onChangeText = null, maxLength, fieldvalue = null, verifyEmail = false, inputPerfil = false, editable = false, fieldHeight = "16", apointment = false, center = false, secure = false, inputError = false, autoFocus = false, fieldWidth = 100, ref
+    placeholderText, keyType = "default", onChangeText = null, maxLength, fieldvalue = null, verifyEmail = false, inputPerfil = false, editable = false, fieldHeight = "16", apointment = false, center = false, secure = false, inputError = false, autoFocus = false, fieldWidth = 100
 }) => {
     if (verifyEmail) {
         return (
             <InputVirifyEmail
-                ref={ref}
                 placeholder={placeholderText}
                 keyboardType={keyType}
                 onChangeText={onChangeText}

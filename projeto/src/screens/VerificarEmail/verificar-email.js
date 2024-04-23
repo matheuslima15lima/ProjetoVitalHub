@@ -18,18 +18,18 @@ export const VerificarEmail = ({ navigation, route }) => {
 
     const inputs = [useRef(null), useRef(null), useRef(null), useRef(null)]
 
-    const focusNextInput = index => {
-        //Verifica se o index é menor que o máximo, se não não passa
-        if(index < (inputs.length) - 1){
-            inputs[index + 1 ].current.focus()
-        }
-    }
+    // const focusNextInput = index => {
+    //     //Verifica se o index é menor que o máximo, se não não passa
+    //     if(index < (inputs.length) - 1){
+    //         inputs[index + 1 ].current.focus()
+    //     }
+    // }
 
-    const focusPrevInput = index => {
-        if(index > 0){
-            inputs[index - 1 ].current.focus()
-        }
-    }
+    // const focusPrevInput = index => {
+    //     if(index > 0){
+    //         inputs[index - 1 ].current.focus()
+    //     }
+    // }
 
     const ValidarCodigo = async () => {
         await api.post(`/RecuperarSenha/ValidarCodigoRecuperacaoSenha?email=${email}&codigo=${codigo}`)
@@ -43,7 +43,7 @@ export const VerificarEmail = ({ navigation, route }) => {
     useEffect(() => {
         setEmail(route.params.emailRecuperacao)
         console.log(`Log página de verificar email com o email de recuperação: ${email}`);
-    }, [route.params])
+    }, [route.params]) 
 
     return (
         <ContainerCenter>
@@ -74,7 +74,7 @@ export const VerificarEmail = ({ navigation, route }) => {
                         <Input
                             key={index}
 
-                            ref={inputs[index]}
+                            // ref={inputs[index]}
 
                             placeholderText={"0"}
                             fieldWidth={"20"}
@@ -85,17 +85,12 @@ export const VerificarEmail = ({ navigation, route }) => {
 
                             onChangeText={txt => {
                                 //Verificra se o campo é vazio
-                                if(txt === ""){
-                                    focusPrevInput(index)
-                                }
-                                //Verificar se o campo for preenchido
-                                else{
+                                if(txt !== ""){
+                                    // focusPrevInput(index)
                                     const codigoInformado = [...codigo]
                                     codigoInformado[index] = txt
 
                                     setCodigo(codigoInformado.join(''))
-
-                                    focusNextInput(index)
                                 }
                             }}
                         />

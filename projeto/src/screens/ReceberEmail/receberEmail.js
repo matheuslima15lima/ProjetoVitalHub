@@ -11,11 +11,12 @@ import {api} from "../../services/service"
 export const ReceberEmail = ({ navigation }) => {
 
     const [email, setEmail] = useState("");
+    const emailMocado = "murilo.familia.sa@gmail.com"
 
     const EnviarEmail = async () => {
-        await api.post(`/RecuperarSenha?email=${email}`)
+        await api.post(`/RecuperarSenha?email=${emailMocado}`)
         .then(() => {
-            navigation.replace("VerificarEmail", {emailRecuperacao: email});
+            navigation.replace("VerificarEmail", {emailRecuperacao: emailMocado});
         }).catch(error => {
             console.log(error);
         })
