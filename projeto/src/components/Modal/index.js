@@ -223,14 +223,33 @@ export const MedicoModal = ({ visible, setShowModal = null, informacoes, perfilU
 }
 
 
-export const ModalCamera = ({ visible, setShowModal = null, enviarFoto, ...resto }) => {
+export const ModalCamera = ({ visible, setShowModal = null, enviarFoto, getMediaLibrary = false,...resto }) => {
     const cameraRef = useRef(null)
+
+    const [lastPhoto, setLastPhoto] = useState(null)
+
+    const GetLatestPhoto = async () => {
+        //ordena a lista de fotos da galeria do maior ao menor e pega o primeiro item
+        const assets = await MediaLibrary.getAssetsAsync({sortBy: [[MediaLibrary.SortBy.creationTime, false]], first: 1 })
+
+
+        console.log(assets);
+
+        if(assets.length > 0){
+            setLastPhoto(assets[0].uri)
+        }
+    }
 
     useEffect(() => {
         (async () => {
             const { status: cameraStatus } = Camera.requestCameraPermissionsAsync()
             const { status: mediaStatus } = MediaLibrary.requestPermissionsAsync()
         })()
+
+        //verificar se tem a necessidade de mostrar a galeria
+        if(getMediaLibrary){
+            GetLatestPhoto()
+        }
     }, [])
 
     const CapturarFoto = async () => {

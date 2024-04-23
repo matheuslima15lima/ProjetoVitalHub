@@ -8,9 +8,16 @@ import { useEffect, useState } from "react";
 import { LinkCancel } from "../../components/Link";
 import { View } from "react-native";
 import { UserDecodeToken, UserLogout } from "../../utils/Auth";
-import { BoxCancelPerfil } from "./style";
+import { BoxCancelPerfil, ButtonCamera } from "./style";
 import { api } from "../../services/service";
 import moment from "moment";
+
+//Solicitar acesso à galeria
+import * as MediaLibrary from 'expo-media-library'
+import * as ImagePicker from 'expo-image-picker'
+
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { ModalCamera } from "../../components/Modal";
 
 export const PerfilDeUsuario = ({ navigation }) => {
     const [editavel, setEditavel] = useState(false)
@@ -19,6 +26,10 @@ export const PerfilDeUsuario = ({ navigation }) => {
     const [perfilUsuario, setPerfilUsuario] = useState("")
 
     const [dadosUsuario, setDadosUsuario] = useState({});
+
+    const [showCamera, setShowCamera] = useState(false)
+
+    const [fotoRecebida, setFotoRecebida] = useState("")
 
 
     const ProfileLoad = async () => {
@@ -35,110 +46,133 @@ export const PerfilDeUsuario = ({ navigation }) => {
         return await api.get(`/${perfilUsuario == "Paciente" ? "Pacientes" : "Medicos"}/BuscarPorId?id=${idUsuario}`)
     }
 
+    //solicitar o acesso à galeria
+    const requestGaleria = async () => {
+        await MediaLibrary.requestPermissionsAsync()
+
+        await ImagePicker.requestMediaLibraryPermissionsAsync()
+    }
+
     useEffect(() => {
         ProfileLoad()
             .then(() => {
                 console.log(`Log da linha 45 com o id do usuário: ${idUsuario}`);
-                if (idUsuario !== "") {
-                    BuscarDadosUsuario()
-                    .then(dadosApi => {
-                        setDadosUsuario(dadosApi)
-                    })
-                }
+                // if (idUsuario !== "") {
+                //     BuscarDadosUsuario()
+                //         .then(dadosApi => {
+                //             setDadosUsuario(dadosApi) 
+                //         })
+                // }
             })
+        
+
+            requestGaleria()
     }, [idUsuario])
 
 
-    return (Object.keys(dadosUsuario).length !== 0) ? (
-        <ContainerPerfilPage>
-            <UserImagePerfil
-                source={require("../../assets/images/user1-image.png")}
-            />
+    return (
+        <>
+            <ContainerPerfilPage>
+                <View>
+                    <UserImagePerfil
+                        source={require("../../assets/images/user1-image.png")}
+                    />
+                    <ButtonCamera onPress={() => setShowCamera(true)}>
+                        <MaterialCommunityIcons name="camera-plus" size={20} color={"#FBFBFB"} />
+                    </ButtonCamera>
+                </View>
 
-            {!(editavel) ? (
-                <UserContentBox
-                    editavel={editavel}
-                >
-                    <UserNamePerfilText editavel={editavel}>{dadosUsuario.idNavigation.nome}</UserNamePerfilText>
-                    <EmailUserText editavel={editavel}>{dadosUsuario.idNavigation.email}</EmailUserText>
-                </UserContentBox>
-            ) : null}
-
-            <ContainerForm>
-                {editavel ? (
-                    <>
-                        <BoxInputField
-                            labelText={"Nome:"}
-                            placeholderText={"Nome completo"}
-                            editable={editavel}
-                            inputPerfil
-                            fieldValue={dadosUsuario.idNavigation.nome}
-                        />
-                        <BoxInputField
-                            labelText={"Email:"}
-                            placeholderText={"Email do usuário"}
-                            editable={editavel}
-                            inputPerfil
-                            fieldValue={dadosUsuario.idNavigation.email}
-                        />
-                    </>
-
+                {!(editavel) ? (
+                    <UserContentBox
+                        editavel={false}
+                    >
+                        <UserNamePerfilText editavel={false}>AAAAAAAAA</UserNamePerfilText>
+                        <EmailUserText editavel={false}>AAAAAAAAAAAAAA</EmailUserText>
+                    </UserContentBox>
                 ) : null}
-                <BoxInputField
-                    labelText={"Data De Nascimento:"}
-                    placeholderText={"12/11/2005"}
-                    editable={editavel}
-                    inputPerfil
-                    fieldValue={moment(dadosUsuario.dataNascimento).format("DD/MM/YYYY")}
-                />
-                <BoxInputField
-                    labelText={"CPF:"}
-                    placeholderText={"470.150.038/05"}
-                    editable={editavel}
-                    inputPerfil
-                    fieldValue={dadosUsuario.cpf}
-                />
-                <BoxInputField
-                    labelText={"Endereço:"}
-                    placeholderText={"Rua Das Goiabeiras, n16 - Pilar Velho"}
-                    inputPerfil
-                    fieldValue={dadosUsuario.endereco.logradouro}
-                />
-                <BoxInputRow>
+
+                <ContainerForm>
+                    {editavel ? (
+                        <>
+                            <BoxInputField
+                                labelText={"Nome:"}
+                                placeholderText={"Nome completo"}
+                                editable={editavel}
+                                inputPerfil
+                            // fieldValue={dadosUsuario.idNavigation.nome}
+                            />
+                            <BoxInputField
+                                labelText={"Email:"}
+                                placeholderText={"Email do usuário"}
+                                editable={editavel}
+                                inputPerfil
+                            // fieldValue={dadosUsuario.idNavigation.email}
+                            />
+                        </>
+
+                    ) : null}
                     <BoxInputField
-                        labelText={"CEP:"}
-                        placeholderText={"09432-530"}
-                        fieldWidth={47}
+                        labelText={"Data De Nascimento:"}
+                        placeholderText={"12/11/2005"}
                         editable={editavel}
                         inputPerfil
-                        fieldValue={dadosUsuario.endereco.cep}
+                    // fieldValue={moment(dadosUsuario.dataNascimento).format("DD/MM/YYYY")}
                     />
                     <BoxInputField
-                        labelText={"Cidade:"}
-                        placeholderText={"Ribeirão Pires"}
-                        fieldWidth={47}
+                        labelText={"CPF:"}
+                        placeholderText={"470.150.038/05"}
+                        editable={editavel}
                         inputPerfil
-                        fieldValue={dadosUsuario.endereco.numero.toString()}
+                    // fieldValue={dadosUsuario.cpf}
                     />
-                </BoxInputRow>
-                {editavel ?
-                    <>
-                        <Button onPress={() => setEditavel(false)}>
-                            <ButtonTitle>Salvar Edições</ButtonTitle>
-                        </Button>
-                    </>
-                    : <Button onPress={() => setEditavel(true)}>
-                        <ButtonTitle>Editar</ButtonTitle>
-                    </Button>}
+                    <BoxInputField
+                        labelText={"Endereço:"}
+                        placeholderText={"Rua Das Goiabeiras, n16 - Pilar Velho"}
+                        inputPerfil
+                    // fieldValue={dadosUsuario.endereco.logradouro}
+                    />
+                    <BoxInputRow>
+                        <BoxInputField
+                            labelText={"CEP:"}
+                            placeholderText={"09432-530"}
+                            fieldWidth={47}
+                            editable={editavel}
+                            inputPerfil
+                        // fieldValue={dadosUsuario.endereco.cep}
+                        />
+                        <BoxInputField
+                            labelText={"Cidade:"}
+                            placeholderText={"Ribeirão Pires"}
+                            fieldWidth={47}
+                            inputPerfil
+                        // fieldValue={dadosUsuario.endereco.numero.toString()}
+                        />
+                    </BoxInputRow>
+                    {editavel ?
+                        <>
+                            <Button onPress={() => setEditavel(false)}>
+                                <ButtonTitle>Salvar Edições</ButtonTitle>
+                            </Button>
+                        </>
+                        : <Button onPress={() => setEditavel(true)}>
+                            <ButtonTitle>Editar</ButtonTitle>
+                        </Button>}
 
-            </ContainerForm>
-            <BoxCancelPerfil>
-                {editavel ?
-                    (
-                        <LinkCancel perfil onPress={() => setEditavel(false)}>Cancelar</LinkCancel>
-                    ) : <LinkCancel perfil onPress={() => UserLogout(navigation)}>Deslogar</LinkCancel>
-                }
-            </BoxCancelPerfil>
-        </ContainerPerfilPage>
-    ) : null
+                </ContainerForm>
+                <BoxCancelPerfil>
+                    {editavel ?
+                        (
+                            <LinkCancel perfil onPress={() => setEditavel(false)}>Cancelar</LinkCancel>
+                        ) : <LinkCancel perfil onPress={() => UserLogout(navigation)}>Deslogar</LinkCancel>
+                    }
+                </BoxCancelPerfil>
+            </ContainerPerfilPage>
+
+            <ModalCamera
+                visible={showCamera}
+                setShowModal={setShowCamera}
+                enviarFoto={setFotoRecebida}
+            />
+        </>
+    )
 }

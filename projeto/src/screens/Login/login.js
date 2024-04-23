@@ -30,7 +30,7 @@ export const Login = ({ navigation }) => {
         try {
             await api.post('/Login', {
                 email: "murilo.familia.sa@gmail.com",
-                senha: "caua123"
+                senha: "murilo123"
             }).then( async (response) => {
                     await AsyncStorage.setItem("token", JSON.stringify(response.data))
                     
