@@ -69,14 +69,43 @@ export const PerfilDeUsuario = ({ navigation }) => {
             requestGaleria()
     }, [idUsuario])
 
+    //função para alterar foto do uauário
+    const AlterarFotoPerfil = async ()  => {
+        const formData = new FormData();
+        formData.append("Arquivo", {
+            uri: fotoRecebida,
+            name: `image.${fotoRecebida.split(".")[1]}`,
+            type: `image/${fotoRecebida.split(".")[1]}`
+        })
 
+        await api.put(`/Usuario/AlterarFotoPerfil?id=${idUsuario}`, formData, {
+            headers: {
+                "content-type": "multpart/form-data"
+            }
+        }).then(response => {
+            console.log(response);
+        }).catch(erro => {
+            console.log(erro);
+        })
+    }
+
+    useEffect(() => {
+        if(fotoRecebida === null){
+            AlterarFotoPerfil()
+        }
+    }, [fotoRecebida])
     return (
         <>
             <ContainerPerfilPage>
                 <View>
+                    {fotoRecebida !== "" ? 
                     <UserImagePerfil
-                        source={require("../../assets/images/user1-image.png")}
+                        source={{uri: fotoRecebida}}
+                    /> : 
+                    <UserImagePerfil
+                        source={{uri: "https://blobvitalhubmurilosouza.blob.core.windows.net/containervitalhubmurilosouza/profilePattern.png"}}
                     />
+                    }
                     <ButtonCamera onPress={() => setShowCamera(true)}>
                         <MaterialCommunityIcons name="camera-plus" size={20} color={"#FBFBFB"} />
                     </ButtonCamera>
@@ -172,6 +201,7 @@ export const PerfilDeUsuario = ({ navigation }) => {
                 visible={showCamera}
                 setShowModal={setShowCamera}
                 enviarFoto={setFotoRecebida}
+                getMediaLibrary
             />
         </>
     )
