@@ -53,7 +53,7 @@ export const ApointmentModal = ({ visible, setShowModalApointment, informacoes=n
 
     const HandlePront = (rota) =>{
     // navigation.replace(rota,{pacienteId: informacoes.consulta.pacienteId})
-    navigation.navigate("PaginaDeProntuario" ,{consulta: informacoes})
+    navigation.navigate(rota ,{consulta: informacoes})
     setShowModalApointment(false)
     }
 
@@ -81,10 +81,10 @@ export const ApointmentModal = ({ visible, setShowModalApointment, informacoes=n
                                     </ModalTextRow>
                 
                                     <ButtonModal onPress={() => {
-                                       HandlePront()
+                                       HandlePront("PaginaDeProntuario")
                                     }}>
                                         <ButtonTitle onPress={() => {
-                                           HandlePront()
+                                           HandlePront("PaginaDeProntuario")
                                         }}>Inserir Prontuário</ButtonTitle>
                                     </ButtonModal>
                 

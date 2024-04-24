@@ -13,7 +13,7 @@ namespace WebAPI.Repositories
             return ctx.Clinicas
                 .Select(c => new Clinica
                 {
-                    Id = c.Id,
+                    Id = id,
                     NomeFantasia = c.NomeFantasia,
                     Endereco = c.Endereco
                 })

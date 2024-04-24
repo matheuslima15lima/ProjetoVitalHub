@@ -20,7 +20,7 @@ export const PaginaDeProntuario = ({navigation, route}) => {
 
     const [email, setEmail] = useState("")
 
-    const [consulta, setConsulta] = useState({})
+    const [consulta, setConsulta] = useState(null)
 
     const ProfileLoad = async ()=>{
         const token = await UserDecodeToken()
@@ -47,7 +47,7 @@ export const PaginaDeProntuario = ({navigation, route}) => {
     const ProntuarioInfo = async ()=>{
         try {
             // const id = "8E942765-8128-4948-966B-45550C15962E"
-            const retornoGet = await api.get(`/Pacientes/BuscarPorId?id=${route.params.pacienteId}`)
+            const retornoGet = await api.get(`/Pacientes/BuscarPorId?id=${consulta.pacienteId}`)
 
             console.log(retornoGet.data.idNavigation.nome);
             setNome(retornoGet.data.idNavigation.nome)
@@ -61,12 +61,20 @@ export const PaginaDeProntuario = ({navigation, route}) => {
         ProfileLoad()
         .then(() => {
             ProntuarioInfo()
+            .then(() => {
+                if (nome === "" || email === "") {
+                    ProntuarioInfo()
+                }
+            })
         })
         setConsulta(route.params.consulta)
+        // setNome(route.params.consulta.paciente.idNavigation.nome)
         console.log(consulta);  
-    },[nome])
+    },[])
 
-    return nome !== "" ? (
+
+
+    return consulta != null ? (
         <ContainerProntuario>
             <UserImagePerfil
                 source={require("../../assets/images/user1-image.png")}
@@ -93,14 +101,14 @@ export const PaginaDeProntuario = ({navigation, route}) => {
                         fieldValue={consulta.diagnostico}
                         editable
                     />
-                    <BoxInputField
+                    {/* <BoxInputField
                         apointment 
                         fieldHeight="84"
                         placeholderText={"Prescrição médica"}
                         labelText={"Prescrição médica"}
                         fieldValue={consulta.receita.medicamento}
                         editable
-                    />
+                    /> */}
                 </ApointmentFormBox>
                 {editavel ? 
                 <>
@@ -117,7 +125,5 @@ export const PaginaDeProntuario = ({navigation, route}) => {
             }>Cancelar</LinkCancel>
             </ProntuarioBox>
         </ContainerProntuario>
-    ) : (
-        <ActivityIndicator/>
-    )
+    ) : null
 }

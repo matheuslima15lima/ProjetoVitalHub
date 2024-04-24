@@ -45,15 +45,13 @@ export const Home = ({ navigation }) => {
 
   const [consultaSelecionada, setConsultaSelecionada] = useState({});
 
-
-
   const ProfileLoad = async () => {
-      const token = await UserDecodeToken();
-      
-      if (token) {
-          setDataConsulta(moment().format("YYYY-MM-DD"))
-          setIdUsuarioLogado(token.idUsuario);
-        await LoadListaConsultas(token.idUsuario)
+    const token = await UserDecodeToken();
+
+    if (token) {
+      setDataConsulta(moment().format("YYYY-MM-DD"));
+      setIdUsuarioLogado(token.idUsuario);
+      await LoadListaConsultas(token.idUsuario);
     }
   };
 
@@ -178,28 +176,31 @@ export const HomePaciente = ({ navigation, route }) => {
     const token = await UserDecodeToken();
 
     if (token) {
-        setDataConsulta(moment().format("YYYY-MM-DD"))
+      setDataConsulta(moment().format("YYYY-MM-DD"));
       setIdUsuarioLogado(token.idUsuario);
       setPermissaoUsuario(token.perfil);
-      await LoadListaConsultas(token.idUsuario)
+      await LoadListaConsultas(token.idUsuario);
     }
   };
 
   const LoadListaConsultas = async (idUsuario) => {
-    console.log( `/Pacientes/BuscarPorData?data=${dataConsulta}&id=${idUsuario}`);
-      await api.get(
-        `/Pacientes/BuscarPorData?data=${dataConsulta}&id=${idUsuario}`
-      ).then( async response => {
+    console.log(
+      `/Pacientes/BuscarPorData?data=${dataConsulta}&id=${idUsuario}`
+    );
+    await api
+      .get(`/Pacientes/BuscarPorData?data=${dataConsulta}&id=${idUsuario}`)
+      .then(async (response) => {
         console.log(response.data);
         await setListaDeConsultas(response.data);
         console.log(response.data);
-      }).catch(error => {
-        console.log("ERROOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
       })
+      .catch((error) => {
+        console.log("ERROOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+      });
   };
 
   useEffect(() => {
-    ProfileLoad()
+    ProfileLoad();
     if (ativado) {
       setShowAgendarConsulta(true);
     }
@@ -209,17 +210,17 @@ export const HomePaciente = ({ navigation, route }) => {
     setConsultaSelecionada(consulta);
     console.log(`Consulta selecionada: ${consultaSelecionada}`);
 
-    if (modal === "cancelar") {
-      setShowModalCancel(true);
-    } else if (modal === "prontuario") {
-       setShowModalApointment(true);
-    console.log("Abir modal apointment");
-    } else if (modal === "medico") {
-      setShowModalMedico(true);
+    if (Object.keys(consultaSelecionada).length != 0) {
+      if (modal === "cancelar") {
+        setShowModalCancel(true);
+      } else if (modal === "prontuario") {
+        setShowModalApointment(true);
+        console.log("Abir modal apointment");
+      } else if (modal === "medico") {
+        setShowModalMedico(true);
+      }
     }
   };
-
-  
 
   return (
     <ContainerHome>
@@ -247,30 +248,32 @@ export const HomePaciente = ({ navigation, route }) => {
           />
         </BoxButtonRow>
         <FlatListStyle
-            data={listaDeConsultas}
-            keyExtractor={item => item.id}
-            renderItem={({ item }) =>
-                statusFiltro == item.situacao.situacao ? (
-                    <CardConsulta
-                        consulta={item}
-                        permissaoUsuario={permissaoUsuario}
-                        dadosUsuario={permissaoUsuario == "Paciente" ? item.medicoClinica.medico : item.paciente }
-                        dataConsulta={item.dataConsulta}
-                        prioridade={item.prioridade.prioridade}
-                        // imageSource={item.foto}
-                        statusConsulta={statusFiltro}
+          data={listaDeConsultas}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) =>
+            statusFiltro == item.situacao.situacao ? (
+              <CardConsulta
+                consulta={item}
+                permissaoUsuario={permissaoUsuario}
+                dadosUsuario={
+                  permissaoUsuario == "Paciente"
+                    ? item.medicoClinica.medico
+                    : item.paciente
+                }
+                dataConsulta={item.dataConsulta}
+                prioridade={item.prioridade.prioridade}
+                // imageSource={item.foto}
+                statusConsulta={statusFiltro}
+                onPressCancel={() => MostrarModal("cancelar", item)}
+                onPressApointment={() => MostrarModal("prontuario", item)}
+                onPressCard={() => MostrarModal("medico", item)}
 
-                        onPressCancel={() => MostrarModal('cancelar', item)}
-                        onPressApointment={() => MostrarModal('prontuario', item)}
-                        onPressCard = {() => MostrarModal('medico', item)}
-
-                        // onPressCancel={onPressCancel}
-                        // onPressApointment={onPressApointment}
-                    />)
-                    : null
-
-            }
-            showsVerticalScrollIndicator={false}
+                // onPressCancel={onPressCancel}
+                // onPressApointment={onPressApointment}
+              />
+            ) : null
+          }
+          showsVerticalScrollIndicator={false}
         />
       </HomeContent>
 
