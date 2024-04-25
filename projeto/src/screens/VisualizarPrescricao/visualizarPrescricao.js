@@ -19,19 +19,6 @@ import { useEffect, useRef, useState } from "react";
 import { ModalCamera } from "../../components/Modal";
 
 export const VisualizarPrescricao = ({ navigation, route }) => {
-    const dadosPrescricao = {
-        descricaoConsulta: "O paciente possuí uma infecção no ouvido. Necessário repouse de 2 dias e acompanhamento médico constante",
-        diagnostico: "Infecção no ouvido",
-        prescricao:
-            `Medicamento: Advil 
-Dosagem: 50 mg 
-Frequência: 3 vezes ao dia 
-Duração: 3 dias`,
-        examesMedicos: "",
-        resultados:
-            `Resultado do exame de sangue : 
-tudo normal`
-    }
 
     const [openModalCamera, setOpenModalCamera] = useState(false)
     
