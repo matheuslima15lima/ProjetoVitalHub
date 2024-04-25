@@ -44,6 +44,14 @@ export const CancelattionModal = ({ visible, setShowModalCancel, ...rest }) => {
 
 export const ApointmentModal = ({ visible, setShowModalApointment, informacoes, navigation, perfilUsuario, ...resto }) => {
 
+    const AbrirPaginaProntuario = () => {
+        if(perfilUsuario === "Paciente"){
+            navigation.navigate("VisualizarPrescricao", {consultaId: informacoes.id})
+        }else{
+            navigation.navigate("PaginaDeProntuario")
+        }
+    }
+
     return (
         <Modal {...resto}
             visible={visible}
@@ -64,11 +72,11 @@ export const ApointmentModal = ({ visible, setShowModalApointment, informacoes, 
                     </ModalTextRow>
 
                     <ButtonModal onPress={() => {
-                        navigation.navigate("PaginaDeProntuario")
+                        AbrirPaginaProntuario()
                         setShowModalApointment(false)
                     }}>
                         <ButtonTitle onPress={() => {
-                            navigation.navigate("PaginaDeProntuario")
+                            AbrirPaginaProntuario()
                             setShowModalApointment(false)
                         }}>Inserir Prontuário</ButtonTitle>
                     </ButtonModal>
@@ -273,6 +281,7 @@ export const ModalCamera = ({ visible, setShowModal = null, enviarFoto, getMedia
 
         if (!result.canceled) {
             setPhoto(result.assets[0].uri)
+            setShowModalImage(true)
         }
     }
 
@@ -325,9 +334,11 @@ export const ModalCamera = ({ visible, setShowModal = null, enviarFoto, getMedia
 
             <ModalImageCamera
                 visible={showModalImage}
-                setShowModal={setShowModalImage}
+                setShowModalImage={setShowModalImage}
+                setShowModalCamera={setShowModal}
                 setFotoFinal={enviarFoto}
                 image={photo}
+
             />
         </>
     )
@@ -362,10 +373,11 @@ export const ErrorModal = ({ visible, setShowModalError, ...rest }) => {
     )
 }
 
-export const ModalImageCamera = ({ visible, setShowModal, image, setFotoFinal, ...resto }) => {
+export const ModalImageCamera = ({ visible, setShowModalImage, setShowModalCamera, image, setFotoFinal, ...resto }) => {
     const RetornarFoto = (foto) => {
         setFotoFinal(foto)
-        setShowModal(false)
+        setShowModalImage(false)
+        setShowModalCamera(false)
     }
 
     return (
@@ -384,7 +396,7 @@ export const ModalImageCamera = ({ visible, setShowModal, image, setFotoFinal, .
                         <ButtonTitle>Confirmar</ButtonTitle>
                     </Button>
                     {/* <TextRegular>{image}</TextRegular> */}
-                    <LinkCancel onPress={() => setShowModal(false)}>Voltar</LinkCancel>
+                    <LinkCancel onPress={() => setShowModalImage(false)}>Voltar</LinkCancel>
                 </ImageContent>
 
             </PatientModal>

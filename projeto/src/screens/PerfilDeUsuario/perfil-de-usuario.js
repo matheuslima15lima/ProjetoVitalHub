@@ -1,4 +1,4 @@
-import { ButtonTitle, EmailUserText, SemiBoldText, Title, UserNamePerfilText } from "../../components/Text/style";
+import { ButtonTitle, EmailUserText, SemiBoldText, TextRegular, Title, UserNamePerfilText } from "../../components/Text/style";
 import { ContainerApp, ContainerForm, ContainerPerfilPage } from "../../components/Container/style";
 import { UserImagePerfil } from "../../components/UserImage/styled";
 import { BoxInputRow, UserContentBox } from "../../components/Box/style";
@@ -6,7 +6,7 @@ import { BoxInputField } from "../../components/Box";
 import { Button } from "../../components/Button/styled";
 import { useEffect, useState } from "react";
 import { LinkCancel } from "../../components/Link";
-import { View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import { UserDecodeToken, UserLogout } from "../../utils/Auth";
 import { BoxCancelPerfil, ButtonCamera } from "./style";
 import { api } from "../../services/service";
@@ -31,20 +31,43 @@ export const PerfilDeUsuario = ({ navigation }) => {
 
     const [fotoRecebida, setFotoRecebida] = useState("")
 
-
     const ProfileLoad = async () => {
-        await UserDecodeToken()
-            .then(token => {
-                if (token !== null) {
-                    setIdUsuario(token.idUsuario)
-                    setPerfilUsuario(token.perfil)
-                }
-            })
+        const token = await UserDecodeToken()
+
+        if(token !== null){
+            setIdUsuario(token.idUsuario)
+            setPerfilUsuario(token.perfil)
+        }
+        
+        BuscarDadosUsuario(token.perfil, token.idUsuario)
     }
 
-    const BuscarDadosUsuario = async () => {
-        return await api.get(`/${perfilUsuario == "Paciente" ? "Pacientes" : "Medicos"}/BuscarPorId?id=${idUsuario}`)
+    useEffect(() => {
+        ProfileLoad()
+            .then(() => {
+                console.log(`Log da linha 45 com o id do usuário: ${idUsuario}`);
+            })
+
+            requestGaleria()
+    }, [idUsuario])
+
+    const BuscarDadosUsuario = async (perfil, id) => {
+        await api.get(`/${perfil == "Paciente" ? "Pacientes" : "Medicos"}/BuscarPorId?id=${id}`)
+        .then(retornoApi => {
+            setDadosUsuario(retornoApi.data)
+        })
     }
+
+    // useEffect(() => {
+    //     if (idUsuario != "") {
+    //         BuscarDadosUsuario(perfilUsuario, idUsuario)
+    //         .then(() => {
+    //             if(idUsuario !== ""){
+    //                 BuscarDadosUsuario(perfilUsuario, idUsuario)
+    //             }
+    //         })
+    //     }
+    // }, [idUsuario])
 
     //solicitar o acesso à galeria
     const requestGaleria = async () => {
@@ -52,22 +75,6 @@ export const PerfilDeUsuario = ({ navigation }) => {
 
         await ImagePicker.requestMediaLibraryPermissionsAsync()
     }
-
-    useEffect(() => {
-        ProfileLoad()
-            .then(() => {
-                console.log(`Log da linha 45 com o id do usuário: ${idUsuario}`);
-                // if (idUsuario !== "") {
-                //     BuscarDadosUsuario()
-                //         .then(dadosApi => {
-                //             setDadosUsuario(dadosApi) 
-                //         })
-                // }
-            })
-        
-
-            requestGaleria()
-    }, [idUsuario])
 
     //função para alterar foto do uauário
     const AlterarFotoPerfil = async ()  => {
@@ -78,7 +85,7 @@ export const PerfilDeUsuario = ({ navigation }) => {
             type: `image/${fotoRecebida.split(".")[1]}`
         })
 
-        await api.put(`/Usuario/AlterarFotoPerfil?id=${idUsuario}`, formData, {
+        await api.put(`/Usuario/AlterarFotoPerfil?idUsuario=${idUsuario}`, formData, {
             headers: {
                 "content-type": "multpart/form-data"
             }
@@ -90,33 +97,32 @@ export const PerfilDeUsuario = ({ navigation }) => {
     }
 
     useEffect(() => {
-        if(fotoRecebida === null){
+        if(fotoRecebida !== null){
             AlterarFotoPerfil()
+            ProfileLoad()
         }
     }, [fotoRecebida])
-    return (
+    return (Object.keys(dadosUsuario).length !== 0) ? (
+
         <>
             <ContainerPerfilPage>
                 <View>
-                    {fotoRecebida !== "" ? 
+                    
                     <UserImagePerfil
-                        source={{uri: fotoRecebida}}
-                    /> : 
-                    <UserImagePerfil
-                        source={{uri: "https://blobvitalhubmurilosouza.blob.core.windows.net/containervitalhubmurilosouza/profilePattern.png"}}
+                        source={{uri: dadosUsuario.idNavigation.foto}}
                     />
-                    }
+                    
                     <ButtonCamera onPress={() => setShowCamera(true)}>
                         <MaterialCommunityIcons name="camera-plus" size={20} color={"#FBFBFB"} />
                     </ButtonCamera>
-                </View>
+                </View> 
 
                 {!(editavel) ? (
                     <UserContentBox
-                        editavel={false}
+                        editavel={editavel}
                     >
-                        <UserNamePerfilText editavel={false}>AAAAAAAAA</UserNamePerfilText>
-                        <EmailUserText editavel={false}>AAAAAAAAAAAAAA</EmailUserText>
+                        <UserNamePerfilText editavel={editavel}>{dadosUsuario.idNavigation.nome}</UserNamePerfilText>
+                        <EmailUserText editavel={editavel}>{dadosUsuario.idNavigation.email}</EmailUserText>
                     </UserContentBox>
                 ) : null}
 
@@ -128,14 +134,14 @@ export const PerfilDeUsuario = ({ navigation }) => {
                                 placeholderText={"Nome completo"}
                                 editable={editavel}
                                 inputPerfil
-                            // fieldValue={dadosUsuario.idNavigation.nome}
+                                fieldValue={dadosUsuario.idNavigation.nome}
                             />
                             <BoxInputField
                                 labelText={"Email:"}
                                 placeholderText={"Email do usuário"}
                                 editable={editavel}
                                 inputPerfil
-                            // fieldValue={dadosUsuario.idNavigation.email}
+                            fieldValue={dadosUsuario.idNavigation.email}
                             />
                         </>
 
@@ -145,20 +151,20 @@ export const PerfilDeUsuario = ({ navigation }) => {
                         placeholderText={"12/11/2005"}
                         editable={editavel}
                         inputPerfil
-                    // fieldValue={moment(dadosUsuario.dataNascimento).format("DD/MM/YYYY")}
+                    fieldValue={moment(dadosUsuario.dataNascimento).format("DD/MM/YYYY")}
                     />
                     <BoxInputField
                         labelText={"CPF:"}
                         placeholderText={"470.150.038/05"}
                         editable={editavel}
                         inputPerfil
-                    // fieldValue={dadosUsuario.cpf}
+                    fieldValue={dadosUsuario.cpf}
                     />
                     <BoxInputField
                         labelText={"Endereço:"}
                         placeholderText={"Rua Das Goiabeiras, n16 - Pilar Velho"}
                         inputPerfil
-                    // fieldValue={dadosUsuario.endereco.logradouro}
+                    fieldValue={dadosUsuario.endereco.logradouro}
                     />
                     <BoxInputRow>
                         <BoxInputField
@@ -167,14 +173,14 @@ export const PerfilDeUsuario = ({ navigation }) => {
                             fieldWidth={47}
                             editable={editavel}
                             inputPerfil
-                        // fieldValue={dadosUsuario.endereco.cep}
+                        fieldValue={dadosUsuario.endereco.cep}
                         />
                         <BoxInputField
                             labelText={"Cidade:"}
                             placeholderText={"Ribeirão Pires"}
                             fieldWidth={47}
                             inputPerfil
-                        // fieldValue={dadosUsuario.endereco.numero.toString()}
+                        fieldValue={dadosUsuario.endereco.numero.toString()}
                         />
                     </BoxInputRow>
                     {editavel ?
@@ -204,5 +210,12 @@ export const PerfilDeUsuario = ({ navigation }) => {
                 getMediaLibrary
             />
         </>
+    ) : (
+        <View
+            style={{alignItems: "center", justifyContent: "center", height: "100%", gap: 10}}
+        > 
+            <TextRegular>Carregando...</TextRegular>
+            <ActivityIndicator/>
+        </View>
     )
 }

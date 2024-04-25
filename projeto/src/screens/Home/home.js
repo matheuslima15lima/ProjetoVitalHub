@@ -11,6 +11,7 @@ import { AgendarConsultaButton, HomeContent } from "./style";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { api } from "../../services/service";
 import { UserDecodeToken } from "../../utils/Auth";
+import moment from "moment";
 
 export const Home = ({navigation}) => {
     const [dataConsulta, setDataConsulta] = useState("")
@@ -131,7 +132,7 @@ export const Home = ({navigation}) => {
 export const HomePaciente = ({navigation, route}) => {
     const {ativado} = route.params
 
-    const [dataConsulta, setDataConsulta] = useState("")
+    const [dataConsulta, setDataConsulta] = useState(moment().format("YYYY-MM-DD"))
 
     const [listaDeConsultas, setListaDeConsultas] = useState([]);
 

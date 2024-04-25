@@ -18,7 +18,7 @@ import { Camera, CameraType } from "expo-camera";
 import { useEffect, useRef, useState } from "react";
 import { ModalCamera } from "../../components/Modal";
 
-export const VisualizarPrescricao = ({ navigation }) => {
+export const VisualizarPrescricao = ({ navigation, route }) => {
     const dadosPrescricao = {
         descricaoConsulta: "O paciente possuí uma infecção no ouvido. Necessário repouse de 2 dias e acompanhamento médico constante",
         diagnostico: "Infecção no ouvido",
@@ -35,7 +35,37 @@ tudo normal`
 
     const [openModalCamera, setOpenModalCamera] = useState(false)
     
-    const [foto, setFoto] = useState(null)
+    const [foto, setFoto] = useState("")
+
+    const [descricaoExame, setDescricaoExame] = useState(null)
+
+    const InserirExame = async () => {
+        const formData = new FormData()
+        formData.append("ConsultaId", route.params.consultaId)
+        formData.append("Imagem", {
+            uri: foto,
+            name: `image.${foto.split(".").pop()}`,
+            type: `image/${foto.split(".").pop()}`
+        });
+
+        await api.post(`/Exame`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        }).then(retornoApi => {
+            //vai somando todos os arquivos enviados
+            setDescricaoExame( descricaoExame + "\n" + retornoApi.data.descricao)
+        }).catch(error => {
+            console.log(error);
+        })
+    }
+
+    useEffect(() => {
+        if (foto) {
+            InserirExame()
+        }
+
+    }, [foto])
 
     return (
         <>
@@ -77,7 +107,9 @@ tudo normal`
                         <InputLabel>Exames médicos:</InputLabel>
                         <ImageInputBoxField>
                             <MaterialCommunityIcons name="file-upload-outline" size={24} color="#4E4B59" />
-                            <ImageInputBoxText>Nenhuma foto informada</ImageInputBoxText>
+                            <ImageInputBoxText>
+                                {(foto === "") ? "Nenhuma foto informada" : foto}
+                            </ImageInputBoxText>
                         </ImageInputBoxField>
                     </ImageInputBox>
                     <ImageSubmitBox>
