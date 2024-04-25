@@ -1,5 +1,5 @@
-import { Modal, StyleSheet, View, TouchableOpacity } from "react-native"
-import { BoxInputConsulta, CameraContent, ConsultaModal, DadosConsultaBox, DadosConsultaText, DadosConsultaTitle, LinhaDadosConsulta, ModalConsultaForm, ModalContent, ModalSubtitle, ModalText, ModalTextRow, PatientModal, ResumoConsultaBox, LastPhoto, ImageContent, ImagemRecebida } from "./style"
+import { Modal, StyleSheet, Text, View } from "react-native"
+import { BoxInputConsulta, CameraContent, ConsultaModal, DadosConsultaBox, DadosConsultaText, DadosConsultaTitle, LinhaDadosConsulta, ModalConsultaForm, ModalContent, ModalSubtitle, ModalText, ModalTextRow, PatientModal, ResumoConsultaBox } from "./style"
 import { ButtonTitle, SemiBoldText, TextRegular, Title } from "../Text/style"
 import { Button, ButtonCamera, ButtonModal } from "../Button/styled"
 import { LinkCancel } from "../Link"
@@ -16,6 +16,8 @@ import * as MediaLibrary from 'expo-media-library'
 import * as ImagePicker from 'expo-image-picker'
 
 import { Camera, CameraType } from 'expo-camera'
+import api from "../../services/service"
+import { ActivityIndicator } from "react-native-web"
 
 export const CancelattionModal = ({ visible, setShowModalCancel, ...rest }) => {
     return (
@@ -43,17 +45,22 @@ export const CancelattionModal = ({ visible, setShowModalCancel, ...rest }) => {
 }
 
 export const ApointmentModal = ({ visible, setShowModalApointment, informacoes, navigation, perfilUsuario, ...resto }) => {
+    
 
-    const AbrirPaginaProntuario = () => {
-        if(perfilUsuario === "Paciente"){
-            navigation.navigate("VisualizarPrescricao", {consultaId: informacoes.id})
-        }else{
-            navigation.navigate("PaginaDeProntuario")
-        }
+   
+    const HandlePress = (rota) => {
+        navigation.replace(rota, {clinicaId : informacoes.paciente.clinicaId})
     }
 
-    return (
-        <Modal {...resto}
+    const HandlePront = (rota) =>{
+    // navigation.replace(rota,{pacienteId: informacoes.consulta.pacienteId})
+    navigation.navigate(rota ,{consulta: informacoes})
+    setShowModalApointment(false)
+    }
+
+    return informacoes !== null ?
+         (
+            <Modal {...resto}
             visible={visible}
             transparent={true}
             animationType="fade"
@@ -63,30 +70,46 @@ export const ApointmentModal = ({ visible, setShowModalApointment, informacoes, 
                     <UserImageModal
                         source={require("../../assets/images/nicolle_image_modal.png")}
                     />
+                       
+                                    
+                                    
+                                   
+                                    {/* <Title>{informacoes.paciente.idNavigation.nome}</Title> */}
 
-                    <Title>{informacoes.nome}</Title>
+                                    <ModalTextRow>
+                                        <ModalText>22 anos</ModalText>
+                                        {/* <ModalText>{informacoes.paciente.idNavigation.email}</ModalText> */}
+                                    </ModalTextRow>
+                
+                                    <ButtonModal onPress={() => {
+                                       HandlePront("PaginaDeProntuario")
+                                    }}>
+                                        <ButtonTitle onPress={() => {
+                                           HandlePront("PaginaDeProntuario")
+                                        }}>Inserir Prontuário</ButtonTitle>
+                                    </ButtonModal>
+                
+                                    <LinkCancel onPress={() => setShowModalApointment(false)}>Cancelar</LinkCancel>
+                                    
+                                {/* // ): */}
 
-                    <ModalTextRow>
-                        <ModalText>{informacoes.idade} anos</ModalText>
-                        <ModalText>{informacoes.email}</ModalText>
-                    </ModalTextRow>
-
-                    <ButtonModal onPress={() => {
-                        AbrirPaginaProntuario()
-                        setShowModalApointment(false)
-                    }}>
-                        <ButtonTitle onPress={() => {
-                            AbrirPaginaProntuario()
-                            setShowModalApointment(false)
-                        }}>Inserir Prontuário</ButtonTitle>
-                    </ButtonModal>
-
-                    <LinkCancel onPress={() => setShowModalApointment(false)}>Cancelar</LinkCancel>
+                             
+                              
+                       
+                  
                 </ModalContent>
             </PatientModal>
         </Modal>
+         ):(
+                
+                                   <>
+                                   <Text>Carregando...</Text>
+                                    {/* <ActivityIndicator/> */}
+                            </>
+                                
     )
 }
+      
 
 export const AgendarConsultaModal = ({ visible, setShowModal, navigation, ...resto }) => {
 

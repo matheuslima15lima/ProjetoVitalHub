@@ -5,12 +5,7 @@ import { UserImageCart } from "../UserImage/styled";
 import { useEffect, useState } from "react";
 import { UserDecodeToken } from "../../utils/Auth";
 
-export const CardConsulta = ({ consulta, statusConsulta, onPressCancel, onPressApointment, loadInfoConsulta, permissaoUsuario, dadosUsuario, dataConsulta, prioridade, onPressCard = null }) => {
-
-    const abrirModalProntuario = () => {
-        onPressApointment();
-        loadInfoConsulta(consulta);
-    }
+export const CardConsulta = ({ consulta, statusConsulta, onPressCancel, onPressApointment, permissaoUsuario, dadosUsuario, dataConsulta, prioridade, onPressCard = null }) => {
 
 
     // const ProfileLoad = async ()=>{
@@ -44,7 +39,7 @@ export const CardConsulta = ({ consulta, statusConsulta, onPressCancel, onPressA
                     </HorarioBox>
                     <CardTextCancelApointment
                         statusConsulta={statusConsulta}
-                        onPress={statusConsulta == "Agendada" ? (onPressCancel) : (abrirModalProntuario)}
+                        onPress={statusConsulta == "Agendada" ? (onPressCancel) : (onPressApointment)}
                     >
                         {statusConsulta == "Agendada" ? "Cancelar" : (statusConsulta == "Realizada" ? "Ver Prontuário" : null)}
                     </CardTextCancelApointment>
