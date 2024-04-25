@@ -82,3 +82,19 @@ export const CameraContent = styled.View`
     align-items: center;
     justify-content: space-between;
 `
+
+export const LastPhoto = styled.Image`
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+`
+
+export const ImageContent = styled(ModalContent)`
+    gap: 30px;
+`
+
+export const ImagemRecebida = styled.Image`
+    height: 80%;
+    width: 80%;
+    border-radius: 5px;
+`

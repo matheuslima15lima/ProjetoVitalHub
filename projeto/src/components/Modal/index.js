@@ -1,7 +1,7 @@
-import { Modal, StyleSheet, Text, View } from "react-native"
-import { BoxInputConsulta, CameraContent, ConsultaModal, DadosConsultaBox, DadosConsultaText, DadosConsultaTitle, LinhaDadosConsulta, ModalConsultaForm, ModalContent, ModalSubtitle, ModalText, ModalTextRow, PatientModal, ResumoConsultaBox } from "./style"
+import { Modal, StyleSheet, View, TouchableOpacity } from "react-native"
+import { BoxInputConsulta, CameraContent, ConsultaModal, DadosConsultaBox, DadosConsultaText, DadosConsultaTitle, LinhaDadosConsulta, ModalConsultaForm, ModalContent, ModalSubtitle, ModalText, ModalTextRow, PatientModal, ResumoConsultaBox, LastPhoto, ImageContent, ImagemRecebida } from "./style"
 import { ButtonTitle, SemiBoldText, TextRegular, Title } from "../Text/style"
-import { ButtonCamera, ButtonModal } from "../Button/styled"
+import { Button, ButtonCamera, ButtonModal } from "../Button/styled"
 import { LinkCancel } from "../Link"
 import { UserImageModal } from "../UserImage/styled"
 import { useEffect, useRef, useState } from "react"
@@ -13,6 +13,7 @@ import { Input } from "../Input"
 import { AntDesign } from '@expo/vector-icons';
 
 import * as MediaLibrary from 'expo-media-library'
+import * as ImagePicker from 'expo-image-picker'
 
 import { Camera, CameraType } from 'expo-camera'
 import api from "../../services/service"
@@ -44,11 +45,13 @@ export const CancelattionModal = ({ visible, setShowModalCancel, ...rest }) => {
 }
 
 export const ApointmentModal = ({ visible, setShowModalApointment, informacoes, navigation, perfilUsuario, ...resto }) => {
-    
 
-   
-    const HandlePress = (rota) => {
-        navigation.replace(rota, {clinicaId : informacoes.paciente.clinicaId})
+    const AbrirPaginaProntuario = () => {
+        if(perfilUsuario === "Paciente"){
+            navigation.navigate("VisualizarPrescricao", {consultaId: informacoes.id})
+        }else{
+            navigation.navigate("PaginaDeProntuario")
+        }
     }
 
     const HandlePront = (rota) =>{
@@ -92,10 +95,22 @@ export const ApointmentModal = ({ visible, setShowModalApointment, informacoes, 
                                     
                                 {/* // ): */}
 
-                             
-                              
-                       
-                  
+                    <ModalTextRow>
+                        <ModalText>{informacoes.idade} anos</ModalText>
+                        <ModalText>{informacoes.email}</ModalText>
+                    </ModalTextRow>
+
+                    <ButtonModal onPress={() => {
+                        AbrirPaginaProntuario()
+                        setShowModalApointment(false)
+                    }}>
+                        <ButtonTitle onPress={() => {
+                            AbrirPaginaProntuario()
+                            setShowModalApointment(false)
+                        }}>Inserir Prontuário</ButtonTitle>
+                    </ButtonModal>
+
+                    <LinkCancel onPress={() => setShowModalApointment(false)}>Cancelar</LinkCancel>
                 </ModalContent>
             </PatientModal>
         </Modal>
@@ -217,11 +232,11 @@ export const ConfirmarConsultaModal = ({ visible, setShowModal = null, navigatio
 }
 
 export const MedicoModal = ({ visible, setShowModal = null, informacoes, perfilUsuario, navigation, ...resto }) => {
-    
-    function handleClose(){
-        navigation.navigate("LocalConsulta", { clinicaId : informacoes.medicoClinica.clinicaId })
+
+    function handleClose() {
+        navigation.navigate("LocalConsulta", { clinicaId: informacoes.medicoClinica.clinicaId })
     }
-    
+
     return (
         <Modal
             {...resto}
@@ -242,8 +257,8 @@ export const MedicoModal = ({ visible, setShowModal = null, informacoes, perfilU
                         <ModalText>CRM-11204</ModalText>
                     </ModalTextRow>
 
-                    <ButtonModal onPress={() => handleClose()}>
-                        <ButtonTitle>Ver Local da Consulta</ButtonTitle>
+                    <ButtonModal onPress={() => handleClose("LocalConsulta")}>
+                        <ButtonTitle onPress={() => handleClose("LocalConsulta")}>Ver Local da Consulta</ButtonTitle>
                     </ButtonModal>
 
                     <LinkCancel onPress={() => setShowModal(false)}>Cancelar</LinkCancel>
@@ -253,61 +268,116 @@ export const MedicoModal = ({ visible, setShowModal = null, informacoes, perfilU
     )
 }
 
-export const ModalCamera = ({ visible, setShowModal = null, enviarFoto, ...resto  }) => {
+
+export const ModalCamera = ({ visible, setShowModal = null, enviarFoto, getMediaLibrary = false, ...resto }) => {
     const cameraRef = useRef(null)
+
+    const [lastPhoto, setLastPhoto] = useState(null)
+    const [photo, setPhoto] = useState(null)
+
+    const [showModalImage, setShowModalImage] = useState(false)
+
+    const GetLatestPhoto = async () => {
+        //ordena a lista de fotos da galeria do maior ao menor e pega o primeiro item
+        const { assets } = await MediaLibrary.getAssetsAsync({ sortBy: [[MediaLibrary.SortBy.creationTime, false]], first: 1 })
+
+
+        console.log(assets);
+
+        if (assets.length > 0) {
+            setLastPhoto(assets[0].uri)
+        }
+    }
 
     useEffect(() => {
         (async () => {
             const { status: cameraStatus } = Camera.requestCameraPermissionsAsync()
             const { status: mediaStatus } = MediaLibrary.requestPermissionsAsync()
         })()
+
+        //verificar se tem a necessidade de mostrar a galeria
+        if (getMediaLibrary) {
+            GetLatestPhoto()
+        }
     }, [])
 
     const CapturarFoto = async () => {
-        if(cameraRef){
+        if (cameraRef) {
             const captura = await cameraRef.current.takePictureAsync()
 
-            enviarFoto(captura.uri)
+            setPhoto(captura.uri)
+            setShowModalImage(true)
+        }
+    }
 
-            .then(() => {
-                console.warn("Foto capturada com sucesso")
-            }).catch( erro => {
-                console.warn(erro)
-            })
+    const SelectImageGalery = async () => {
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            quality: 1
+        })
+
+        if (!result.canceled) {
+            setPhoto(result.assets[0].uri)
+            setShowModalImage(true)
         }
     }
 
     return (
-        <Modal {...resto}
-            visible={visible}
-            transparent
-            animationType="fade"
+        <>
+            <Modal {...resto}
+                visible={visible}
+                transparent
+                animationType="fade"
 
-        >
-            <PatientModal>
-                <CameraContent>
-                    <View style={{ height: "90%", width: "100%", borderRadius: 15 }}>
-                        <Camera
-                            ref={cameraRef}
-                            ratio='15:9'
-                            type={CameraType.back}
-                            style={styles.camera}
-                        />
-                    </View>
-                    <View style={{width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 30}}>
-                        <ButtonCamera onPress={() => CapturarFoto()}>
-                            <AntDesign name="camera" size={24} color="white" />
-                        </ButtonCamera>
-                        <ButtonCamera 
-                            onPress={() => setShowModal(false)}
-                            close
-                        >
-                            <AntDesign name="close" size={24} color="white" />
-                        </ButtonCamera>
-                    </View>
-                </CameraContent>
-            </PatientModal>
-        </Modal>
+            >
+                <PatientModal>
+
+                    <CameraContent>
+                        <View style={{ height: "90%", width: "100%", borderRadius: 15 }}>
+                            <Camera
+                                ref={cameraRef}
+                                ratio='15:9'
+                                type={CameraType.back}
+                                style={styles.camera}
+                            />
+                        </View>
+                        <View style={{ width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 30 }}>
+                            <ButtonCamera onPress={() => CapturarFoto()}>
+                                <AntDesign name="camera" size={24} color="white" />
+                            </ButtonCamera>
+                            <ButtonCamera
+                                onPress={() => setShowModal(false)}
+                                close
+                            >
+                                <AntDesign name="close" size={24} color="white" />
+                            </ButtonCamera>
+
+                            <TouchableOpacity onPress={() => SelectImageGalery()}>
+                                {
+                                    lastPhoto !== null ?
+                                        <LastPhoto
+                                            source={{ uri: lastPhoto }}
+                                        />
+                                        : (
+                                            null
+                                        )
+                                }
+                            </TouchableOpacity>
+                        </View>
+                    </CameraContent>
+
+                </PatientModal>
+            </Modal>
+
+            <ModalImageCamera
+                visible={showModalImage}
+                setShowModalImage={setShowModalImage}
+                setShowModalCamera={setShowModal}
+                setFotoFinal={enviarFoto}
+                image={photo}
+
+            />
+        </>
     )
 }
 
@@ -331,10 +401,41 @@ export const ErrorModal = ({ visible, setShowModalError, ...rest }) => {
                     </ButtonModal>
 
                     <LinkCancel onPress={() => {
-                        
+
                         setShowModalError(false)
                     }}>fechar </LinkCancel>
                 </ModalContent>
+            </PatientModal>
+        </Modal>
+    )
+}
+
+export const ModalImageCamera = ({ visible, setShowModalImage, setShowModalCamera, image, setFotoFinal, ...resto }) => {
+    const RetornarFoto = (foto) => {
+        setFotoFinal(foto)
+        setShowModalImage(false)
+        setShowModalCamera(false)
+    }
+
+    return (
+        <Modal {...resto}
+            visible={visible}
+            transparent
+            animationType="fade"
+
+        >
+            <PatientModal>
+                <ImageContent>
+                    <ImagemRecebida
+                        source={{ uri: image }}
+                    />
+                    <Button onPress={() => RetornarFoto(image)}>
+                        <ButtonTitle>Confirmar</ButtonTitle>
+                    </Button>
+                    {/* <TextRegular>{image}</TextRegular> */}
+                    <LinkCancel onPress={() => setShowModalImage(false)}>Voltar</LinkCancel>
+                </ImageContent>
+
             </PatientModal>
         </Modal>
     )

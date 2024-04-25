@@ -9,7 +9,7 @@ import { UserDecodeToken } from "../../utils/Auth";
 
 const BottomTab = createBottomTabNavigator();
 
-const Main = ({route}) => {
+const Main = ({navigation, route}) => {
     const ativado = route.params
 
     const [perfil, setPerfil] = useState("paciente")

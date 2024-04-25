@@ -5,7 +5,7 @@ import { ListaClinicas, ListaMedicos } from "../../components/FlatList";
 import { InputSelect } from "../../components/Input";
 import { ConfirmarConsultaModal } from "../../components/Modal";
 import { ContainerSelectPage, TitleSelecao } from "./style";
-import api from "../../services/service";
+import { api } from "../../services/service";
 import { ActivityIndicator } from "react-native";
 
 export const SelecionarClinica = ({navigation}) => {

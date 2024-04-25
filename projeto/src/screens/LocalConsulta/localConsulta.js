@@ -26,7 +26,7 @@ import {
 
 import { mapsKey } from "../../utils/MapsKey";
 import MapViewDirections from "react-native-maps-directions";
-import api from "../../services/service";
+import { api } from "../../services/service";
 import { LinkCancel } from "../../components/Link";
 
 export const LocalConsulta = ({ navigation, route }) => {

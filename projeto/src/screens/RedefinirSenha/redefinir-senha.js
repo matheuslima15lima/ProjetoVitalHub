@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BoxInput } from "../../components/Box/style";
 import { Button } from "../../components/Button/styled";
 import { ContainerCenter } from "../../components/Container/style";
@@ -6,65 +6,62 @@ import { Input } from "../../components/Input";
 import { LogoVitalHub } from "../../components/Logo";
 import { IconContainer, IconImage } from "../../components/NavigationIcons/style";
 import { ButtonTitle, TextRegular, TitleRedefinirSenha } from "../../components/Text/style";
-import api from "../../services/service";
+import { api } from "../../services/service";
 
+export const RedefinirSenha = ({ navigation, route }) => {
 
+    const [senha, setSenha] = useState("");
+    const [confirmarSenha, setConfirmarSenha] = useState("")
 
-export const RedefinirSenha = ({navigation, route}) => {
+    const [email, setEmail] = useState("")
 
-    const[senha, setSenha] = useState("");
-
-    const [confirmaSenha, setConfirmaSenha] = useState("");
-    
-    async function AlterarSenha(){
-        if(senha===confirmaSenha){
-            await api.put(`/Usuario/AlterarSenha?email=${route.params.emailRecuperacao}`,{
+    const AltererSenha = async () => {
+        if (senha === confirmarSenha) {
+            await api.put(`/Usuario/AlterarSenha?email=${email}`, {
                 senhaNova: senha
-            }).then(()=> {
+            }).then(() => {
                 navigation.replace("Login")
-            }).catch(error=>{
-                console.log(error);
+            }).catch(erro => {
+                console.log(erro);
             })
+        } else {
+            alert("As senhas digitadas não condizem")
         }
-    
-        else{
-            alert("Senhas incopartiveis")
-        }
-       
     }
-    
 
+    useEffect(() => {
+        setEmail(route.params.emailRecuperacao)
+    }, [route.params])
 
-return(
-
-
-    <ContainerCenter>
-        <IconContainer
-            onPress={() => navigation.replace("Login")}
-        >
-            <IconImage
-                source={require("../../assets/images/fechar_icon.png")}
-            />
-        </IconContainer>
-        <LogoVitalHub/>
-        <TitleRedefinirSenha>Redefinir senha</TitleRedefinirSenha>
-        <TextRegular>Insira e confirme a sua nova senha</TextRegular>
-        <BoxInput>
-          
-            <Input
-                placeholderText={"Nova senha"}
-                editable
-                fieldvalue= {senha}
-                onChangeText={(txt)=> setSenha(txt)}
-            />
-            <Input
-                placeholderText={"confirmar nova senha"}
-                editable
-                value= {confirmaSenha}
-                onChangeText={(txt)=> setConfirmaSenha(txt)}
-            />
-        </BoxInput>
-        <Button onPress={() => AlterarSenha()}>
-            <ButtonTitle>Confirmar nova senha</ButtonTitle>
-        </Button>
-    </ContainerCenter>)}
+    return (
+        <ContainerCenter>
+            <IconContainer
+                onPress={() => navigation.replace("Login")}
+            >
+                <IconImage
+                    source={require("../../assets/images/fechar_icon.png")}
+                />
+            </IconContainer>
+            <LogoVitalHub />
+            <TitleRedefinirSenha>Redefinir senha</TitleRedefinirSenha>
+            <TextRegular>Insira e confirme a sua nova senha</TextRegular>
+            <BoxInput>
+                <Input
+                    placeholderText={"Nova senha"}
+                    editable
+                    fieldvalue={senha}
+                    onChangeText={text => setSenha(text)}
+                />
+                <Input
+                    placeholderText={"confirmar nova senha"}
+                    editable
+                    fieldvalue={confirmarSenha}
+                    onChangeText={text => setConfirmarSenha(text)}
+                />
+            </BoxInput>
+            <Button onPress={() => AltererSenha()}>
+                <ButtonTitle>Confirmar nova senha</ButtonTitle>
+            </Button>
+        </ContainerCenter>
+    )
+}
