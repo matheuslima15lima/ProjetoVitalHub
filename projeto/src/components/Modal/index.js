@@ -1,5 +1,5 @@
-import { Modal, StyleSheet, View, TouchableOpacity } from "react-native"
-import { BoxInputConsulta, CameraContent, ConsultaModal, DadosConsultaBox, DadosConsultaText, DadosConsultaTitle, LinhaDadosConsulta, ModalConsultaForm, ModalContent, ModalSubtitle, ModalText, ModalTextRow, PatientModal, ResumoConsultaBox, LastPhoto, ImageContent, ImagemRecebida } from "./style"
+import { Modal, StyleSheet, Text, View } from "react-native"
+import { BoxInputConsulta, CameraContent, ConsultaModal, DadosConsultaBox, DadosConsultaText, DadosConsultaTitle, LinhaDadosConsulta, ModalConsultaForm, ModalContent, ModalSubtitle, ModalText, ModalTextRow, PatientModal, ResumoConsultaBox } from "./style"
 import { ButtonTitle, SemiBoldText, TextRegular, Title } from "../Text/style"
 import { Button, ButtonCamera, ButtonModal } from "../Button/styled"
 import { LinkCancel } from "../Link"
@@ -45,13 +45,11 @@ export const CancelattionModal = ({ visible, setShowModalCancel, ...rest }) => {
 }
 
 export const ApointmentModal = ({ visible, setShowModalApointment, informacoes, navigation, perfilUsuario, ...resto }) => {
+    
 
-    const AbrirPaginaProntuario = () => {
-        if(perfilUsuario === "Paciente"){
-            navigation.navigate("VisualizarPrescricao", {consultaId: informacoes.id})
-        }else{
-            navigation.navigate("PaginaDeProntuario")
-        }
+   
+    const HandlePress = (rota) => {
+        navigation.replace(rota, {clinicaId : informacoes.paciente.clinicaId})
     }
 
     const HandlePront = (rota) =>{
@@ -95,22 +93,10 @@ export const ApointmentModal = ({ visible, setShowModalApointment, informacoes, 
                                     
                                 {/* // ): */}
 
-                    <ModalTextRow>
-                        <ModalText>{informacoes.idade} anos</ModalText>
-                        <ModalText>{informacoes.email}</ModalText>
-                    </ModalTextRow>
-
-                    <ButtonModal onPress={() => {
-                        AbrirPaginaProntuario()
-                        setShowModalApointment(false)
-                    }}>
-                        <ButtonTitle onPress={() => {
-                            AbrirPaginaProntuario()
-                            setShowModalApointment(false)
-                        }}>Inserir Prontuário</ButtonTitle>
-                    </ButtonModal>
-
-                    <LinkCancel onPress={() => setShowModalApointment(false)}>Cancelar</LinkCancel>
+                             
+                              
+                       
+                  
                 </ModalContent>
             </PatientModal>
         </Modal>
