@@ -1,107 +1,113 @@
-import { useEffect, useState } from "react"
-import { ContainerApp } from "../../components/Container/style/"
-import { AgeUserText, ButtonTitle, EmailUserText, Title, UserNamePerfilText } from "../../components/Text/style"
-import { UserImagePerfil } from "../../components/UserImage/styled"
-import { UserContentBox } from "../../components/Box/style"
-import { ContainerProntuario } from "../../components/Container/style"
-import { ApointmentFormBox, ProntuarioBox, UserDataApointment } from "./style"
-import { BoxInputField } from "../../components/Box"
-import { Button } from "../../components/Button/styled"
-import { LinkCancel } from "../../components/Link"
-import { UserDecodeToken } from "../../utils/Auth"
-import api from "../../services/service"
-import { ActivityIndicator } from "react-native"
+import { useEffect, useState } from "react";
+import { ContainerApp } from "../../components/Container/style/";
+import {
+  AgeUserText,
+  ButtonTitle,
+  EmailUserText,
+  Title,
+  UserNamePerfilText,
+} from "../../components/Text/style";
+import { UserImagePerfil } from "../../components/UserImage/styled";
+import { UserContentBox } from "../../components/Box/style";
+import { ContainerProntuario } from "../../components/Container/style";
+import { ApointmentFormBox, ProntuarioBox, UserDataApointment } from "./style";
+import { BoxInputField } from "../../components/Box";
+import { Button } from "../../components/Button/styled";
+import { LinkCancel } from "../../components/Link";
+import { UserDecodeToken } from "../../utils/Auth";
+import api from "../../services/service";
+import { ActivityIndicator } from "react-native";
 
-export const PaginaDeProntuario = ({navigation, route}) => {
+export const PaginaDeProntuario = ({ navigation, route }) => {
+  const [editavel, setEditavel] = useState(false);
 
-    const [editavel, setEditavel] = useState(false)
+  const [nome, setNome] = useState("");
 
-    const [nome , setNome] = useState("")
+  const [email, setEmail] = useState("");
 
-    const [email, setEmail] = useState("")
+  const [consulta, setConsulta] = useState(null);
 
-    const [consulta, setConsulta] = useState(null)
+  const ProfileLoad = async () => {
+    const token = await UserDecodeToken();
 
-    const ProfileLoad = async ()=>{
-        const token = await UserDecodeToken()
+    if (token) {
+      setNome(token.nome);
+      setEmail(token.email);
+    }
+  };
 
-        if (token){
-            setNome(token.nome)
-            setEmail(token.email)
-            console.log(token);
-        }
+  // const [prontuario, setProntuario] = useState({
+  //     descricao:"",
+  //     diagnostico:"",
+
+  // })
+  // const EditProntuario = async ()=>{
+  //         const retronoApi = await api.put("/Consultas/Prontuario",{
+
+  //         })
+  // }
+
+  useEffect(() => {
+    setConsulta(route.params.consulta);
+
+    ProfileLoad();
+  }, []);
+
+  useEffect(() => {
+    if (route.params != undefined) {
+      ProntuarioInfo();
     }
 
-    // const [prontuario, setProntuario] = useState({
-    //     descricao:"",
-    //     diagnostico:"",
+    console.log("route");
+    console.log(route);
+  }, [route.params]);
 
-    // })
-    // const EditProntuario = async ()=>{
-    //         const retronoApi = await api.put("/Consultas/Prontuario",{
+  const ProntuarioInfo = async () => {
+    try {
+      console.log(`/Pacientes/BuscarPorId?id=${consulta.pacienteId}`);
+      console.log(consulta);
 
-    //         })
-    // }
-
-
-    const ProntuarioInfo = async ()=>{
-        try {
-            // const id = "8E942765-8128-4948-966B-45550C15962E"
-            const retornoGet = await api.get(`/Pacientes/BuscarPorId?id=${consulta.pacienteId}`)
-
-            console.log(retornoGet.data.idNavigation.nome);
-            setNome(retornoGet.data.idNavigation.nome)
-            setEmail(retornoGet.data.idNavigation.email);
-        } catch (error) {
-            console.log(error);
-        }
+      // const id = "8E942765-8128-4948-966B-45550C15962E"
+      const retornoGet = await api.get(
+        `/Pacientes/BuscarPorId?id=${route.params.pacienteId}`
+      );
+      console.log(retornoGet.data);
+      setNome(retornoGet.data.idNavigation.nome);
+      setEmail(retornoGet.data.idNavigation.email);
+    } catch (error) {
+      console.log(error);
     }
+  };
 
-    useEffect(()=>{
-        ProfileLoad()
-        .then(() => {
-            ProntuarioInfo()
-            .then(() => {
-                if (nome === "" || email === "") {
-                    ProntuarioInfo()
-                }
-            })
-        })
-        setConsulta(route.params.consulta)
-        // setNome(route.params.consulta.paciente.idNavigation.nome)
-        console.log(consulta);  
-    },[])
-
-
-
-    return consulta != null ? (
-        <ContainerProntuario>
-            <UserImagePerfil
-                source={require("../../assets/images/user1-image.png")}
-            />
-            <ProntuarioBox>
-                <UserNamePerfilText editavel={true}>{consulta.paciente.idNavigation.nome}</UserNamePerfilText>
-                <UserDataApointment>
-                    <AgeUserText>18 anos</AgeUserText>
-                    <EmailUserText editavel={true}>{consulta.paciente.idNavigation.email}</EmailUserText>
-                </UserDataApointment>
-                <ApointmentFormBox>
-                    <BoxInputField
-                        apointment
-                        fieldHeight="84"
-                        placeholderText={"Descrição"}
-                        labelText={"Descrição da consulta"}
-                        fieldValue={consulta.descricao}
-                        editable
-                    />
-                    <BoxInputField
-                        apointment
-                        placeholderText={"Diagnóstico"}
-                        labelText={"Diagnóstico do paciente"}
-                        fieldValue={consulta.diagnostico}
-                        editable
-                    />
-                    {/* <BoxInputField
+  return consulta != null ? (
+    <ContainerProntuario>
+      <UserImagePerfil
+        source={require("../../assets/images/user1-image.png")}
+      />
+      <ProntuarioBox>
+        <UserNamePerfilText editavel={true}>{nome}</UserNamePerfilText>
+        <UserDataApointment>
+          <AgeUserText>18 anos</AgeUserText>
+          {console.log(consulta)}
+          <EmailUserText editavel={true}>{email}</EmailUserText>
+        </UserDataApointment>
+        <ApointmentFormBox>
+          <BoxInputField
+            apointment
+            fieldHeight="84"
+            placeholderText={"Descrição"}
+            labelText={"Descrição da consulta"}
+            fieldValue={consulta.descricao}
+            editable
+          />
+          <BoxInputField
+            apointment
+            placeholderText={"Diagnóstico"}
+            labelText={"Diagnóstico do paciente"}
+            fieldValue={consulta.diagnostico}
+            editable
+          />
+          {/* <BoxInputField
                         apointment 
                         fieldHeight="84"
                         placeholderText={"Prescrição médica"}
@@ -109,21 +115,29 @@ export const PaginaDeProntuario = ({navigation, route}) => {
                         fieldValue={consulta.receita.medicamento}
                         editable
                     /> */}
-                </ApointmentFormBox>
-                {editavel ? 
-                <>
-                    <Button onPress={() => setEditavel(false)}>
-                        <ButtonTitle>Salvar Edições</ButtonTitle>
-                    </Button> 
-                </>
-                : <Button onPress={() => setEditavel(true)}>
-                    <ButtonTitle>Editar</ButtonTitle>
-                </Button>}
-                    
-            <LinkCancel onPress={ 
-                editavel ? () => setEditavel(false) : () => navigation.replace("Main")
-            }>Cancelar</LinkCancel>
-            </ProntuarioBox>
-        </ContainerProntuario>
-    ) : null
-}
+        </ApointmentFormBox>
+        {editavel ? (
+          <>
+            <Button onPress={() => setEditavel(false)}>
+              <ButtonTitle>Salvar Edições</ButtonTitle>
+            </Button>
+          </>
+        ) : (
+          <Button onPress={() => setEditavel(true)}>
+            <ButtonTitle>Editar</ButtonTitle>
+          </Button>
+        )}
+
+        <LinkCancel
+          onPress={
+            editavel
+              ? () => setEditavel(false)
+              : () => navigation.replace("Main")
+          }
+        >
+          Cancelar
+        </LinkCancel>
+      </ProntuarioBox>
+    </ContainerProntuario>
+  ) : null;
+};

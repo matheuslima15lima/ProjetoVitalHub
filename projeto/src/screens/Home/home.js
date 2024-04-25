@@ -170,7 +170,7 @@ export const HomePaciente = ({ navigation, route }) => {
   const [showModalApointment, setShowModalApointment] = useState(false);
 
   //state para guardar os dados da consulta e renderizar no modal
-  const [consultaSelecionada, setConsultaSelecionada] = useState(null);
+  const [consultaSelecionada, setConsultaSelecionada] = useState({});
 
   const ProfileLoad = async () => {
     const token = await UserDecodeToken();

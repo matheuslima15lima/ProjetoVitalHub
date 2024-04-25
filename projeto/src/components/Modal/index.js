@@ -43,7 +43,7 @@ export const CancelattionModal = ({ visible, setShowModalCancel, ...rest }) => {
     )
 }
 
-export const ApointmentModal = ({ visible, setShowModalApointment, informacoes=null, navigation, perfilUsuario, ...resto }) => {
+export const ApointmentModal = ({ visible, setShowModalApointment, informacoes, navigation, perfilUsuario, ...resto }) => {
     
 
    
