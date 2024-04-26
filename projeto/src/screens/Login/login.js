@@ -29,8 +29,8 @@ export const Login = ({ navigation }) => {
         setActivity(true)
         try {
             await api.post('/Login', {
-                email: "murilo.familia.sa@gmail.com",
-                senha: "murilo123"
+                email: "marcos@email.com",
+                senha: "marcos123"
             }).then( async (response) => {
                     await AsyncStorage.setItem("token", JSON.stringify(response.data))
                     

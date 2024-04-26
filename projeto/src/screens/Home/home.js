@@ -22,7 +22,7 @@ import moment from "moment";
 import { CardConsulta } from "../../components/Card";
 
 export const Home = ({ navigation }) => {
-  const [dataConsulta, setDataConsulta] = useState("");
+  const [dataConsulta, setDataConsulta] = useState(moment().format("YYYY-MM-DD"));
 
   const [listaDeConsultas, setListaDeConsultas] = useState([]);
 
@@ -49,9 +49,9 @@ export const Home = ({ navigation }) => {
     const token = await UserDecodeToken();
 
     if (token) {
-      setDataConsulta(moment().format("YYYY-MM-DD"));
       setIdUsuarioLogado(token.idUsuario);
       await LoadListaConsultas(token.idUsuario);
+      LoadListaConsultas(token.idUsuario)
     }
   };
 

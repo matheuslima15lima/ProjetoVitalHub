@@ -27,6 +27,8 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
 
   const [consulta, setConsulta] = useState(null);
 
+  const [medicamento, setMedicamento]= useState("");
+
   const ProfileLoad = async () => {
     const token = await UserDecodeToken();
 
@@ -36,19 +38,30 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
     }
   };
 
-  // const [prontuario, setProntuario] = useState({
-  //     descricao:"",
-  //     diagnostico:"",
-
-  // })
-  // const EditProntuario = async ()=>{
-  //         const retronoApi = await api.put("/Consultas/Prontuario",{
-
-  //         })
-  // }
+  // const [descricao, setDescricao] = useState({})
+  // const [diagnostico, setDiagnostico] = useState({})
+  const EditProntuario = async ()=>{
+    setEditavel(false)
+          try {
+            
+            const retornoApi = await api.put("/Consultas/Prontuario",{
+              consultaId: consulta.id,
+              descricao: consulta.descricao,
+              diagnostico:consulta.diagnostico,
+              medicamento:medicamento
+  
+            })
+          } catch (error) {
+            console.log(error);
+          }
+         
+  }
 
   useEffect(() => {
     setConsulta(route.params.consulta);
+    setMedicamento(route.params.consulta.receita.medicamento)
+    console.log('MEDICAMENTOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO');
+    console.log(medicamento);
 
     ProfileLoad();
   }, []);
@@ -60,7 +73,10 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
 
     console.log("route");
     console.log(route);
+    setEditavel(false);
   }, [route.params]);
+
+
 
   const ProntuarioInfo = async () => {
     try {
@@ -71,6 +87,7 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
       const retornoGet = await api.get(
         `/Pacientes/BuscarPorId?id=${route.params.pacienteId}`
       );
+      
       console.log(retornoGet.data);
       setNome(retornoGet.data.idNavigation.nome);
       setEmail(retornoGet.data.idNavigation.email);
@@ -78,6 +95,7 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
       console.log(error);
     }
   };
+
 
   return consulta != null ? (
     <ContainerProntuario>
@@ -98,6 +116,7 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
             placeholderText={"Descrição"}
             labelText={"Descrição da consulta"}
             fieldValue={consulta.descricao}
+            onChangeText={txt=>setConsulta({...consulta, descricao:txt})}
             editable
           />
           <BoxInputField
@@ -105,20 +124,22 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
             placeholderText={"Diagnóstico"}
             labelText={"Diagnóstico do paciente"}
             fieldValue={consulta.diagnostico}
+            onChangeText={txt=>setConsulta({...consulta, diagnostico:txt})}
             editable
           />
-          {/* <BoxInputField
+          <BoxInputField
                         apointment 
                         fieldHeight="84"
                         placeholderText={"Prescrição médica"}
                         labelText={"Prescrição médica"}
-                        fieldValue={consulta.receita.medicamento}
-                        editable
-                    /> */}
+                        
+                        fieldValue={medicamento}
+                        editable={false}
+                    />
         </ApointmentFormBox>
         {editavel ? (
           <>
-            <Button onPress={() => setEditavel(false)}>
+            <Button onPress={() => EditProntuario()}>
               <ButtonTitle>Salvar Edições</ButtonTitle>
             </Button>
           </>
