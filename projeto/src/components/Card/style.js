@@ -17,11 +17,12 @@ export const CardBox = styled.TouchableOpacity`
     background-color: white;
 `
 
+
 export const CardSelectBox = styled(CardBox)`
     padding: 20px;
     justify-content: space-between;
     elevation: 5;
-    ${props => props.firstItem && css`
+    ${props => props.selecionado && css`
         border: 2px solid #496BBA;
     `}
 `

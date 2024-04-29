@@ -62,8 +62,8 @@ export const Calendario = ({setDataConsulta}) => {
     )
 }
 
-export const CalendarioCompleto = () => {
-    const [selected, setSelected] = useState("");
+export const CalendarioCompleto = ({setDataSelecionada, dataSelecionada}) => {
+    const [selected, setSelected ] = useState("");
 
     const currentDate = new Date();
     const startingDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
@@ -87,6 +87,9 @@ export const CalendarioCompleto = () => {
     };
     LocaleConfig.defaultLocale = "pt-br";
   
+    useEffect(()=>{
+      console.log(dataSelecionada);
+    },[dataSelecionada])
     return (
       <Calendar
         style={{
@@ -95,10 +98,9 @@ export const CalendarioCompleto = () => {
           backgroundColor : '#FAFAFA',
           marginBottom: 50
         }}
-      
-        onDayPress={(day) => {
-          setSelected(day.dateString);
-        }}
+
+        onDayPress={(date)=> setDataSelecionada(date.dateString)}
+  
         markedDates={{
           [selected]: {
             selected: true,

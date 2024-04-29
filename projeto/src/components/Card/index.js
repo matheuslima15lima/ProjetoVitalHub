@@ -49,9 +49,18 @@ export const CardConsulta = ({ consulta, statusConsulta, onPressCancel, onPressA
     )
 }
 
-export const CardClinica = ({dados, firstItem}) => {
+//Card de Clinicas
+export const CardClinica = ({ dados, selecionarClinica = null, selecionada = false }) => {
     return (
-        <CardSelectBox firstItem={firstItem}>
+        <CardSelectBox
+            selecionado={selecionada}
+            onPress={() => {
+                selecionarClinica({
+                    id: dados.id,
+                    nomeFantasia: dados.nomeFantasia
+                })
+            }}
+        >
             <CardSelectContent>
                 <TitleSelectCard>{dados.nomeFantasia}</TitleSelectCard>
                 <CardSelectDescription>{dados.endereco.cidade}</CardSelectDescription>
@@ -59,7 +68,7 @@ export const CardClinica = ({dados, firstItem}) => {
             <CardSelectContentEnd>
                 <AvaliacaoClinicaBox>
                     <AntDesign name="star" size={20} color="#F9A620" />
-                    <NotaAvaliacao>4,7</NotaAvaliacao>
+                    <NotaAvaliacao>{GerarNotaClinica()}</NotaAvaliacao>
                 </AvaliacaoClinicaBox>
                 <HorarioClinicaBox>
                     <MaterialCommunityIcons name="calendar" size={14} color="#49B3BA" />
@@ -70,15 +79,23 @@ export const CardClinica = ({dados, firstItem}) => {
     )
 }
 
-export const CardMedico = ({dados, firstItem}) =>{
+//Card Medico
+export const CardMedico = ({ dados, selecionarMedico = null, selecionado = false }) => {
     return (
-    <CardBox firstItem={firstItem}>
-        <UserImageCart
-            source={require("../../assets/images/doctor_image_select.png")}
-        />
-        <CardSelectContent>
-            <TitleSelectCard>{dados.idNavigation.nome}</TitleSelectCard>
-            <CardSelectDescription>{dados.especialidade.especialidade1}</CardSelectDescription>
-        </CardSelectContent>
-    </CardBox>)
+        <CardBox
+            selecionado={selecionado}
+            onPress={() => 
+                selecionarMedico(dados.id)
+            }
+            
+        >
+            <UserImageCart
+                source={require("../../assets/images/doctor_image_select.png")}
+            />
+            <CardSelectContent>
+                <TitleSelectCard>{dados.idNavigation.nome}</TitleSelectCard>
+                <CardSelectDescription>{dados.especialidade.especialidade1}</CardSelectDescription>
+            </CardSelectContent>
+        </CardBox>
+    )
 }

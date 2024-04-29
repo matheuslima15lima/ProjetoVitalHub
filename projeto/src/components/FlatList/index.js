@@ -33,16 +33,28 @@ export const ListaConsultas = ({ dados, statusConsulta, permissaoUsuario, Mostra
     )
 }
 
-export const ListaClinicas = ({ dados }) =>
+export const ListaClinicas = ({ dados, selecionarClinica, clinicaSelecionada }) =>
     <FlatListStyle
         data={dados}
         keyExtractor={item => item.id}
-        renderItem={({ item, index }) => <CardClinica firstItem={index === 0 ? true : false} dados={item} />}
+        renderItem={({ item }) => 
+            <CardClinica 
+                selecionarClinica={selecionarClinica} 
+                selecionada={item.id === clinicaSelecionada.id ? true : false} 
+                dados={item} 
+            />
+        }
     />
-
-export const ListaMedicos = ({ dados }) =>
+// Lista de Medicos
+export const ListaMedicos = ({ dados, selecionarMedico, medicoSelecionado }) =>
     <FlatListStyle
         data={dados}
         keyExtractor={item => item.id}
-        renderItem={({ item, index }) => <CardMedico firstItem={index === 0 ? true : false} dados={item}  />}
+        renderItem={({ item }) => 
+            <CardMedico 
+                selecionarMedico={selecionarMedico} 
+                selecionado={item.id === medicoSelecionado ? true : false}
+                dados={item} 
+            />
+        }
     />
