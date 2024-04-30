@@ -15,10 +15,13 @@ import { BoxInputField } from "../../components/Box";
 import { Button } from "../../components/Button/styled";
 import { LinkCancel } from "../../components/Link";
 import { UserDecodeToken } from "../../utils/Auth";
-import api from "../../services/service";
 import { ActivityIndicator } from "react-native";
+import { api } from "../../services/service";
 
 export const PaginaDeProntuario = ({ navigation, route }) => {
+
+  const [frmEditData, setFrmEditData] = useState({})
+  // const [frmEdit, setFrmEdit] = useState(false)
   const [editavel, setEditavel] = useState(false);
 
   const [nome, setNome] = useState("");
@@ -38,23 +41,31 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
     }
   };
 
+
+
+    //Exibe os dados na tela com o formulário de edição
+    async function showUpdateForm(consulta) {
+      setFrmEditData(consulta);
+      // setFrmEdit(true);
+    }
+  
   // const [descricao, setDescricao] = useState({})
   // const [diagnostico, setDiagnostico] = useState({})
   const EditProntuario = async ()=>{
-    setEditavel(false)
           try {
             
-            const retornoApi = await api.put("/Consultas/Prontuario",{
-              consultaId: consulta.id,
-              descricao: consulta.descricao,
-              diagnostico:consulta.diagnostico,
-              medicamento:medicamento
-  
+            await api.put("/Consultas/Prontuario", {
+              consultaId: route.params.consulta.id,
+              descricao: frmEditData.descricao,
+              diagnostico:frmEditData.diagnostico,
+              medicamento: route.params.consulta.receita.medicamento
             })
+
+        
           } catch (error) {
             console.log(error);
           }
-         
+          setEditavel(false)
   }
 
   useEffect(() => {
@@ -67,6 +78,7 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
   }, []);
 
   useEffect(() => {
+    setFrmEditData(route.params.consulta)
     if (route.params != undefined) {
       ProntuarioInfo();
     }
@@ -106,7 +118,7 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
         <UserNamePerfilText editavel={true}>{nome}</UserNamePerfilText>
         <UserDataApointment>
           <AgeUserText>18 anos</AgeUserText>
-          {console.log(consulta)}
+          {console.log(frmEditData)}
           <EmailUserText editavel={true}>{email}</EmailUserText>
         </UserDataApointment>
         <ApointmentFormBox>
@@ -115,17 +127,17 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
             fieldHeight="84"
             placeholderText={"Descrição"}
             labelText={"Descrição da consulta"}
-            fieldValue={consulta.descricao}
-            onChangeText={txt=>setConsulta({...consulta, descricao:txt})}
-            editable
+            fieldValue={frmEditData.descricao}
+            onChangeText={txt=>setFrmEditData({...frmEditData, descricao:txt})}
+            editable={editavel}
           />
           <BoxInputField
             apointment
             placeholderText={"Diagnóstico"}
             labelText={"Diagnóstico do paciente"}
-            fieldValue={consulta.diagnostico}
-            onChangeText={txt=>setConsulta({...consulta, diagnostico:txt})}
-            editable
+            fieldValue={frmEditData.diagnostico}
+            onChangeText={txt=>setFrmEditData({...frmEditData, diagnostico:txt})}
+            editable={editavel}
           />
           <BoxInputField
                         apointment 

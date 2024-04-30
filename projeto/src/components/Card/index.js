@@ -56,7 +56,7 @@ export const CardClinica = ({ dados, selecionarClinica = null, selecionada = fal
             selecionado={selecionada}
             onPress={() => {
                 selecionarClinica({
-                    id: dados.id,
+                    clinicaId: dados.id,
                     nomeFantasia: dados.nomeFantasia
                 })
             }}
@@ -68,7 +68,7 @@ export const CardClinica = ({ dados, selecionarClinica = null, selecionada = fal
             <CardSelectContentEnd>
                 <AvaliacaoClinicaBox>
                     <AntDesign name="star" size={20} color="#F9A620" />
-                    <NotaAvaliacao>{GerarNotaClinica()}</NotaAvaliacao>
+                    <NotaAvaliacao>4.5</NotaAvaliacao>
                 </AvaliacaoClinicaBox>
                 <HorarioClinicaBox>
                     <MaterialCommunityIcons name="calendar" size={14} color="#49B3BA" />
@@ -85,7 +85,11 @@ export const CardMedico = ({ dados, selecionarMedico = null, selecionado = false
         <CardBox
             selecionado={selecionado}
             onPress={() => 
-                selecionarMedico(dados.id)
+                selecionarMedico({
+                    medicoId: dados.id,
+                    medicoEspecialidade: dados.especialidade.especialidade1,
+                    medicoNome: dados.idNavigation.nome
+                })
             }
             
         >

@@ -9,7 +9,7 @@ import { api } from "../../services/service";
 import { ActivityIndicator } from "react-native";
 
 export const SelecionarClinica = ({ navigation, route }) => {
-  const [clinicaSelecionada, setClinicaSelecionada] = useState(null);
+  const [clinicaSelecionada, setClinicaSelecionada] = useState({});
   function handleContinue() {
     navigation.replace("Selecionar Medico", {
       agendamento: {
@@ -54,7 +54,7 @@ export const SelecionarClinica = ({ navigation, route }) => {
   const loadClinicasList = async () => {
     try {
       const retornoApi = await api.get(
-        `/Clinica/BuscarPorCidade?=${route.params.agendamento.localizacao}`
+        `/Clinica/BuscarPorCidade?cidade=${route.params.agendamento.localizacao}`
       );
       console.log(retornoApi.data);
       setListaClinicas(retornoApi.data);
@@ -154,7 +154,7 @@ export const SelecionarMedico = ({ navigation, route }) => {
   //         foto: "../../assets/images/doctor_image_select.png"
   //     }
   // ]
-  const [medicoSelecionado, setMedicoSelecionado] = useState("");
+  const [medicoSelecionado, setMedicoSelecionado] = useState({});
   return listaDeMedicos == null ? (
     <ActivityIndicator />
   ) : (

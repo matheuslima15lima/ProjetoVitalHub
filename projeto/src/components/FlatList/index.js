@@ -40,7 +40,7 @@ export const ListaClinicas = ({ dados, selecionarClinica, clinicaSelecionada }) 
         renderItem={({ item }) => 
             <CardClinica 
                 selecionarClinica={selecionarClinica} 
-                selecionada={item.id === clinicaSelecionada.id ? true : false} 
+                selecionada={item.id === clinicaSelecionada.clinicaId ? true : false} 
                 dados={item} 
             />
         }
@@ -53,7 +53,7 @@ export const ListaMedicos = ({ dados, selecionarMedico, medicoSelecionado }) =>
         renderItem={({ item }) => 
             <CardMedico 
                 selecionarMedico={selecionarMedico} 
-                selecionado={item.id === medicoSelecionado ? true : false}
+                selecionado={item.id === medicoSelecionado.medicoId ? true : false}
                 dados={item} 
             />
         }

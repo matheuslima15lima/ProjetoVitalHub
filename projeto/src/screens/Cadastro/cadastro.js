@@ -26,6 +26,8 @@ export const Cadastro = ({ navigation }) => {
 
   const CriarConta = async () => {
     if(senhaConfirma != conta.senha){
+
+      // const form = new FormData();
       alert("Senhas não são iguais")
       return null
     }else{
