@@ -25,21 +25,31 @@ export const Cadastro = ({ navigation }) => {
   const [senhaConfirma, setSenhaConfirma] = useState("")
 
   const CriarConta = async () => {
-    if(senhaConfirma != conta.senha){
+    if(senhaConfirma === conta.senha){
 
-      // const form = new FormData();
-      alert("Senhas não são iguais")
-      return null
+      const form = new FormData();
+      form.append("nome", `${conta.nome}`)
+      form.append("email", `${conta.email}`);
+      form.append("senha", `${conta.senha}`);
+      form.append("idTipoUsuario", `42EAB83A-A42C-4C0D-AE47-2C7D47468164`)
+
+      const response = await api.post("/Pacientes", form, {
+            headers:{
+              "Content-Type":"multipart/form-data"
+            }
+
+      });
+        console.log(response);
+        if(response.data.sucess){
+          console.log("cadastrado com sucesso!!!");
+        }
+      navigation.replace("Login")
+    
+      // return null
     }else{
     try {
-      await api.post("/Pacientes", {
-        nome: conta.nome,
-        email: conta.email,
-        senha: conta.senha,
-        idTipoUsuario:"42EAB83A-A42C-4C0D-AE47-2C7D47468164"
-      });
-
-      navigation.replace("Login")
+        alert("Senhas não são iguais")
+   
       
       // if (retornoApi.status == 201) {
       //   alert("usuário criado");
