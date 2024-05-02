@@ -1,13 +1,13 @@
 import { BoxInput } from "../../components/Box/style";
 import { Button } from "../../components/Button/styled";
-import { ContainerCenter } from "../../components/Container/style";
+import { ContainerProfile } from "../../components/Container/style";
 import { Input } from "../../components/Input";
 import { LogoVitalHub } from "../../components/Logo";
 import { IconContainer, IconImage } from "../../components/NavigationIcons/style";
 import { ButtonTitle, TextRegular, TitleRedefinirSenha } from "../../components/Text/style";
 
 export const ReceberEmail = ({ navigation }) =>
-    <ContainerCenter>
+    <ContainerProfile>
         <IconContainer
             onPress={() => navigation.replace("Login")}
         >
@@ -27,4 +27,4 @@ export const ReceberEmail = ({ navigation }) =>
         <Button onPress={() => navigation.navigate("VerificarEmail")}>
             <ButtonTitle>Confirmar</ButtonTitle>
         </Button>
-    </ContainerCenter>
+    </ContainerProfile>

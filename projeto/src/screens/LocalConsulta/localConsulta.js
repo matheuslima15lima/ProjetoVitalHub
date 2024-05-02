@@ -26,19 +26,21 @@ import {
 
 import { mapsKey } from "../../utils/MapsKey";
 import MapViewDirections from "react-native-maps-directions";
-import api from "../../services/service";
+import { api } from "../../services/service";
 import { LinkCancel } from "../../components/Link";
+import { LoadingIndicator } from "../../components/LoadingIndicator";
 
 export const LocalConsulta = ({ navigation, route }) => {
   const [dataClinic, setDataClinic] = useState(null);
   const [numero, setNumero] = useState({});
   const [cidade, setCidade] = useState({});
   const [logradouro, setLogradouro] = useState({});
+  const [coordsClinica, setCoordsClinica] = useState({})
   const [latitude, setLatitude] = useState({});
   const [longitude, setLongitude] = useState({});
   const [finalPosition, setFinalPosition] = useState({
-    latitude: -23.5068153,
-    longitude: -46.5159653,
+    latitude: coordsClinica.latitude,
+    longitude: coordsClinica.longitude,
   });
   const mapReference = useRef(null);
 
@@ -53,8 +55,6 @@ export const LocalConsulta = ({ navigation, route }) => {
       const retornoGet = await api.get(
         `/Clinica/BuscarPorId?id=${route.params.clinicaId}`
       );
-
-      console.log("AQUIIIIIIII");
       setNumero(retornoGet.data.endereco.numero);
       setCidade(retornoGet.data.endereco.cidade);
       setLogradouro(retornoGet.data.endereco.logradouro);
@@ -62,7 +62,12 @@ export const LocalConsulta = ({ navigation, route }) => {
       setLongitude(retornoGet.data.endereco.longitude)
       setDataClinic(retornoGet.data);
 
-      console.log(retornoGet.data);
+      //define as coordenadas da clínica
+      setCoordsClinica({
+        latitude: retornoGet.data.endereco.latitude,
+        longitude: retornoGet.data.endereco.longitude
+      })
+      setFinalPosition(coordsClinica)
     } catch (error) {
       console.log(error);
     }
@@ -103,13 +108,27 @@ export const LocalConsulta = ({ navigation, route }) => {
 
   useEffect(() => {
     CapturarLocalizacao();
-  }, []);
+
+    //capturar localmente
+    watchPositionAsync({
+        accuracy: LocationAccuracy.High,
+        timeInterval: 1000,
+        distanceInterval: 1
+      }, async response => {
+        await setInitialPosition(response)
+      })
+
+  }, [1000]);
 
   useEffect(() => {
     if (dataClinic == null) {
       ClinicaInfo();
     }
   }, [dataClinic]);
+
+  useEffect(() => {
+    RecarregarVisualizacaoMapa()
+  }, [initialPosition])
 
   return (
     <ContainerLocalConsulta>
@@ -177,11 +196,7 @@ export const LocalConsulta = ({ navigation, route }) => {
                 {console.log(initialPosition)}
               </>
             ) : (
-              <>
-                <Text>Carregando...</Text>
-
-                <ActivityIndicator />
-              </>
+              <LoadingIndicator/>
             )}
           </View>
 

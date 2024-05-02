@@ -3,48 +3,96 @@ import { AntDesign } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { UserImageCart } from "../UserImage/styled";
 import { useEffect, useState } from "react";
-import { UserDecodeToken } from "../../utils/Auth";
+import { GerarNotaClinica } from "../../utils/funcoesUteis";
+import { LoadProfile } from "../../utils/Auth";
+import moment from "moment";
 
-export const CardConsulta = ({ consulta, statusConsulta, onPressCancel, onPressApointment, loadInfoConsulta, permissaoUsuario, dadosUsuario, dataConsulta, prioridade, onPressCard = null }) => {
+export const CardConsulta = ({ consulta, navigation, statusConsulta, onPressCancel, onPressApointment, loadInfoConsulta, onPressConsulta, imageSource }) => {
+    const [idadePaciente, setIdadePaciente] = useState(null)
+    const [prioridadeConsulta, setPrioridadeConsulta] = useState("")
 
-    const abrirModalProntuario = () => {
-        onPressApointment();
-        loadInfoConsulta(consulta);
+    const [perfil, setPerfil] = useState("")
+
+    const AbrirModal = modal => {
+        loadInfoConsulta(consulta)
+
+        switch (modal) {
+            case "localConsulta":
+                onPressConsulta()
+                break;
+        
+            case "prontuario":
+                onPressApointment()
+                break;
+
+            case "cancelar":
+                onPressCancel()
+                break;
+            
+            default:
+                alert("Erro ao abrir o modal");
+        }
     }
 
+    useEffect(() => {
+        LoadProfile()
+        .then(token => {
+            if(token){
+                setPerfil(token.perfil)
+                if(token.perfil === "Medico"){
+                    setIdadePaciente(moment.duration(moment().diff(moment(consulta.paciente.dataNascimento))).asYears());
+                }
+            }
+        })
 
-    // const ProfileLoad = async ()=>{
-    //     const token = await UserDecodeToken()
 
-    //     if (token){
-    //         setNome(token.nome)
-    //         setEmail(token.email)
-    //         console.log(token);
-    //     }
-    // }
+        switch (consulta.prioridade.prioridade) {
+            case 1:
+                setPrioridadeConsulta("Rotina")
+                break;
+        
+            case 2:
+                setPrioridadeConsulta("Exame")
+                break;
+
+            case 3:
+                setPrioridadeConsulta("Urgência")
+                break;
+
+            default:
+                setPrioridadeConsulta("Erro ao carregar prioridade de exame")
+                break;
+        }
+
+    }, [])
+
     return (
-        <CardBox onPress={onPressCard}>
+        <CardBox onPress={() => AbrirModal("localConsulta")}>
             <UserImageCart
-                source={require(`../../assets/images/nicolle_image.png`)}
+                source={{uri: imageSource}}
             />
             <CardContent>
                 <DataCard>
                     <TitleCard>
-                        {dadosUsuario.idNavigation.nome}
+                        {perfil === "Paciente" ? consulta.medicoClinica.medico.idNavigation.nome 
+                            : consulta.paciente.idNavigation.nome }
                     </TitleCard>
                     <ProfileData>
-                        <TextAge>{permissaoUsuario == "Paciente" ? `CRM ${dadosUsuario.crm}` : "22 anos"}</TextAge>
-                        <TextTipoConsulta>{consulta.nivel}</TextTipoConsulta>
+                    {perfil === "Paciente" ?
+                        <TextAge>{consulta.medicoClinica.medico.crm}</TextAge> : 
+                        <TextAge>{idadePaciente} anos</TextAge>
+                    }
+                        <TextTipoConsulta>{prioridadeConsulta}</TextTipoConsulta>
                     </ProfileData>
                 </DataCard>
                 <ViewRow>
                     <HorarioBox statusConsulta={statusConsulta}>
                         <AntDesign name="clockcircle" size={14} color={statusConsulta == "Agendada" ? "#49B3BA" : "#4E4B59"} />
-                        <HorarioText statusConsulta={statusConsulta}>14:00</HorarioText>
+                        <HorarioText statusConsulta={statusConsulta}>{consulta.horario}</HorarioText>
                     </HorarioBox>
                     <CardTextCancelApointment
                         statusConsulta={statusConsulta}
-                        onPress={statusConsulta == "Agendada" ? (onPressCancel) : (abrirModalProntuario)}
+                        onPress={statusConsulta == "Agendada" ? (() => AbrirModal("cancelar")) : (() => AbrirModal("prontuario"))}
                     >
                         {statusConsulta == "Agendada" ? "Cancelar" : (statusConsulta == "Realizada" ? "Ver Prontuário" : null)}
                     </CardTextCancelApointment>
@@ -54,9 +102,17 @@ export const CardConsulta = ({ consulta, statusConsulta, onPressCancel, onPressA
     )
 }
 
-export const CardClinica = ({dados, firstItem}) => {
+export const CardClinica = ({ dados, selecionarClinica = null, selecionada = false }) => {
     return (
-        <CardSelectBox firstItem={firstItem}>
+        <CardSelectBox
+            selecionado={selecionada}
+            onPress={() => {
+                selecionarClinica({
+                    clinicaId: dados.id,
+                    nomeFantasia: dados.nomeFantasia
+                })
+            }}
+        >
             <CardSelectContent>
                 <TitleSelectCard>{dados.nomeFantasia}</TitleSelectCard>
                 <CardSelectDescription>{dados.endereco.cidade}</CardSelectDescription>
@@ -64,7 +120,7 @@ export const CardClinica = ({dados, firstItem}) => {
             <CardSelectContentEnd>
                 <AvaliacaoClinicaBox>
                     <AntDesign name="star" size={20} color="#F9A620" />
-                    <NotaAvaliacao>4,7</NotaAvaliacao>
+                    <NotaAvaliacao>{GerarNotaClinica()}</NotaAvaliacao>
                 </AvaliacaoClinicaBox>
                 <HorarioClinicaBox>
                     <MaterialCommunityIcons name="calendar" size={14} color="#49B3BA" />
@@ -75,15 +131,27 @@ export const CardClinica = ({dados, firstItem}) => {
     )
 }
 
-export const CardMedico = ({dados, firstItem}) =>{
+export const CardMedico = ({ dados, selecionarMedico = null, selecionado = false }) => {
     return (
-    <CardBox firstItem={firstItem}>
-        <UserImageCart
-            source={require("../../assets/images/doctor_image_select.png")}
-        />
-        <CardSelectContent>
-            <TitleSelectCard>{dados.idNavigation.nome}</TitleSelectCard>
-            <CardSelectDescription>{dados.especialidade.especialidade1}</CardSelectDescription>
-        </CardSelectContent>
-    </CardBox>)
+        <CardBox
+            selecionado={selecionado}
+            onPress={() => 
+                selecionarMedico({
+                    medicoId: dados.idNavigation.id,
+                    medicoClinicaId: dados.id,
+                    medicoNome: dados.idNavigation.nome,
+                    medicoEspecialidade: dados.especialidade.especialidade1
+                })
+            }
+            
+        >
+            <UserImageCart
+                source={require("../../assets/images/doctor_image_select.png")}
+            />
+            <CardSelectContent>
+                <TitleSelectCard>{dados.idNavigation.nome}</TitleSelectCard>
+                <CardSelectDescription>{dados.especialidade.especialidade1}</CardSelectDescription>
+            </CardSelectContent>
+        </CardBox>
+    )
 }

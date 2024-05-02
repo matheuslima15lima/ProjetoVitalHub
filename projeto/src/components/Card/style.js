@@ -5,9 +5,11 @@ import { LinkSemiBoldCancel } from "../Link/style";
 export const CardBox = styled.TouchableOpacity`
     padding: 10px;
     flex-direction: row;
-    ${props => props.firstItem && css`
+
+    ${props => props.selecionado && css`
         border: 2px solid #496BBA;
     `}
+
     elevation: 5;
     gap: 10px;
     align-items: center;    
@@ -21,7 +23,7 @@ export const CardSelectBox = styled(CardBox)`
     padding: 20px;
     justify-content: space-between;
     elevation: 5;
-    ${props => props.firstItem && css`
+    ${props => props.selecionado && css`
         border: 2px solid #496BBA;
     `}
 `

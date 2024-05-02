@@ -1,31 +1,34 @@
 import { ApointmentInputField, InputField, InputVirifyEmail, PerfilInputField } from "./style";
 
 import RNPickerSelect from "react-native-picker-select";
-import { StyleSheet, View } from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons'
+import { useEffect, useState } from "react";
+import moment from "moment";
 
 export const Input = ({
-    placeholderText, keyType = "default", onChangeText = null, maxLength, fieldvalue = null, verifyEmail = false, inputPerfil = false, editable = false, fieldHeight = "16", apointment = false, center = false, secure = false, inputError = false, autoFocus = false, fieldWidth = 100
+    placeholderText, keyType = "default", onChangeText = null, maxLength, fieldvalue = null, verifyEmail = false, inputPerfil = false, editable = false, fieldHeight = "16", apointment = false, center = false, multiline = true, secure = false
 }) => {
     if (verifyEmail) {
         return (
             <InputVirifyEmail
+                secureTextEntry={secure}
+                multiline={multiline}
                 placeholder={placeholderText}
                 keyboardType={keyType}
                 onChangeText={onChangeText}
                 maxLength={maxLength}
                 value={fieldvalue}
                 editable={editable}
-                secureTextEntry={secure}
-                fieldWidth={fieldWidth}
-
             />
         )
     } else if (inputPerfil) {
         return (
             <PerfilInputField
+                secureTextEntry={secure}
+                multiline={multiline}
                 placeholder={placeholderText}
                 keyboardType={keyType}
                 onChangeText={onChangeText}
@@ -33,13 +36,13 @@ export const Input = ({
                 value={fieldvalue}
                 editable={editable}
                 fieldHeight={fieldHeight}
-                secureTextEntry={secure}
-                fieldWidth={fieldWidth}
             />
         )
     } else if (apointment) {
         return (
             <ApointmentInputField
+                secureTextEntry={secure}
+                multiline={multiline}
                 placeholder={placeholderText}
                 keyboardType={keyType}
                 onChangeText={onChangeText}
@@ -48,13 +51,13 @@ export const Input = ({
                 editable={editable}
                 fieldHeight={fieldHeight}
                 center={center}
-                secureTextEntry={secure}
-                fieldWidth={fieldWidth}
             />
         )
     } else {
         return (
             <InputField
+                secureTextEntry={secure}
+                multiline={multiline}
                 placeholder={placeholderText}
                 keyboardType={keyType}
                 onChangeText={onChangeText}
@@ -62,39 +65,58 @@ export const Input = ({
                 value={fieldvalue}
                 editable={editable}
                 center={center}
-                secureTextEntry={secure}
-                inputError={inputError}
-                autoFocus={autoFocus}
-                fieldWidth={fieldWidth}
             />
         )
     }
 
 }
 
-export const InputSelect = () => {
+export const InputSelect = ({ selecionarHora }) => {
+    const dataAtual = moment().format("YYYY-MM-DD")
+    const [arrayOptions, setArrayOptions] = useState(null)
+
+    const LoadOptions = async () => {
+        // Capturar a quantidade que faltam para 24hrs
+        const horasRestantes = moment(dataAtual).add(24, 'hours').diff(moment(), "hours");
+        console.log(horasRestantes);
+
+        // Criar um laço que rode a quantidade de horas
+        const options = Array.from({ length: horasRestantes }, (_, index) => {
+
+            // pra cada hora será uma nova option
+
+            let valor = new Date().getHours() + (index + 1)
+
+            return {
+                label: `${valor}:00`, value: `${valor}:00`
+            }
+        })
+
+        setArrayOptions(options);
+
+    }
+
+    useEffect(() => {
+        LoadOptions()
+    }, [])
+
     return (
         <View style={{ width: 316, borderWidth: 2, marginBottom: 75, borderStyle: "solid", borderColor: "#34898F", borderRadius: 5 }}>
-            <RNPickerSelect
-                style={style}
-                Icon={() => {
-                    return <FontAwesomeIcon style={{marginLeft: "1%"}} icon={faCaretDown} color='#34898F' size={22} />
-                }}
-                placeholder={{
-                    label: 'Selecione um valor',
-                    value: null,
-                    color: '#34898F'
-                }}
-                onValueChange={(value) => console.log(value)}
-                items={[
-                    { label: "JavaScript", value: "JavaScript" },
-                    { label: "TypeScript", value: "TypeScript" },
-                    { label: "Python", value: "Python" },
-                    { label: "Java", value: "Java" },
-                    { label: "C++", value: "C++" },
-                    { label: "C", value: "C" },
-                ]}
-            />
+            {arrayOptions ?
+                <RNPickerSelect
+                    style={style}
+                    Icon={() => {
+                        return <FontAwesomeIcon style={{ marginLeft: "1%" }} icon={faCaretDown} color='#34898F' size={22} />
+                    }}
+                    placeholder={{
+                        label: 'Selecione um valor',
+                        value: null,
+                        color: '#34898F'
+                    }}
+                    onValueChange={(value) => selecionarHora(value)}
+                    items={arrayOptions}
+                />
+                : <ActivityIndicator/>}
         </View>
     )
 }

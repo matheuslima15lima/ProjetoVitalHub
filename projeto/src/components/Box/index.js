@@ -35,13 +35,15 @@ export const ButtonContinuarBox = ({manipulationFunction = null, openModalFuncti
         <LinkCancel onPress={functionCancel}>Cancelar</LinkCancel>
     </>
 
-export const BoxInputSelect = ({labelText}) => {
+export const BoxInputSelect = ({labelText, selecionarHora}) => {
     return(
         <InputContentBox
             fieldWidth={"90"}
         >
             <InputLabel>{labelText}</InputLabel>
-            <InputSelect/>
+            <InputSelect
+                selecionarHora={selecionarHora}
+            />
         </InputContentBox>
     )
 }

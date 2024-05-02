@@ -1,18 +1,11 @@
-import axios from "axios"
+import axios from "axios";
 
-//Declarar a porta da API
+const ip = "192.168.21.92";
+
 const portaApi = "4466";
-
-//Declarar o IP da máquina
-const ip = "192.168.19.134";
-
-//Definir a URL padrão da api
 
 const apiUrlLocal = `http://${ip}:${portaApi}/api`;
 
-const api = axios.create({
-    //passa um objeto com a baseURL como chave e a Url da api como valor
+export const api = axios.create({
     baseURL: apiUrlLocal
-});
-
-export default api;
+})

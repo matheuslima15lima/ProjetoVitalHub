@@ -4,107 +4,65 @@ import { BoxButton, BoxInput, ContentAccount } from "../../components/Box/style"
 import { Input } from "../../components/Input";
 import { LinkAccount, LinkRedefinirSenha } from "../../components/Link";
 import { AntDesign } from '@expo/vector-icons';
-import { ContainerApp, ContainerCenter } from "../../components/Container/style";
+import { ContainerProfile } from "../../components/Container/style";
 import { Button, ButtonGoogle } from "../../components/Button/styled";
 import { LinkSemiBold } from "../../components/Link/style";
-import { useEffect, useState } from "react";
-import api from "../../services/service";
-
-import AsyncStorage from "@react-native-async-storage/async-storage"
-import { ErrorModal } from "../../components/Modal";
-import { ActivityIndicator } from "react-native";
-import { LoadIcon } from "./style";
+import { useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { api } from "../../services/service";
 
 export const Login = ({ navigation }) => {
-    const [email, setEmail] = useState("carlos@email.com")
-    const [senha, setSenha] = useState("carlos123")
-
-    const [showModalError, setShowModalError]= useState(false)
-
-    const [activity, setActivity] = useState(false)
-
-    const [inputError, setInputError] = useState(false);
+    const [dadosLogin, setDadosLogin] = useState({
+        email: "",
+        senha: ""
+    });
 
     const Login = async () => {
-        setActivity(true)
-        try {
-            await api.post('/Login', {
-                email: email,
-                senha: senha
-            }).then( async (response) => {
-                    await AsyncStorage.setItem("token", JSON.stringify(response.data))
-                    
-                    setInputError(false);
-                    navigation.replace("Main")
-                }
-            )
-        } catch (error) {
-            console.log(error)
-
-            setInputError(true);
-            setShowModalError(true);
-        } 
-        setActivity(false)
+        await api.post("/Login", {
+            email: "murilo.familia.sa@gmail.com",
+            senha: "murilo123"
+        }).then(async response => {
+            await AsyncStorage.setItem("token", JSON.stringify(response.data))
+            navigation.replace("Main")
+        }).catch(error => {
+            alert(error)
+        })
     }
-
-    const redefinirStates = () => {
-        setEmail("")
-        setSenha("")
-        setInputError(false)
-        setShowModalError(false)
-    }
-
-    useEffect(()=>{
-        redefinirStates()
-    },[])
 
     return (
-        <ContainerCenter>
+        <ContainerProfile>
             <LogoVitalHub />
             <TitleLogin>Entrar ou criar conta</TitleLogin>
-             <BoxInput>
+            <BoxInput>
                 <Input
                     placeholderText={"Usuário ou email"}
-                    onChangeText={(text) => setEmail(text)}
-                    value={email}
+                    fieldvalue={dadosLogin.email}
+                    onChangeText={(text) => setDadosLogin({...dadosLogin, email: text})}
                     editable
-                    inputError={inputError}
-                    autoFocus={inputError}
                 />
                 <Input
                     placeholderText={"Senha"}
-                    onChangeText={(txt) => setSenha(txt)}
-                    value={senha}
-                    editable
+                    fieldvalue={dadosLogin.senha}
+                    multiline={false}
                     secure={true}
-                    inputError={inputError}
-                    autoFocus={false}
-                /> 
+                    onChangeText={(text) => setDadosLogin({...dadosLogin, senha: text})}
+                    editable
+                />
                 <LinkRedefinirSenha onPress={() => navigation.navigate("ReceberEmail")}>Esqueceu sua senha?</LinkRedefinirSenha>
             </BoxInput>
             <BoxButton>
                 <Button onPress={() => Login()}>
                     <ButtonTitle>Entrar</ButtonTitle>
-                    <LoadIcon
-                        animating={activity}
-                        color={"#FFFFFF"}
-                        size={"small"}
-                    />
                 </Button>
-                <ButtonGoogle onPress={() => navigation.navigate("LocalConsulta")}>
+                <ButtonGoogle onPress={() => Login()}>
                     <AntDesign name="google" size={20} color={"#496BBA"} />
                     <ButtonTitleLight>Entrar com Google</ButtonTitleLight>
                 </ButtonGoogle>
-            </BoxButton> 
+            </BoxButton>
             <ContentAccount>
                 <TextAccount>Não tem conta?</TextAccount>
                 <LinkSemiBold onPress={() => navigation.replace("Cadastro")} > Crie sua conta aqui</LinkSemiBold>
             </ContentAccount>
-
-            <ErrorModal
-                visible={showModalError}
-                setShowModalError={setShowModalError}
-            />
-        </ContainerCenter>
+        </ContainerProfile>
     )
 }

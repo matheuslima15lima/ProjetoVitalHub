@@ -9,10 +9,9 @@ export const ClinicaImage = styled.Image`
 
 export const ContainerLocalConsulta = styled(ContainerPerfilPage)``
 
-export const ClinicaContentBox = styled(UserContentBox)`
+export const ClinicaContentBox = styled.View`
     width: 100%;
     align-items: center;
     justify-content: center;
-    margin-right: 0;
-    margin-left: 0;
+    margin: 30px 0 20px;
 `

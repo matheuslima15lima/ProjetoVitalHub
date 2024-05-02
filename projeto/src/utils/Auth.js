@@ -1,7 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
-
-//funções para decofidicar e recodificar o token
 import { encode, decode } from "base-64";
 
 if(!global.atob){
@@ -38,4 +36,14 @@ export const UserLogout = async (navigation) => {
     .then(() => {
         navigation.replace("Login")
     })
+}
+
+export const LoadProfile = async () => {
+    const token = await UserDecodeToken();
+
+    if(!token){
+        return null;    
+    }
+
+    return token
 }
