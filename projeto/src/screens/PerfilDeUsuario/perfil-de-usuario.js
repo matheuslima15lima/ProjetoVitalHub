@@ -1,9 +1,9 @@
 import { ButtonTitle, EmailUserText, SemiBoldText, TextRegular, Title, UserNamePerfilText } from "../../components/Text/style";
-import { ContainerApp, ContainerForm, ContainerPerfilPage, LoadingContainer } from "../../components/Container/style";
+import { ContainerApp, ContainerForm, ContainerImagePerfil, ContainerPerfilPage, LoadingContainer } from "../../components/Container/style";
 import { UserImagePerfil } from "../../components/UserImage/styled";
 import { BoxInputRow, UserContentBox } from "../../components/Box/style";
 import { BoxInputField } from "../../components/Box";
-import { Button, ButtonCamera } from "../../components/Button/styled";
+import { Button, ButtonCamera, ButtonEditPhoto } from "../../components/Button/styled";
 import { useEffect, useState } from "react";
 import { LinkCancel } from "../../components/Link";
 import { ActivityIndicator, View } from "react-native";
@@ -40,7 +40,9 @@ export const PerfilDeUsuario = ({ navigation }) => {
                 console.log(`Não foi possível buscar as informações do usuário`);
                 console.log(`Erro: ${erro}`);
             });
-    }, [idUsuario])
+
+        requestGaleria()
+    }, [])
 
 
     const CarregarDadosUsuario = async (idUsuario, perfil) => {
@@ -57,7 +59,10 @@ export const PerfilDeUsuario = ({ navigation }) => {
     }, [idUsuario])
 
     const ModoEdicaoUsuario = () => {
-        setDadosAtualizarUsuario(dadosUsuario)
+        setDadosAtualizarUsuario({
+            ...dadosUsuario,
+            dataNascimento: moment(dadosUsuario.dataNascimento).format("DD/MM/YYYY")
+        })
         setEditavel(true)
     }
 
@@ -117,7 +122,7 @@ export const PerfilDeUsuario = ({ navigation }) => {
     useEffect(() => {
         if (fotoRecebida !== null) {
             AlterarFotoPerfil()
-            ProfileLoad()
+            CarregarDadosUsuario(idUsuario, perfilUsuario)
         }
     }, [fotoRecebida])
 
@@ -125,13 +130,15 @@ export const PerfilDeUsuario = ({ navigation }) => {
         (
             <>
                 <ContainerPerfilPage>
-                    <UserImagePerfil
-                        source={{uri: (fotoRecebida === "") ? dadosUsuario.idNavigation.foto : fotoRecebida}}
-                    />
+                    <ContainerImagePerfil>
+                        <UserImagePerfil
+                            source={{ uri: (fotoRecebida === "") ? dadosUsuario.idNavigation.foto : fotoRecebida }}
+                        />
 
-                    <ButtonCamera onPress={() => setShowCamera(true)}>
-                        <MaterialCommunityIcons name="camera-plus" size={20} color={"#FBFBFB"} />
-                    </ButtonCamera>
+                        <ButtonEditPhoto onPress={() => setShowCamera(true)}>
+                            <MaterialCommunityIcons name="camera-plus" size={20} color={"#FBFBFB"} />
+                        </ButtonEditPhoto>
+                    </ContainerImagePerfil>
                     {!editavel ? (<>
                         <UserContentBox
                             editavel={editavel}
@@ -155,7 +162,9 @@ export const PerfilDeUsuario = ({ navigation }) => {
                             <>
                                 <BoxInputField
                                     labelText={"CRM:"}
+                                    keyType="numeric"
                                     placeholderText={"874204"}
+                                    keyboardType = 'numeric'
                                     editable={editavel}
                                     inputPerfil
                                     fieldValue={editavel ? dadosAtualizarUsuario.crm : dadosUsuario.crm}
@@ -170,6 +179,7 @@ export const PerfilDeUsuario = ({ navigation }) => {
                                 <BoxInputField
                                     labelText={"RG:"}
                                     placeholderText={"00.000.000-0"}
+                                    keyType="numeric"
                                     editable={editavel}
                                     inputPerfil
                                     fieldValue={editavel ? dadosAtualizarUsuario.rg : dadosUsuario.rg}
@@ -184,7 +194,7 @@ export const PerfilDeUsuario = ({ navigation }) => {
                                     placeholderText={"12/11/2005"}
                                     editable={editavel}
                                     inputPerfil
-                                    fieldValue={editable ? moment(dadosAtualizarUsuario.dataNascimento).format("DD/MM/YYYY") : moment(dadosUsuario.dataNascimento).format("DD/MM/YYYY")}
+                                    fieldValue={editavel ? dadosAtualizarUsuario.dataNascimento : moment(dadosUsuario.dataNascimento).format("DD/MM/YYYY")}
                                     onChangeText={text => setDadosAtualizarUsuario({
                                         ...dadosAtualizarUsuario,
                                         dataNascimento: text
@@ -193,9 +203,10 @@ export const PerfilDeUsuario = ({ navigation }) => {
                                 <BoxInputField
                                     labelText={"CPF:"}
                                     placeholderText={"470.150.038/05"}
+                                    keyType="numeric"
                                     editable={editavel}
                                     inputPerfil
-                                    fieldValue={editable ? dadosAtualizarUsuario.cpf : dadosUsuario.cpf}
+                                    fieldValue={editavel ? dadosAtualizarUsuario.cpf : dadosUsuario.cpf}
                                     onChangeText={text => setDadosAtualizarUsuario({
                                         ...dadosAtualizarUsuario,
                                         cpf: text
@@ -224,6 +235,7 @@ export const PerfilDeUsuario = ({ navigation }) => {
                                 labelText={"Número:"}
                                 placeholderText={"XX"}
                                 fieldValue={editavel ? dadosAtualizarUsuario.endereco.numero.toString() : dadosUsuario.endereco.numero.toString()}
+                                keyType="numeric"
                                 editable
                                 inputPerfil
                                 fieldWidth={47}
@@ -241,6 +253,7 @@ export const PerfilDeUsuario = ({ navigation }) => {
                                 labelText={"CEP:"}
                                 placeholderText={"09432-530"}
                                 fieldWidth={47}
+                                keyType={"numeric"}
                                 editable={editavel}
                                 inputPerfil
                                 fieldValue={editavel ? dadosAtualizarUsuario.endereco.cep : dadosUsuario.endereco.cep}
@@ -299,3 +312,4 @@ export const PerfilDeUsuario = ({ navigation }) => {
         </>)
     )
 }
+

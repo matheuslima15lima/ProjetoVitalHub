@@ -1,7 +1,7 @@
-import { Modal, StyleSheet, View } from "react-native"
+import { Modal, StyleSheet, TouchableOpacity, View } from "react-native"
 import { BoxInputConsulta, CameraContent, ConsultaModal, DadosConsultaBox, DadosConsultaText, DadosConsultaTitle, ImageContent, ImagemRecebida, LastPhoto, LinhaDadosConsulta, ModalConsultaForm, ModalContent, ModalSubtitle, ModalText, ModalTextRow, PatientModal, ResumoConsultaBox } from "./style"
 import { ButtonTitle, SemiBoldText, TextRegular, Title } from "../Text/style"
-import { ButtonCamera, ButtonModal } from "../Button/styled"
+import { Button, ButtonCamera, ButtonModal } from "../Button/styled"
 import { LinkCancel } from "../Link"
 import { UserImageModal } from "../UserImage/styled"
 import { useEffect, useRef, useState } from "react"
@@ -19,6 +19,7 @@ import { Camera, CameraType } from 'expo-camera'
 import moment from "moment"
 import { api } from "../../services/service"
 import { LoadProfile, UserDecodeToken } from "../../utils/Auth"
+
 
 export const CancelattionModal = ({idConsulta, visible, setShowModalCancel, ListarConsultas = null, ...rest }) => {
     const CancelarConsulta = async (id) => {
@@ -259,8 +260,8 @@ export const ConfirmarConsultaModal = ({ agendamento, visible, setShowModal = nu
 
 export const ConsultaModalCard = ({ consulta, visible, setShowModal = null, navigation, ...resto }) => {
 
-    const [perfilUsuario, setPerfilUsuario] = ("")
-    const [idadePaciente, setIdadePaciente] = (0)
+    const [perfilUsuario, setPerfilUsuario] = useState("")
+    const [idadePaciente, setIdadePaciente] = useState(0)
 
     const HandlePress = () => {
         setShowModal(false)
@@ -279,6 +280,7 @@ export const ConsultaModalCard = ({ consulta, visible, setShowModal = null, navi
     }, [])
 
     return (
+        consulta !== null ?
         <Modal
             {...resto}
             visible={visible}
@@ -317,6 +319,8 @@ export const ConsultaModalCard = ({ consulta, visible, setShowModal = null, navi
                 </ModalContent>
             </PatientModal>
         </Modal>
+        : null
+        
     )
 }
 
