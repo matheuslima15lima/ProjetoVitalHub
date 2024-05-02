@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "eokD0rNJQOloJwUSq4O8uKlcZZdsTECEADeWiIGYSA6hO42J753+cfgZxuidrGuvLFK+CH7jDMAgMoXIJNUx8A==",
+  "dgSpecHash": "JyKXY507Bv61LaY1kASnn+dXv9/0gqiAlz9CKFhVPe8lSenR4nG94zq/2FDXCx3pA8MvnoGop6D/lj3/ANYDmA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\47015003805\\Documents\\curso-senai\\3-Semestre\\BackEnd\\API-VitalHub\\WebAPI\\WebAPI\\WebAPI.csproj",
+  "projectFilePath": "C:\\Users\\47015003805\\Desktop\\ProjetoVitalHub\\BackEnd\\WebAPI\\WebAPI\\WebAPI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\47015003805\\.nuget\\packages\\azure.core\\1.36.0\\azure.core.1.36.0.nupkg.sha512",
     "C:\\Users\\47015003805\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",

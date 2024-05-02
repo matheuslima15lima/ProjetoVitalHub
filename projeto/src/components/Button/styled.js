@@ -36,3 +36,16 @@ export const ButtonCamera = styled(Button)`
         border: 1px solid #E35B5B;
     `}
 `
+
+export const ButtonEditPhoto = styled(Button)`
+    width: 45px;
+    height: 45px;
+    border: 1px solid #FBFBFB;
+    background-color: #496BBA;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    right: 20px;
+    bottom: -20px;
+    z-index: 1000;
+`

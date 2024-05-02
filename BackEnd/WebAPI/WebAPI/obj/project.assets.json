@@ -8182,11 +8182,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\47015003805\\Documents\\curso-senai\\3-Semestre\\BackEnd\\API-VitalHub\\WebAPI\\WebAPI\\WebAPI.csproj",
+      "projectUniqueName": "C:\\Users\\47015003805\\Desktop\\ProjetoVitalHub\\BackEnd\\WebAPI\\WebAPI\\WebAPI.csproj",
       "projectName": "WebAPI",
-      "projectPath": "C:\\Users\\47015003805\\Documents\\curso-senai\\3-Semestre\\BackEnd\\API-VitalHub\\WebAPI\\WebAPI\\WebAPI.csproj",
+      "projectPath": "C:\\Users\\47015003805\\Desktop\\ProjetoVitalHub\\BackEnd\\WebAPI\\WebAPI\\WebAPI.csproj",
       "packagesPath": "C:\\Users\\47015003805\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\47015003805\\Documents\\curso-senai\\3-Semestre\\BackEnd\\API-VitalHub\\WebAPI\\WebAPI\\obj\\",
+      "outputPath": "C:\\Users\\47015003805\\Desktop\\ProjetoVitalHub\\BackEnd\\WebAPI\\WebAPI\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

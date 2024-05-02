@@ -55,3 +55,8 @@ export const LoadingContainer = styled(ContainerApp)`
     justify-content: center;
     gap: 10px;
 `
+
+export const ContainerImagePerfil = styled.SafeAreaView`
+    width: 100%;
+    height: 280px;
+`

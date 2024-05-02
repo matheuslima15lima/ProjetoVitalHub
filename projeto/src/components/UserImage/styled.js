@@ -21,7 +21,7 @@ export const UserImageCart = styled(UserImage)`
 
 export const UserImagePerfil = styled.Image`
     width: 100%;
-    height: 280px;
+    height: 100%;
 `
 
 export const UserImageModal = styled(UserImage)`

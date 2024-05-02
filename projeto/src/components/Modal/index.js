@@ -1,7 +1,7 @@
-import { Modal, StyleSheet, View } from "react-native"
+import { Modal, StyleSheet, TouchableOpacity, View } from "react-native"
 import { BoxInputConsulta, CameraContent, ConsultaModal, DadosConsultaBox, DadosConsultaText, DadosConsultaTitle, ImageContent, ImagemRecebida, LastPhoto, LinhaDadosConsulta, ModalConsultaForm, ModalContent, ModalSubtitle, ModalText, ModalTextRow, PatientModal, ResumoConsultaBox } from "./style"
 import { ButtonTitle, SemiBoldText, TextRegular, Title } from "../Text/style"
-import { ButtonCamera, ButtonModal } from "../Button/styled"
+import { Button, ButtonCamera, ButtonModal } from "../Button/styled"
 import { LinkCancel } from "../Link"
 import { UserImageModal } from "../UserImage/styled"
 import { useEffect, useRef, useState } from "react"
@@ -259,8 +259,8 @@ export const ConfirmarConsultaModal = ({ agendamento, visible, setShowModal = nu
 
 export const ConsultaModalCard = ({ consulta, visible, setShowModal = null, navigation, ...resto }) => {
 
-    const [perfilUsuario, setPerfilUsuario] = ("")
-    const [idadePaciente, setIdadePaciente] = (0)
+    const [perfilUsuario, setPerfilUsuario] = useState("")
+    const [idadePaciente, setIdadePaciente] = useState(null)
 
     const HandlePress = () => {
         setShowModal(false)
@@ -272,13 +272,14 @@ export const ConsultaModalCard = ({ consulta, visible, setShowModal = null, navi
             .then(token => {
                 setPerfilUsuario(token.perfil)
                 if (token.perfil === "Medico") {
-                    setIdadePaciente(moment.duration(moment().diff(moment(consulta.paciente.dataNascimento))).asYears());
+                    const diferenca = moment().diff(moment(consulta.paciente.dataNascimento))
+                    setIdadePaciente(moment.duration(diferenca).asYears());
                 }
             })
 
     }, [])
 
-    return (
+    return ( consulta !== null ?
         <Modal
             {...resto}
             visible={visible}
@@ -317,7 +318,7 @@ export const ConsultaModalCard = ({ consulta, visible, setShowModal = null, navi
                 </ModalContent>
             </PatientModal>
         </Modal>
-    )
+     : null)
 }
 
 export const ModalCamera = ({ visible, setShowModal = null, enviarFoto, getMediaLibrary = false, ...resto }) => {

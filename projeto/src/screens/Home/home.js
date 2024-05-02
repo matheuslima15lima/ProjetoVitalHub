@@ -32,7 +32,7 @@ export const Home = ({ navigation, route }) => {
     const [showModalAgendarConsulta, setShowAgendarConsulta] = useState(false)
 
     //state para guardar os dados da consulta e renderizar no modal
-    const [infoConsulta, setInfoConsulta] = useState({})
+    const [infoConsulta, setInfoConsulta] = useState(null)
 
     //state para armazenar a data seleciondada no calendário
     const [dataAtual, setDataAtual] = useState(moment().format("YYYY-MM-DD"));
@@ -48,9 +48,9 @@ export const Home = ({ navigation, route }) => {
     const ListarConsultasUsuario = async (perfil, id) => {
         await api.get(`/${perfil}s/BuscarPorData?data=${dataAtual}&id=${id}`)
             .then(retornoApi => {
-                alert(retornoApi.data)
+                alert(`/${perfil}s/BuscarPorData?data=${dataAtual}&id=${id}`)
+                console.log(`/${perfil}s/BuscarPorData?data=${dataAtual}&id=${id}`);
                 setListaDeConsultas(retornoApi.data)
-                alert(listaDeConsultas)
             })
     }
 
@@ -68,8 +68,6 @@ export const Home = ({ navigation, route }) => {
     }, [])
 
     useEffect(() => {
-        alert(dataAtual)
-
         if (infoUsuario !== null) {
             ListarConsultasUsuario(infoUsuario.perfil, infoUsuario.idUsuario)
         }
@@ -115,52 +113,59 @@ export const Home = ({ navigation, route }) => {
                         perfilUsuario={infoUsuario.perfil}
                         navigation={navigation}
                     />
-                    : <LoadingIndicator />
+                    : null
                 }
             </HomeContent>
 
 
             {/* Modal Cancelar */}
 
-            <CancelattionModal
-                setShowModalCancel={setShowModalCancel}
-                visible={showModalCancel}
-                idConsulta={infoConsulta.id}
-                ListarConsultas={() => ListarConsultasUsuario(infoUsuario.perfil, infoUsuario.idUsuario)}
-            />
+            {infoConsulta !== null ?
+                <>
+                    <CancelattionModal
+                        setShowModalCancel={setShowModalCancel}
+                        visible={showModalCancel}
+                        idConsulta={infoConsulta.id}
+                        ListarConsultas={() => ListarConsultasUsuario(infoUsuario.perfil, infoUsuario.idUsuario)}
+                    />
 
 
-            {/* Modal Prontuário */}
+                    {/* Modal Prontuário */}
 
-            <ApointmentModal
-                setShowModalApointment={setShowModalApointment}
-                visible={showModalApointment}
-                informacoes={infoConsulta}
-                navigation={navigation}
-            />
+                    <ApointmentModal
+                        setShowModalApointment={setShowModalApointment}
+                        visible={showModalApointment}
+                        informacoes={infoConsulta}
+                        navigation={navigation}
+                    />
 
-            {/* Modal de Consulta no Card */}
-            <ConsultaModalCard
-                visible={showModalConsulta}
-                setShowModal={setShowModalConsulta}
-                navigation={navigation}
-                consulta={infoConsulta}
-            />
+                    {/* Modal de Consulta no Card */}
 
-            {/* Botão para agendar consulta */}
-            {(infoUsuario !== null && infoUsuario.perfil === "Paciente") ?
-                <AgendarConsultaButton onPress={() => setShowAgendarConsulta(true)}>
-                    <FontAwesome name="stethoscope" size={32} color="white" />
-                </AgendarConsultaButton>
-                : null
-            }
+                    <ConsultaModalCard
+                        visible={showModalConsulta}
+                        setShowModal={setShowModalConsulta}
+                        navigation={navigation}
+                        consulta={infoConsulta}
+                    />
 
-            {/* Modal de Agendar Consulta */}
-            <AgendarConsultaModal
-                visible={showModalAgendarConsulta}
-                setShowModal={setShowAgendarConsulta}
-                navigation={navigation}
-            />
+
+                    {/* Botão para agendar consulta */}
+                    {(infoUsuario !== null && infoUsuario.perfil === "Paciente") ?
+                        <AgendarConsultaButton onPress={() => setShowAgendarConsulta(true)}>
+                            <FontAwesome name="stethoscope" size={32} color="white" />
+                        </AgendarConsultaButton>
+                        : null
+                    }
+
+                    {/* Modal de Agendar Consulta */}
+                    <AgendarConsultaModal
+                        visible={showModalAgendarConsulta}
+                        setShowModal={setShowAgendarConsulta}
+                        navigation={navigation}
+                    />
+                </>
+                : null}
+
         </ContainerHome>
     )
 }
