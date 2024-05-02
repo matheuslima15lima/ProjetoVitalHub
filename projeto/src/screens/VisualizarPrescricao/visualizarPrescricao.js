@@ -18,22 +18,26 @@ import { Camera, CameraType } from "expo-camera";
 import { useEffect, useRef, useState } from "react";
 import { ModalCamera } from "../../components/Modal";
 
-export const VisualizarPrescricao = ({ navigation, route }) => {
+export const VisualizarPrescricao = ({ navigation }) => {
 
     const [openModalCamera, setOpenModalCamera] = useState(false)
     
+    const [descricaoExame, setDescricaoExame] = useState("")
+
     const [foto, setFoto] = useState("")
 
-    const [descricaoExame, setDescricaoExame] = useState(null)
-
     const InserirExame = async () => {
+        const idConsulta = "121C2076-6457-4253-9DA1-8B36E6B2A90C"
+
+
         const formData = new FormData()
-        formData.append("ConsultaId", route.params.consultaId)
+        formData.append("ConsultaId", idConsulta)
         formData.append("Imagem", {
             uri: foto,
             name: `image.${foto.split(".").pop()}`,
             type: `image/${foto.split(".").pop()}`
         });
+
 
         await api.post(`/Exame`, formData, {
             headers: {
@@ -48,7 +52,7 @@ export const VisualizarPrescricao = ({ navigation, route }) => {
     }
 
     useEffect(() => {
-        if (foto) {
+        if (foto !== "") {
             InserirExame()
         }
 
@@ -72,20 +76,17 @@ export const VisualizarPrescricao = ({ navigation, route }) => {
                 <ContainerForm>
                     <BoxInputField
                         labelText={"Descrição da consulta"}
-                        fieldValue={dadosPrescricao.descricaoConsulta}
                         inputPerfil
                         fieldHeight="40"
                     />
                     <BoxInputField
                         labelText={"Diagnóstico do paciente:"}
                         placeholderText={"diagnóstico"}
-                        fieldValue={dadosPrescricao.diagnostico}
                         inputPerfil
                     />
                     <BoxInputField
                         labelText={"Prescrição médica:"}
                         placeholderText={"prescrição"}
-                        fieldValue={dadosPrescricao.prescricao}
                         inputPerfil
                         fieldHeight="40"
                     />
@@ -93,9 +94,14 @@ export const VisualizarPrescricao = ({ navigation, route }) => {
                     <ImageInputBox>
                         <InputLabel>Exames médicos:</InputLabel>
                         <ImageInputBoxField>
-                            <MaterialCommunityIcons name="file-upload-outline" size={24} color="#4E4B59" />
+                            {(foto === "") ? <MaterialCommunityIcons name="file-upload-outline" size={24} color="#4E4B59" /> : null}
+                            
                             <ImageInputBoxText>
-                                {(foto === "") ? "Nenhuma foto informada" : foto}
+                                {(foto === "") ? "Nenhuma foto informada" : 
+                                <Image
+                                    style={{height: "100%", width: "100%"}}
+                                    source={{uri: foto}}
+                                />}
                             </ImageInputBoxText>
                         </ImageInputBoxField>
                     </ImageInputBox>
@@ -122,7 +128,7 @@ export const VisualizarPrescricao = ({ navigation, route }) => {
                         inputPerfil
                         placeholderText={"Resultados..."}
                         fieldHeight="60"
-                        fieldvalue={dadosPrescricao.resultados}
+                        fieldvalue={descricaoExame}
                     />
 
                     <LinkVoltar onPress={() => navigation.replace("Main")}>
@@ -135,6 +141,7 @@ export const VisualizarPrescricao = ({ navigation, route }) => {
                 visible={openModalCamera}
                 setShowModal={setOpenModalCamera}
                 enviarFoto={setFoto}
+                getMediaLibrary
             />
         </>
     )

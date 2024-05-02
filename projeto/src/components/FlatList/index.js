@@ -2,28 +2,22 @@ import { View } from "react-native"
 import { FlatListStyle } from "./style"
 import { CardClinica, CardConsulta, CardMedico } from "../Card"
 
-export const ListaConsultas = ({ dados, statusConsulta, permissaoUsuario, MostrarModal = null }) => {
+export const ListaConsultas = ({navigation, perfilUsuario, dados, statusConsulta, onPressCancel, onPressApointment, loadInfoConsulta, onPressConsulta }) => {
     return (
         <FlatListStyle
             data={dados}
             keyExtractor={item => item.id}
             renderItem={({ item }) =>
-                statusConsulta == item.situacao.situacao ? (
+                statusConsulta === item.situacao.situacao ? (
                     <CardConsulta
                         consulta={item}
-                        permissaoUsuario={permissaoUsuario}
-                        dadosUsuario={permissaoUsuario == "Paciente" ? item.medicoClinica.medico : item.paciente }
-                        dataConsulta={item.dataConsulta}
-                        prioridade={item.prioridade.prioridade}
-                        // imageSource={item.foto}
+                        imageSource={perfilUsuario === "Paciente" ? item.medicoClinica.medico.idNavigation.foto :  item.paciente.idNavigation.foto}
                         statusConsulta={statusConsulta}
-
-                        onPressCancel={() => MostrarModal('cancelar', item)}
-                        onPressApointment={() => MostrarModal('prontuario', item)}
-                        onPressCard = {() => MostrarModal('medico', item)}
-
-                        // onPressCancel={onPressCancel}
-                        // onPressApointment={onPressApointment}
+                        onPressCancel={onPressCancel}
+                        onPressApointment={onPressApointment}
+                        onPressConsulta={onPressConsulta}
+                        loadInfoConsulta={loadInfoConsulta}
+                        navigation={navigation}
                     />)
                     : null
 
@@ -45,7 +39,7 @@ export const ListaClinicas = ({ dados, selecionarClinica, clinicaSelecionada }) 
             />
         }
     />
-// Lista de Medicos
+
 export const ListaMedicos = ({ dados, selecionarMedico, medicoSelecionado }) =>
     <FlatListStyle
         data={dados}
@@ -53,7 +47,7 @@ export const ListaMedicos = ({ dados, selecionarMedico, medicoSelecionado }) =>
         renderItem={({ item }) => 
             <CardMedico 
                 selecionarMedico={selecionarMedico} 
-                selecionado={item.id === medicoSelecionado.medicoId ? true : false}
+                selecionado={item.idNavigation.id === medicoSelecionado.medicoId ? true : false}
                 dados={item} 
             />
         }

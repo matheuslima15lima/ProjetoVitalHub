@@ -10,10 +10,8 @@ export const ContainerApp = styled.SafeAreaView`
     /* justify-content: center; */
 `
 
-export const ContainerCenter = styled(ContainerApp)`
+export const ContainerProfile = styled(ContainerApp)`
     justify-content: center;
-    margin: 0;
-    padding: 0 5%;
 `
 
 export const ContainerHeader = styled(LinearGradient).attrs({
@@ -22,20 +20,21 @@ export const ContainerHeader = styled(LinearGradient).attrs({
     end: {x: 1, y: 0}
 })`
     width: 100%;
-    padding: 55px 0 22px;
+    padding: 50px 0 22px;
     border-radius: 0 0 15px 15px;
 `
 
 export const ContainerPerfilPage = styled.ScrollView`
     position: relative;
     background-color: #FBFBFB;
-    padding: 35px 0 40px;
+    padding-bottom: 40px;
     flex: 1;
+    margin-top: 30px;
 `
 
 export const ContainerForm = styled.View`
     flex: 1;
-    margin: 75px 0 30px;
+    margin-top: ${props => `${props.marginTop}px`};
     width: 100%;
     gap: 25px;
     justify-content: center;
@@ -50,3 +49,9 @@ export const ContainerHome = styled.View`
 `
 
 export const ContainerProntuario = styled(ContainerPerfilPage)``
+
+export const LoadingContainer = styled(ContainerApp)`
+    height: 100%;
+    justify-content: center;
+    gap: 10px;
+`

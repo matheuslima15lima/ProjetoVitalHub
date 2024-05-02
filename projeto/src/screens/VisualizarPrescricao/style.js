@@ -59,4 +59,3 @@ export const ImageInputBoxText = styled.Text`
     font-family: "MontserratAlternates_500Medium"; 
     text-align: center;
 `
-

@@ -6,206 +6,154 @@ import { InputSelect } from "../../components/Input";
 import { ConfirmarConsultaModal } from "../../components/Modal";
 import { ContainerSelectPage, TitleSelecao } from "./style";
 import { api } from "../../services/service";
-import { ActivityIndicator } from "react-native";
+import { GerarNotaClinica } from "../../utils/funcoesUteis";
 
 export const SelecionarClinica = ({ navigation, route }) => {
-  const [clinicaSelecionada, setClinicaSelecionada] = useState({});
-  function handleContinue() {
-    navigation.replace("Selecionar Medico", {
-      agendamento: {
-        ...route.params.agendamento,
-        ...clinica,
-      },
-    });
-  }
-  // const listaClinicas = [
-  //     {
-  //         id: 1,
-  //         nome: "Clínica Natureh",
-  //         localizacao: "São Paulo, SP",
-  //         avaliacao: "4,5",
-  //         disponibilidade: "Seg-Sex"
-  //     },
-  //     {
-  //         id: 2,
-  //         nome: "Diamond Pró-Mulher",
-  //         localizacao: "São Paulo, SP",
-  //         avaliacao: "4,8",
-  //         disponibilidade: "Seg-Sex"
-  //     },
-  //     {
-  //         id: 3,
-  //         nome: "Clinica Villa Lobos",
-  //         localizacao: "Taboão, SP",
-  //         avaliacao: "4,2",
-  //         disponibilidade: "Seg-Sab"
-  //     },
-  //     {
-  //         id: 4,
-  //         nome: "SP Oncologia Clínica",
-  //         localizacao: "Taboão, SP",
-  //         avaliacao: "4,2",
-  //         disponibilidade: "Seg-Sab"
-  //     }
-  // ]
+    const [clinicaSelecionada, setClinicaSelecionada] = useState({});
+    const [lsitaDeClinicas, setListaDeClinicas] = useState([])
 
-  const [listaClinicas, setListaClinicas] = useState([]);
-
-  const loadClinicasList = async () => {
-    try {
-      const retornoApi = await api.get(
-        `/Clinica/BuscarPorCidade?cidade=${route.params.agendamento.localizacao}`
-      );
-      console.log(retornoApi.data);
-      setListaClinicas(retornoApi.data);
-    } catch (error) {
-      console.log(error);
+    const BuscarClinicas = async (localizacao) => {
+        await api.get(`/Clinica/BuscarPorCidade?cidade=${localizacao}`)
+            .then(retornoApi => {
+                setListaDeClinicas(retornoApi.data)
+            })
     }
-  };
 
-  useEffect(() => {
-    console.log(route);
-  }, [route]);
-  useEffect(() => {
-    loadClinicasList();
-  }, []);
+    const NavegarParaPaginaMedico = () => {
+        if (clinicaSelecionada === "") {
+            alert("Selecione Uma Clínica Para Continuar!")
+        } else {
+            navigation.replace("SelecionarMedico", { agendamento: { ...clinicaSelecionada, ...route.params.agendamento } })
+        }
+    }
 
-  return (
-    <ContainerSelectPage>
-      <TitleSelecao>Selecionar Clínica</TitleSelecao>
+    useEffect(() => {
+        console.log(route.params.agendamento);
+        BuscarClinicas(route.params.agendamento.localizacao)
+    }, [route.params])
 
-      <ListaClinicas
-        dados={listaClinicas}
-        selecionarClinica={setClinicaSelecionada}
-        clinicaSelecionada={clinicaSelecionada}
-      />
-      <ButtonContinuarBox
-        onPress={() => {
-          handleContinue;
-
-          //   navigation.replace("SelecionarClinica");
-        }}
-        // manipulationFunction={() => {
-        //   navigation.navigate("SelecionarMedico");
-        // }}
-
-        functionCancel={() => navigation.replace("Main", { ativado: true })}
-      />
-    </ContainerSelectPage>
-  );
-};
+    return (
+        <ContainerSelectPage>
+            <TitleSelecao>Selecionar Clínica</TitleSelecao>
+            {(lsitaDeClinicas.length > 0) ?
+                <ListaClinicas
+                    dados={lsitaDeClinicas}
+                    selecionarClinica={setClinicaSelecionada}
+                    clinicaSelecionada={clinicaSelecionada}
+                />
+                : null
+            }
+            <ButtonContinuarBox
+                manipulationFunction={NavegarParaPaginaMedico}
+                functionCancel={() => navigation.replace("Main", { ativado: true })}
+            />
+        </ContainerSelectPage>
+    )
+}
 
 export const SelecionarMedico = ({ navigation, route }) => {
-  useEffect(() => {
-    console.log(route);
-  }, [route]);
-  const [listaDeMedicos, setListaDeMedicos] = useState([]);
-  const [agendamento,setAgendamento] = useState(null)
+    const [medicoSelecionado, setMedicoSelecionado] = useState({});
+    const [listaDeMedicos, setListaDeMedicos] = useState([])
 
-  function handleContinue(){
-    navigation.replace("SelecionarData", {
-        agendamento:{
-            ...route.params.agendamento,
-            ...medico
-        }
-    })
-  }
-  const loadMedicosList = async () => {
-    try {
-      const retornoApi = await api.get(
-        `/Medicos/BuscarPorIdClinica?id=${route.params.agendamento.clinicaId}`
-      );
-
-      setListaDeMedicos(retornoApi.data);
-    } catch (erro) {
-      console.log(erro);
+    const BuscarMedicos = async (id) => {
+        await api.get(`/Medicos/BuscarPorIdClinica?id=${id}`)
+            .then(retornoApi => {
+                setListaDeMedicos(retornoApi.data)
+            })
+            .catch(erro => {
+                alert(erro)
+            })
     }
 
-    // Jeito do professor (usando o requisicao.then(() => {}).catch(() => {}))
-    // api.get("/Medicos")
-    // .then(Response => {
-    //     setListaDeMedicos(Response.data)
+    const NavegarParaSelecaoDeData = () => {
+        if (medicoSelecionado === "") {
+            alert("Selecione um médico para continuar!!")
+        } else {
+            navigation.navigate("SelecionarData", { agendamento: { ...medicoSelecionado, ...route.params.agendamento } })
+            // navigation.navigate("SelecionarData", { agendamento: {...route.params.agendamento, ...medicoSelecionado} })
+        }
+    }
 
-    //     console.log(listaDeMedicos);
-    // }).catch(error => {
-    //     console.log(error);
-    // })
-  };
+    useEffect(() => {
+        console.log(route.params);
+        BuscarMedicos(route.params.agendamento.clinicaId)
+    }, [route.params])
 
-  useEffect(() => {
-    loadMedicosList();
-  }, []);
-
-  // const listaMedicos = [
-  //     {
-  //         id: 1,
-  //         nome: "Dra.Alessandra",
-  //         especialidades: "Dermatologia, Eletricista",
-  //         foto: "../../assets/images/doctor_image_select.png"
-  //     },{
-  //         id: 2,
-  //         nome: "Dr. Kumushiro",
-  //         especialidades: "Cirurgião, Cardiologista",
-  //         foto: "../../assets/images/doctor_image_select.png"
-  //     },{
-  //         id: 3,
-  //         nome: "Dr. Rodrigo Santos",
-  //         especialidades: "Clínica, Pediatra",
-  //         foto: "../../assets/images/doctor_image_select.png"
-  //     }
-  // ]
-  const [medicoSelecionado, setMedicoSelecionado] = useState({});
-  return listaDeMedicos == null ? (
-    <ActivityIndicator />
-  ) : (
-    <ContainerSelectPage>
-      <TitleSelecao>Selecionar Médico</TitleSelecao>
-      {/* <ListaSelectPages
+    return (
+        <ContainerSelectPage>
+            <TitleSelecao>Selecionar Médico</TitleSelecao>
+            {/* <ListaSelectPages
             
             /> */}
+            {(listaDeMedicos.length > 0) ?
+                <ListaMedicos
+                    dados={listaDeMedicos}
+                    selecionarMedico={setMedicoSelecionado}
+                    medicoSelecionado={medicoSelecionado}
+                />
+                : null
+            }
+            <ButtonContinuarBox
+                manipulationFunction={NavegarParaSelecaoDeData}
+                functionCancel={() => navigation.replace("SelecionarClinica")}
+            />
+        </ContainerSelectPage>
+    )
+}
 
-      <ListaMedicos
-        dados={listaDeMedicos}
-        selecionarMedico={setMedicoSelecionado}
-        medicoSelecionado={medicoSelecionado}
-      />
-      <ButtonContinuarBox
-      onPress={()=>handleContinue}
-        manipulationFunction={() => navigation.navigate("SelecionarData")}
-        functionCancel={() => navigation.replace("Main", { ativado: true })}
-      />
-    </ContainerSelectPage>
-  );
-};
+export const SelecionarData = ({ navigation, route }) => {
+    const [showModalConfirmarConsulta, setShowModalConfirmarConsulta] = useState(false)
 
-export const SelecionarData = ({ navigation,route }) => {
-    const [agendamento, setAgendamento] = useState(null);
-    const [dataSelecionada, setDataSelecionada] = useState('');
-    const [horaSelecionada, setHoraSecionada] = useState('')
-  const [showModalConfirmarConsulta, setShowModalConfirmarConsulta] =
-    useState(false);
+    const [agendamento, setAgendamento] = useState({
+        dataConsulta: ""
+    });
+    const [dataSelecionada, setDataSelecionada] = useState("");
+    const [horaSelecionada, setHoraSelecionada] = useState("");
 
-  return (
-    <ContainerSelectPage>
-      <TitleSelecao>Selecionar Data</TitleSelecao>
-      <CalendarioCompleto
-        setDataSelecionada={setDataSelecionada}
-        dataSelecionada={dataSelecionada}
-      />
-      <BoxInputSelect labelText={"Selecione um horário disponível:"} 
-    
-        selecionarHora={setHoraSecionada}
-      />
-      <ButtonContinuarBox
-        manipulationFunction={() => setShowModalConfirmarConsulta(true)}
-        functionCancel={() => navigation.replace("Main", { ativado: true })}
-      />
+    const HandleContinue = () => {
+        setAgendamento({
+            ...route.params.agendamento,
+            dataConsulta: `${dataSelecionada} ${horaSelecionada}`
+        })
 
-      <ConfirmarConsultaModal
-        navigation={navigation}
-        visible={showModalConfirmarConsulta}
-        setShowModal={setShowModalConfirmarConsulta}
-      />
-    </ContainerSelectPage>
-  );
-};
+        setShowModalConfirmarConsulta(true)
+    }
+    useEffect(() => {
+        console.log(route.params);
+    }, [route.params])
+
+    useEffect(() => {
+        console.log(dataSelecionada);
+    }, [dataSelecionada])
+
+    useEffect(() => {
+        console.log(horaSelecionada);
+    }, [horaSelecionada])
+    return (
+        <ContainerSelectPage>
+            <TitleSelecao>Selecionar Data</TitleSelecao>
+            <CalendarioCompleto
+                selecionarData={setDataSelecionada}
+                dataSelecionada={dataSelecionada}
+            />
+            <BoxInputSelect
+                labelText={"Selecione um horário disponível:"}
+                selecionarHora={setHoraSelecionada}
+            />
+            <ButtonContinuarBox
+                manipulationFunction={() => HandleContinue()}
+                functionCancel={() => navigation.replace("SelecionarMedico", { clinica: route.params.clinica })}
+            />
+
+            {agendamento.dataConsulta !== "" ?
+                <ConfirmarConsultaModal
+                    navigation={navigation}
+                    visible={showModalConfirmarConsulta}
+                    setShowModal={setShowModalConfirmarConsulta}
+                    agendamento={agendamento}
+                />
+                : null}
+
+        </ContainerSelectPage>
+    )
+}

@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const IconContainer = styled.TouchableOpacity`
     position: absolute;
     left: 20px;
-    top: 70px;
+    top: 20px;
     height: 30px;
     width: 30px;
 `

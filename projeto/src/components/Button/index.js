@@ -17,17 +17,27 @@ export const ButtonHome = ({ widthValue = 30, actived, buttonText, manipulationF
     )
 }
 
-export const ButtonModalConsulta = ({ widthValue = 30, actived, buttonText, manipulationFunction = null, situacao }) => {
+export const ButtonModalConsulta = ({ widthValue = 30, actived, buttonText, manipulationFunction = null, situacao, manipularAgendamento = null, idPrioridade = "", labelPrioridade = "" }) => {
     return (
         actived ? <Button
-            onPress={() => manipulationFunction(situacao)}
+            onPress={() => {
+                manipulationFunction(situacao)
+                if(manipularAgendamento !== null){
+                    manipularAgendamento(idPrioridade, labelPrioridade)
+                }
+            }}
             width={widthValue}
             modal
         >
             <ButtonSemiBoldTitle>{buttonText}</ButtonSemiBoldTitle>
         </Button>
             : <ButtonLight
-                onPress={() => manipulationFunction(situacao)}
+                onPress={() => {
+                    manipulationFunction(situacao)
+                    if(manipularAgendamento !== null){
+                        manipularAgendamento(idPrioridade, labelPrioridade)
+                    }
+                }}
                 width={widthValue}
                 modal
             >

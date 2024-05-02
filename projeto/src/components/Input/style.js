@@ -1,25 +1,19 @@
 import styled, { css } from "styled-components";
 
 export const InputField = styled.TextInput.attrs({
-    placeholderTextColor: props => props.inputError ? '#F54A45' : "#49B3BA",
-    multiline: true
+    placeholderTextColor: '#34898F'
 })`
     border: 2px solid #49B3BA;
     border-radius: 5px;
-    width: ${props => `${props.fieldWidth}%`};
+    width: 100%;
     padding: 16px;
     ${props => props.center && css`
         justify-content: center;
         align-items: center;
     `}
-    ${props => props.inputError && css`
-        border-color: #F54A45;
-    `}
 `
 
-export const InputVirifyEmail = styled(InputField).attrs({
-    placeholderTextColor: "#34898F"
-})`
+export const InputVirifyEmail = styled(InputField)`
     align-items: center;
     justify-content: center;
     padding: 5px 20px;

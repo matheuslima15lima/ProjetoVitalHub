@@ -3,43 +3,96 @@ import { AntDesign } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { UserImageCart } from "../UserImage/styled";
 import { useEffect, useState } from "react";
-import { UserDecodeToken } from "../../utils/Auth";
+import { GerarNotaClinica } from "../../utils/funcoesUteis";
+import { LoadProfile } from "../../utils/Auth";
+import moment from "moment";
 
-export const CardConsulta = ({ consulta, statusConsulta, onPressCancel, onPressApointment, permissaoUsuario, dadosUsuario, dataConsulta, prioridade, onPressCard = null }) => {
+export const CardConsulta = ({ consulta, navigation, statusConsulta, onPressCancel, onPressApointment, loadInfoConsulta, onPressConsulta, imageSource }) => {
+    const [idadePaciente, setIdadePaciente] = useState(null)
+    const [prioridadeConsulta, setPrioridadeConsulta] = useState("")
+
+    const [perfil, setPerfil] = useState("")
+
+    const AbrirModal = modal => {
+        loadInfoConsulta(consulta)
+
+        switch (modal) {
+            case "localConsulta":
+                onPressConsulta()
+                break;
+        
+            case "prontuario":
+                onPressApointment()
+                break;
+
+            case "cancelar":
+                onPressCancel()
+                break;
+            
+            default:
+                alert("Erro ao abrir o modal");
+        }
+    }
+
+    useEffect(() => {
+        LoadProfile()
+        .then(token => {
+            if(token){
+                setPerfil(token.perfil)
+                if(token.perfil === "Medico"){
+                    setIdadePaciente(moment.duration(moment().diff(moment(consulta.paciente.dataNascimento))).asYears());
+                }
+            }
+        })
 
 
-    // const ProfileLoad = async ()=>{
-    //     const token = await UserDecodeToken()
+        switch (consulta.prioridade.prioridade) {
+            case 1:
+                setPrioridadeConsulta("Rotina")
+                break;
+        
+            case 2:
+                setPrioridadeConsulta("Exame")
+                break;
 
-    //     if (token){
-    //         setNome(token.nome)
-    //         setEmail(token.email)
-    //         console.log(token);
-    //     }
-    // }
+            case 3:
+                setPrioridadeConsulta("Urgência")
+                break;
+
+            default:
+                setPrioridadeConsulta("Erro ao carregar prioridade de exame")
+                break;
+        }
+
+    }, [])
+
     return (
-        <CardBox onPress={onPressCard}>
+        <CardBox onPress={() => AbrirModal("localConsulta")}>
             <UserImageCart
-                source={require(`../../assets/images/nicolle_image.png`)}
+                source={{uri: imageSource}}
             />
             <CardContent>
                 <DataCard>
                     <TitleCard>
-                        {dadosUsuario.idNavigation.nome}
+                        {perfil === "Paciente" ? consulta.medicoClinica.medico.idNavigation.nome 
+                            : consulta.paciente.idNavigation.nome }
                     </TitleCard>
                     <ProfileData>
-                        <TextAge>{permissaoUsuario == "Paciente" ? `CRM ${dadosUsuario.crm}` : "22 anos"}</TextAge>
-                        <TextTipoConsulta>{consulta.nivel}</TextTipoConsulta>
+                    {perfil === "Paciente" ?
+                        <TextAge>{consulta.medicoClinica.medico.crm}</TextAge> : 
+                        <TextAge>{idadePaciente} anos</TextAge>
+                    }
+                        <TextTipoConsulta>{prioridadeConsulta}</TextTipoConsulta>
                     </ProfileData>
                 </DataCard>
                 <ViewRow>
                     <HorarioBox statusConsulta={statusConsulta}>
                         <AntDesign name="clockcircle" size={14} color={statusConsulta == "Agendada" ? "#49B3BA" : "#4E4B59"} />
-                        <HorarioText statusConsulta={statusConsulta}>14:00</HorarioText>
+                        <HorarioText statusConsulta={statusConsulta}>{consulta.horario}</HorarioText>
                     </HorarioBox>
                     <CardTextCancelApointment
                         statusConsulta={statusConsulta}
-                        onPress={statusConsulta == "Agendada" ? (onPressCancel) : (onPressApointment)}
+                        onPress={statusConsulta == "Agendada" ? (() => AbrirModal("cancelar")) : (() => AbrirModal("prontuario"))}
                     >
                         {statusConsulta == "Agendada" ? "Cancelar" : (statusConsulta == "Realizada" ? "Ver Prontuário" : null)}
                     </CardTextCancelApointment>
@@ -49,7 +102,6 @@ export const CardConsulta = ({ consulta, statusConsulta, onPressCancel, onPressA
     )
 }
 
-//Card de Clinicas
 export const CardClinica = ({ dados, selecionarClinica = null, selecionada = false }) => {
     return (
         <CardSelectBox
@@ -68,7 +120,7 @@ export const CardClinica = ({ dados, selecionarClinica = null, selecionada = fal
             <CardSelectContentEnd>
                 <AvaliacaoClinicaBox>
                     <AntDesign name="star" size={20} color="#F9A620" />
-                    <NotaAvaliacao>4.5</NotaAvaliacao>
+                    <NotaAvaliacao>{GerarNotaClinica()}</NotaAvaliacao>
                 </AvaliacaoClinicaBox>
                 <HorarioClinicaBox>
                     <MaterialCommunityIcons name="calendar" size={14} color="#49B3BA" />
@@ -79,16 +131,16 @@ export const CardClinica = ({ dados, selecionarClinica = null, selecionada = fal
     )
 }
 
-//Card Medico
 export const CardMedico = ({ dados, selecionarMedico = null, selecionado = false }) => {
     return (
         <CardBox
             selecionado={selecionado}
             onPress={() => 
                 selecionarMedico({
-                    medicoId: dados.id,
-                    medicoEspecialidade: dados.especialidade.especialidade1,
-                    medicoNome: dados.idNavigation.nome
+                    medicoId: dados.idNavigation.id,
+                    medicoClinicaId: dados.id,
+                    medicoNome: dados.idNavigation.nome,
+                    medicoEspecialidade: dados.especialidade.especialidade1
                 })
             }
             
