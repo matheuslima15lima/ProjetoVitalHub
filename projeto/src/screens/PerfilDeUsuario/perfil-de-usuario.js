@@ -71,21 +71,20 @@ export const PerfilDeUsuario = ({ navigation }) => {
         setEditavel(false)
     }
 
-    const AtualizarUsuario = async (idUsuario, dadosUsuario) => {
-        const idTipoUsuario = "edbdd738-c3af-4a4e-a396-340cfbdd1bd7"
+    const AtualizarUsuario = async (idUsuario) => {
 
         await api.put(`/Pacientes?idUsuario=${idUsuario}`, {
-            rg: dadosUsuario.rg,
-            cpf: dadosUsuario.cpf,
-            dataNascimento: moment(dadosUsuario.dataNascimento).format("YYYY-MM-DD"),
-            cep: dadosUsuario.endereco.cep,
-            logradouro: dadosUsuario.endereco.logradouro,
-            numero: dadosUsuario.endereco.numero,
-            cidade: dadosUsuario.endereco.cidade,
-            nome: dadosUsuario.idNavigation.nome,
-            idTipoUsuario
-        }).then(() => {
-            CarregarDadosUsuario(idUsuario, perfilUsuario).then(() => {
+            rg: dadosAtualizarUsuario.rg,
+            cpf: dadosAtualizarUsuario.cpf,
+            // dataNascimento: moment(dadosAtualizarUsuario.dataNascimento).format("YYYY-MM-DD"),
+            cep: dadosAtualizarUsuario.endereco.cep,
+            logradouro: dadosAtualizarUsuario.endereco.logradouro,
+            numero: parseInt(dadosAtualizarUsuario.endereco.numero),
+            cidade: dadosAtualizarUsuario.endereco.cidade,
+            nome: dadosAtualizarUsuario.idNavigation.nome,
+            idTipoUsuario: "2C48012E-32A6-4FC6-85D4-42C009E9F4D8"
+        }).then(retornoApi => {
+            setDadosUsuario(retornoApi.data).then(() => {
                 setEditavel(false)
             })
         }).catch(error => {
@@ -166,6 +165,7 @@ export const PerfilDeUsuario = ({ navigation }) => {
                                     placeholderText={"874204"}
                                     keyboardType = 'numeric'
                                     editable={editavel}
+                                    multiline={false}
                                     inputPerfil
                                     fieldValue={editavel ? dadosAtualizarUsuario.crm : dadosUsuario.crm}
                                     onChangeText={text => setDadosAtualizarUsuario({
@@ -181,6 +181,7 @@ export const PerfilDeUsuario = ({ navigation }) => {
                                     placeholderText={"00.000.000-0"}
                                     keyType="numeric"
                                     editable={editavel}
+                                    multiline={false}
                                     inputPerfil
                                     fieldValue={editavel ? dadosAtualizarUsuario.rg : dadosUsuario.rg}
                                     onChangeText={text => setDadosAtualizarUsuario({
@@ -205,6 +206,7 @@ export const PerfilDeUsuario = ({ navigation }) => {
                                     placeholderText={"470.150.038/05"}
                                     keyType="numeric"
                                     editable={editavel}
+                                    multiline={false}
                                     inputPerfil
                                     fieldValue={editavel ? dadosAtualizarUsuario.cpf : dadosUsuario.cpf}
                                     onChangeText={text => setDadosAtualizarUsuario({
@@ -236,6 +238,7 @@ export const PerfilDeUsuario = ({ navigation }) => {
                                 placeholderText={"XX"}
                                 fieldValue={editavel ? dadosAtualizarUsuario.endereco.numero.toString() : dadosUsuario.endereco.numero.toString()}
                                 keyType="numeric"
+                                multiline={false}
                                 editable
                                 inputPerfil
                                 fieldWidth={47}
@@ -243,7 +246,7 @@ export const PerfilDeUsuario = ({ navigation }) => {
                                     ...dadosAtualizarUsuario,
                                     endereco: {
                                         ...dadosAtualizarUsuario.endereco,
-                                        numero: parseInt(text)
+                                        numero: text
                                     }
                                 })}
                             />
@@ -254,6 +257,7 @@ export const PerfilDeUsuario = ({ navigation }) => {
                                 placeholderText={"09432-530"}
                                 fieldWidth={47}
                                 keyType={"numeric"}
+                                multiline={false}
                                 editable={editavel}
                                 inputPerfil
                                 fieldValue={editavel ? dadosAtualizarUsuario.endereco.cep : dadosUsuario.endereco.cep}
@@ -261,7 +265,7 @@ export const PerfilDeUsuario = ({ navigation }) => {
                                     ...dadosAtualizarUsuario,
                                     endereco: {
                                         ...dadosAtualizarUsuario.endereco,
-                                        cep: parseInt(text)
+                                        cep: text
                                     }
                                 })}
                             />
@@ -283,7 +287,7 @@ export const PerfilDeUsuario = ({ navigation }) => {
                         </BoxInputRow>
                         {perfilUsuario === "Paciente" ? (editavel ?
                             <>
-                                <Button onPress={() => AtualizarUsuario()}>
+                                <Button onPress={() => AtualizarUsuario(idUsuario)}>
                                     <ButtonTitle>Salvar Edições</ButtonTitle>
                                 </Button>
                             </>

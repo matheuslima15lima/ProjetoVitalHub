@@ -149,22 +149,25 @@ export const Home = ({ navigation, route }) => {
                     />
 
 
-                    {/* Botão para agendar consulta */}
-                    {(infoUsuario !== null && infoUsuario.perfil === "Paciente") ?
-                        <AgendarConsultaButton onPress={() => setShowAgendarConsulta(true)}>
-                            <FontAwesome name="stethoscope" size={32} color="white" />
-                        </AgendarConsultaButton>
-                        : null
-                    }
 
-                    {/* Modal de Agendar Consulta */}
-                    <AgendarConsultaModal
-                        visible={showModalAgendarConsulta}
-                        setShowModal={setShowAgendarConsulta}
-                        navigation={navigation}
-                    />
+
                 </>
                 : null}
+
+            {/* Botão para agendar consulta */}
+            {(infoUsuario !== null && infoUsuario.perfil === "Paciente") ?
+                <AgendarConsultaButton onPress={() => setShowAgendarConsulta(true)}>
+                    <FontAwesome name="stethoscope" size={32} color="white" />
+                </AgendarConsultaButton>
+                : null
+            }
+
+            {/* Modal de Agendar Consulta */}
+            <AgendarConsultaModal
+                visible={showModalAgendarConsulta}
+                setShowModal={setShowAgendarConsulta}
+                navigation={navigation}
+            />
 
         </ContainerHome>
     )
