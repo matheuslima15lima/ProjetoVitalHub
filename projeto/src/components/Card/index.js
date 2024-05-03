@@ -7,11 +7,11 @@ import { GerarNotaClinica } from "../../utils/funcoesUteis";
 import { LoadProfile } from "../../utils/Auth";
 import moment from "moment";
 
-export const CardConsulta = ({ consulta, navigation, statusConsulta, onPressCancel, onPressApointment, loadInfoConsulta, onPressConsulta, imageSource }) => {
+export const CardConsulta = ({perfil , consulta, navigation, statusConsulta, onPressCancel, onPressApointment, loadInfoConsulta, onPressConsulta, imageSource }) => {
     const [idadePaciente, setIdadePaciente] = useState(null)
     const [prioridadeConsulta, setPrioridadeConsulta] = useState("")
 
-    const [perfil, setPerfil] = useState("")
+    // const [perfil, setPerfil] = useState("")
 
     const AbrirModal = modal => {
         loadInfoConsulta(consulta)
@@ -35,16 +35,9 @@ export const CardConsulta = ({ consulta, navigation, statusConsulta, onPressCanc
     }
 
     useEffect(() => {
-        LoadProfile()
-        .then(token => {
-            if(token){
-                setPerfil(token.perfil)
-                if(token.perfil === "Medico"){
-                    setIdadePaciente(moment.duration(moment().diff(moment(consulta.paciente.dataNascimento))).asYears());
-                }
-            }
-        })
-
+        if (perfil === "Medico") {
+            setIdadePaciente(moment.duration(moment().diff(moment(consulta.paciente.dataNascimento))).asYears());
+        }
 
         switch (consulta.prioridade.prioridade) {
             case 1:
@@ -66,7 +59,7 @@ export const CardConsulta = ({ consulta, navigation, statusConsulta, onPressCanc
 
     }, [])
 
-    return (
+    return ( consulta !== null ?
         <CardBox onPress={() => AbrirModal("localConsulta")}>
             <UserImageCart
                 source={{uri: imageSource}}
@@ -99,7 +92,7 @@ export const CardConsulta = ({ consulta, navigation, statusConsulta, onPressCanc
                 </ViewRow>
             </CardContent>
         </CardBox>
-    )
+    : null)
 }
 
 export const CardClinica = ({ dados, selecionarClinica = null, selecionada = false }) => {

@@ -136,6 +136,7 @@ export const Home = ({ navigation, route }) => {
           {/* Modal Prontuário */}
 
           <ApointmentModal
+            idUsuario={infoUsuario.idUsuario}
             setShowModalApointment={setShowModalApointment}
             visible={showModalApointment}
             informacoes={infoConsulta}
@@ -148,23 +149,28 @@ export const Home = ({ navigation, route }) => {
             setShowModal={setShowModalConsulta}
             navigation={navigation}
             consulta={infoConsulta}
+            perfil={infoUsuario.perfil}
           />
 
-          {/* Botão para agendar consulta */}
-          {infoUsuario !== null && infoUsuario.perfil === "Paciente" ? (
+        
+       
+        </>
+      ) : null}
+
+        {/* Botão para agendar consulta */}
+        {infoUsuario !== null && infoUsuario.perfil === "Paciente" ? (
             <AgendarConsultaButton onPress={() => setShowAgendarConsulta(true)}>
               <FontAwesome name="stethoscope" size={32} color="white" />
             </AgendarConsultaButton>
           ) : null}
 
-          {/* Modal de Agendar Consulta */}
-          <AgendarConsultaModal
+
+           {/* Modal de Agendar Consulta */}
+           <AgendarConsultaModal
             visible={showModalAgendarConsulta}
             setShowModal={setShowAgendarConsulta}
             navigation={navigation}
           />
-        </>
-      ) : null}
     </ContainerHome>
   );
 };

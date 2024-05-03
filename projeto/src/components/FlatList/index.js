@@ -11,6 +11,7 @@ export const ListaConsultas = ({navigation, perfilUsuario, dados, statusConsulta
                 statusConsulta === item.situacao.situacao ? (
                     <CardConsulta
                         consulta={item}
+                        perfil={perfilUsuario}
                         imageSource={perfilUsuario === "Paciente" ? item.medicoClinica.medico.idNavigation.foto :  item.paciente.idNavigation.foto}
                         statusConsulta={statusConsulta}
                         onPressCancel={onPressCancel}

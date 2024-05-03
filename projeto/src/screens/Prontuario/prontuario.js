@@ -15,6 +15,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { View } from "react-native"
 import { Input } from "../../components/Input"
 import moment from "moment"
+import { ModalCamera } from "../../components/Modal"
+import { api } from "../../services/service"
 
 export const PaginaDeProntuario = ({ navigation, route }) => {
 
@@ -102,11 +104,8 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
     }, [route.params]);
 
     const InserirExame = async () => {
-        const idConsulta = "121C2076-6457-4253-9DA1-8B36E6B2A90C"
-
-
         const formData = new FormData()
-        formData.append("ConsultaId", idConsulta)
+        formData.append("ConsultaId", route.params.consulta.id)
         formData.append("Imagem", {
             uri: foto,
             name: `image.${foto.split(".").pop()}`,
@@ -121,6 +120,9 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
         }).then(retornoApi => {
             //vai somando todos os arquivos enviados
             setDescricaoExame(descricaoExame + "\n" + retornoApi.data.descricao)
+            .then(() => {
+                
+            })
         }).catch(error => {
             console.log(error);
         })
@@ -142,7 +144,7 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
                 <ProntuarioBox>
                     <UserNamePerfilText editavel={true}>{nome}</UserNamePerfilText>
                     <UserDataApointment>
-                        <AgeUserText>{idadePaciente} anos</AgeUserText>
+                        <AgeUserText>{Math.round(idadePaciente)} anos</AgeUserText>
                         <EmailUserText editavel={true}>{email}</EmailUserText>
                     </UserDataApointment>
                     <ApointmentFormBox>
@@ -183,15 +185,16 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
                                 <Button onPress={() => EditProntuario()}>
                                     <ButtonTitle>Salvar Edições</ButtonTitle>
                                 </Button>
+                                <LinkCancel onPress={
+                                    () => AbortarEdicaoProntuario()
+                                }>Cancelar</LinkCancel>
                             </>
                             :
                             <>
                                 <Button onPress={() => showUpdateForm(consulta)}>
                                     <ButtonTitle>Editar</ButtonTitle>
                                 </Button>
-                                <LinkCancel onPress={
-                                    () => AbortarEdicaoProntuario()
-                                }>Cancelar</LinkCancel>
+    
                             </>
                     ) : null}
 
@@ -228,7 +231,7 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
                         inputPerfil
                         placeholderText={"Resultados..."}
                         fieldHeight="60"
-                        fieldvalue={dadosPrescricao.resultados}
+                        fieldvalue={descricaoExame}
                     />
 
 
@@ -249,6 +252,6 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
                 />
                 : null}
         </>)
-        : <LoadingContainer />
+        : <LoadingContainer/>
     )
 }
