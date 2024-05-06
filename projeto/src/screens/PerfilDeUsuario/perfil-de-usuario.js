@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { LinkCancel } from "../../components/Link";
 import { ActivityIndicator, View } from "react-native";
 import { LoadProfile, UserLogout } from "../../utils/Auth";
-import { api } from "../../services/service";
+import { api, apiViaCep } from "../../services/service";
 import { ObjetoEstaVazio } from "../../utils/funcoesUteis";
 import moment from "moment";
 import { LoadingIndicator } from "../../components/LoadingIndicator";
@@ -21,6 +21,8 @@ import { ModalCamera } from "../../components/Modal";
 export const PerfilDeUsuario = ({ navigation }) => {
     const [editavel, setEditavel] = useState(false)
 
+    const [cep, setCep] = useState("") 
+
     const [perfilUsuario, setPerfilUsuario] = useState("")
     const [idUsuario, setIdUsurio] = useState("");
     const [dadosUsuario, setDadosUsuario] = useState({});
@@ -30,11 +32,15 @@ export const PerfilDeUsuario = ({ navigation }) => {
 
     const [fotoRecebida, setFotoRecebida] = useState("")
 
+    const [logradouro, setLogradouro] = useState("")
+    const [cidade, setCidade] = useState("")
+
     useEffect(() => {
         LoadProfile()
             .then(token => {
                 setPerfilUsuario(token.perfil)
                 setIdUsurio(token.idUsuario)
+                CarregarDadosUsuario(token.idUsuario, token.perfil)
             })
             .catch(erro => {
                 console.log(`Não foi possível buscar as informações do usuário`);
@@ -49,6 +55,9 @@ export const PerfilDeUsuario = ({ navigation }) => {
         await api.get(`/${perfil}s/BuscarPorId?id=${idUsuario}`)
             .then(response => {
                 setDadosUsuario(response.data)
+            }).catch(erro => {
+                console.log(erro);
+                // alert(erro)
             })
     }
 
@@ -64,6 +73,9 @@ export const PerfilDeUsuario = ({ navigation }) => {
             dataNascimento: moment(dadosUsuario.dataNascimento).format("DD/MM/YYYY")
         })
         setEditavel(true)
+        setCep(dadosUsuario.endereco.cep)
+        setLogradouro(dadosUsuario.endereco.logradouro)
+        setCidade(dadosUsuario.endereco.localidade)
     }
 
     const AbortarEdicaoUsuario = () => {
@@ -72,24 +84,43 @@ export const PerfilDeUsuario = ({ navigation }) => {
     }
 
     const AtualizarUsuario = async (idUsuario) => {
+        const arrayData = dadosAtualizarUsuario.dataNascimento.split("/")
+        const dataAtalizada = `${arrayData[2]}-${arrayData[1]}-${arrayData[0]}`
+
+        const objetoEnviado = {
+            rg: dadosAtualizarUsuario.rg,
+            cpf: dadosAtualizarUsuario.cpf,
+            dataNascimento: dataAtalizada,
+            cep: cep,
+            logradouro: logradouro,
+            numero: parseInt(dadosAtualizarUsuario.endereco.numero),
+            cidade: cidade,
+            nome: dadosAtualizarUsuario.idNavigation.nome,
+            idTipoUsuario: "2C48012E-32A6-4FC6-85D4-42C009E9F4D8"
+        }
+
+        console.log(objetoEnviado);
 
         await api.put(`/Pacientes?idUsuario=${idUsuario}`, {
             rg: dadosAtualizarUsuario.rg,
             cpf: dadosAtualizarUsuario.cpf,
-            // dataNascimento: moment(dadosAtualizarUsuario.dataNascimento).format("YYYY-MM-DD"),
-            cep: dadosAtualizarUsuario.endereco.cep,
-            logradouro: dadosAtualizarUsuario.endereco.logradouro,
+            dataNascimento: dataAtalizada,
+            cep: cep,
+            logradouro: logradouro,
             numero: parseInt(dadosAtualizarUsuario.endereco.numero),
-            cidade: dadosAtualizarUsuario.endereco.cidade,
+            cidade: cidade,
             nome: dadosAtualizarUsuario.idNavigation.nome,
             idTipoUsuario: "2C48012E-32A6-4FC6-85D4-42C009E9F4D8"
-        }).then(retornoApi => {
-            setDadosUsuario(retornoApi.data).then(() => {
+        }).then(() => {
+            CarregarDadosUsuario(idUsuario, perfilUsuario)
+            .then(() => {
                 setEditavel(false)
             })
         }).catch(error => {
             alert(error)
         })
+
+        setEditavel(false)
     }
 
     const requestGaleria = async () => {
@@ -124,6 +155,25 @@ export const PerfilDeUsuario = ({ navigation }) => {
             CarregarDadosUsuario(idUsuario, perfilUsuario)
         }
     }, [fotoRecebida])
+
+    const BuscarEnderecoPorCep = async () => {
+        if (cep.length < 8) {
+            return null
+        }
+
+        await apiViaCep.get(`${cep}/json/`)
+        .then(retornoApi => {
+            setLogradouro(retornoApi.data.logradouro)
+            setCidade(retornoApi.data.localidade)
+        }).catch(error => {
+            console.log(error); 
+            alert(error)
+        })
+    }
+
+    useEffect(() => {
+        BuscarEnderecoPorCep()
+    }, [cep])
 
     return (!(ObjetoEstaVazio(dadosUsuario)) ?
         (
@@ -221,17 +271,9 @@ export const PerfilDeUsuario = ({ navigation }) => {
                             <BoxInputField
                                 labelText={"Endereço:"}
                                 placeholderText={"Rua Das Goiabeiras"}
-                                fieldValue={editavel ? dadosAtualizarUsuario.endereco.logradouro : dadosUsuario.endereco.logradouro}
-                                editable
+                                fieldValue={editavel ? logradouro : dadosUsuario.endereco.logradouro}
                                 inputPerfil
                                 fieldWidth={47}
-                                onChangeText={text => setDadosAtualizarUsuario({
-                                    ...dadosAtualizarUsuario,
-                                    endereco: {
-                                        ...dadosAtualizarUsuario.endereco,
-                                        logradouro: text
-                                    }
-                                })}
                             />
                             <BoxInputField
                                 labelText={"Número:"}
@@ -260,29 +302,16 @@ export const PerfilDeUsuario = ({ navigation }) => {
                                 multiline={false}
                                 editable={editavel}
                                 inputPerfil
-                                fieldValue={editavel ? dadosAtualizarUsuario.endereco.cep : dadosUsuario.endereco.cep}
-                                onChangeText={text => setDadosAtualizarUsuario({
-                                    ...dadosAtualizarUsuario,
-                                    endereco: {
-                                        ...dadosAtualizarUsuario.endereco,
-                                        cep: text
-                                    }
-                                })}
+                                fieldValue={editavel ? cep : dadosUsuario.endereco.cep}
+                                onChangeText={text => setCep(text)}
                             />
                             <BoxInputField
                                 labelText={"Cidade:"}
                                 placeholderText={"Ribeirão Pires"}
                                 fieldWidth={47}
-                                editable
-                                fieldValue={editavel ? dadosAtualizarUsuario.endereco.cidade : dadosUsuario.endereco.cidade}
+                                fieldValue={editavel ? cidade : dadosUsuario.endereco.cidade}
                                 inputPerfil
-                                onChangeText={text => setDadosAtualizarUsuario({
-                                    ...dadosAtualizarUsuario,
-                                    endereco: {
-                                        ...dadosAtualizarUsuario.endereco,
-                                        cidade: text
-                                    }
-                                })}
+
                             />
                         </BoxInputRow>
                         {perfilUsuario === "Paciente" ? (editavel ?

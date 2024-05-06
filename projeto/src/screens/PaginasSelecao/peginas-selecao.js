@@ -95,7 +95,7 @@ export const SelecionarMedico = ({ navigation, route }) => {
             }
             <ButtonContinuarBox
                 manipulationFunction={NavegarParaSelecaoDeData}
-                functionCancel={() => navigation.replace("SelecionarClinica")}
+                functionCancel={() => navigation.replace("Main")}
             />
         </ContainerSelectPage>
     )
@@ -142,7 +142,7 @@ export const SelecionarData = ({ navigation, route }) => {
             />
             <ButtonContinuarBox
                 manipulationFunction={() => HandleContinue()}
-                functionCancel={() => navigation.replace("SelecionarMedico", { clinica: route.params.clinica })}
+                functionCancel={() => navigation.replace("Main")}
             />
 
             {agendamento.dataConsulta !== "" ?

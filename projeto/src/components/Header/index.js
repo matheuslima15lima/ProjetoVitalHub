@@ -9,9 +9,7 @@ import { LoadProfile } from '../../utils/Auth';
 import { TouchableOpacity } from 'react-native';
 import { api } from '../../services/service';
 
-export const Header = () => {
-    const [nomeUsuario, setNomeUsuario] = useState(null);
-    const [idUsuario, setIdUsuario] = useState("")
+export const Header = ({nomeUsuario, idUsuario}) => {
     const [fotoUsuario, setFotoUsuario] = useState("")
 
     const BuscarImagemUsuario = async (idUsuario) => {
@@ -24,12 +22,7 @@ export const Header = () => {
     }
  
     useEffect(() => {
-        LoadProfile()
-            .then(token => {
-                setNomeUsuario(token.nome);
-                setIdUsuario(token.idUsuario)
-                BuscarImagemUsuario(token.idUsuario)
-            });
+        BuscarImagemUsuario(idUsuario)
     }, [])
 
     useEffect(() => {

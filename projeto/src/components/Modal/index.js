@@ -20,15 +20,17 @@ import moment from "moment"
 import { api } from "../../services/service"
 import { LoadProfile, UserDecodeToken } from "../../utils/Auth"
 
-export const CancelattionModal = ({idConsulta, visible, setShowModalCancel, ListarConsultas = null, ...rest }) => {
-    const CancelarConsulta = async (id) => {
-        await api.put(`/Consultas/Status?idConsulta=${id}&status=Cancelada`)
-        .then( () => {
-            ListarConsultas()
-            setShowModalCancel(false)
-        }).catch( error =>{
-            alert(`Erro ao cancelar consult. Erro: ${error}`)
-        })
+export const CancelattionModal = ({ infoConsulta, visible, setShowModalCancel, ListarConsultas = null, ...rest }) => {
+    const CancelarConsulta = async () => {
+        await api.put(`/Consultas/Status?idConsulta=${infoConsulta.id}&status=Cancelada`)
+            .then(() => {
+                
+                ListarConsultas()
+                setShowModalCancel(false)
+            }).catch(error => {
+                alert(`Erro ao cancelar consult. Erro: ${error}`)
+                console.log(`/Consultas/Status?idConsulta=${infoConsulta.id}&status=Cancelada`);
+            })
     }
 
     return (
@@ -132,7 +134,7 @@ export const AgendarConsultaModal = ({ visible, setShowModal, navigation, ...res
                                     situacao={"rotina"}
                                     actived={nivelConsulta === "rotina"}
                                     manipulationFunction={setNivelConsulta}
-                                    idPrioridade="CFFD0762-BE13-4615-9D23-111467A1C50C"
+                                    idPrioridade="41D4F148-8757-439A-859F-F505B51B5CCD"
                                     labelPrioridade="Rotina"
                                     manipularAgendamento={IncluirNivelPrioridade}
                                 />
@@ -141,7 +143,7 @@ export const AgendarConsultaModal = ({ visible, setShowModal, navigation, ...res
                                     situacao={"exame"}
                                     actived={nivelConsulta === "exame"}
                                     manipulationFunction={setNivelConsulta}
-                                    idPrioridade="AB926C59-CC1B-4DDF-9409-2D600654D5F6"
+                                    idPrioridade="1EC174BF-389B-418A-88FA-9D475178905F"
                                     labelPrioridade="Exame"
                                     manipularAgendamento={IncluirNivelPrioridade}
                                 />
@@ -150,7 +152,7 @@ export const AgendarConsultaModal = ({ visible, setShowModal, navigation, ...res
                                     situacao={"urgencia"}
                                     actived={nivelConsulta === "urgencia"}
                                     manipulationFunction={setNivelConsulta}
-                                    idPrioridade="A958B6ED-9FAF-4592-B1BF-7E5A16249904"
+                                    idPrioridade="3F8EA35F-31FB-43D6-A67D-11536CB33DF9"
                                     labelPrioridade="Urgência"
                                     manipularAgendamento={IncluirNivelPrioridade}
                                 />
@@ -186,7 +188,7 @@ export const ConfirmarConsultaModal = ({ agendamento, visible, setShowModal = nu
 
     const HandleConfirm = async () => {
         await api.post(`/Consultas/Cadastrar`, {
-            situacaoId: "04609AD7-6EB2-465A-B5AC-A13DAEB56E5F",
+            situacaoId: "558E9B82-71DD-46DC-A4C5-5B9D65B3D0A0",
             pacienteId: idUsuario,
             medicoClinicaId: agendamento.medicoClinicaId,
             prioridadeId: agendamento.prioridadeId,
@@ -257,9 +259,8 @@ export const ConfirmarConsultaModal = ({ agendamento, visible, setShowModal = nu
     )
 }
 
-export const ConsultaModalCard = ({ consulta, visible, setShowModal = null, navigation, ...resto }) => {
+export const ConsultaModalCard = ({ perfilUsuario, consulta, visible, setShowModal = null, navigation, ...resto }) => {
 
-    const [perfilUsuario, setPerfilUsuario] = useState("")
     const [idadePaciente, setIdadePaciente] = useState(null)
 
     const HandlePress = () => {
@@ -268,18 +269,15 @@ export const ConsultaModalCard = ({ consulta, visible, setShowModal = null, navi
     }
 
     useEffect(() => {
-        LoadProfile()
-            .then(token => {
-                setPerfilUsuario(token.perfil)
-                if (token.perfil === "Medico") {
-                    const diferenca = moment().diff(moment(consulta.paciente.dataNascimento))
-                    setIdadePaciente(moment.duration(diferenca).asYears());
-                }
-            })
+
+        if (perfilUsuario === "Medico") {
+            const diferenca = moment().diff(moment(consulta.paciente.dataNascimento))
+            setIdadePaciente(moment.duration(diferenca).asYears());
+        }
 
     }, [])
 
-    return ( consulta !== null ?
+    return (consulta !== null ?
         <Modal
             {...resto}
             visible={visible}
@@ -296,7 +294,7 @@ export const ConsultaModalCard = ({ consulta, visible, setShowModal = null, navi
                         : consulta.paciente.idNavigation.nome}</Title>
 
                     <ModalTextRow>
-                        {perfil === "Paciente" ? (
+                        {perfilUsuario === "Paciente" ? (
                             <>
                                 <ModalText>{consulta.medicoClinica.medico.especialidade.especialidade1}</ModalText>
                                 <ModalText>CRM-{consulta.medicoClinica.medico.crm}</ModalText>
@@ -318,7 +316,7 @@ export const ConsultaModalCard = ({ consulta, visible, setShowModal = null, navi
                 </ModalContent>
             </PatientModal>
         </Modal>
-     : null)
+        : null)
 }
 
 export const ModalCamera = ({ visible, setShowModal = null, enviarFoto, getMediaLibrary = false, ...resto }) => {

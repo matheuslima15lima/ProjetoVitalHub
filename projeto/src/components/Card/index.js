@@ -7,11 +7,9 @@ import { GerarNotaClinica } from "../../utils/funcoesUteis";
 import { LoadProfile } from "../../utils/Auth";
 import moment from "moment";
 
-export const CardConsulta = ({ consulta, navigation, statusConsulta, onPressCancel, onPressApointment, loadInfoConsulta, onPressConsulta, imageSource }) => {
+export const CardConsulta = ({perfil, consulta, statusConsulta, onPressCancel, onPressApointment, loadInfoConsulta, onPressConsulta, imageSource }) => {
     const [idadePaciente, setIdadePaciente] = useState(null)
     const [prioridadeConsulta, setPrioridadeConsulta] = useState("")
-
-    const [perfil, setPerfil] = useState("")
 
     const AbrirModal = modal => {
         loadInfoConsulta(consulta)
@@ -35,16 +33,9 @@ export const CardConsulta = ({ consulta, navigation, statusConsulta, onPressCanc
     }
 
     useEffect(() => {
-        LoadProfile()
-        .then(token => {
-            if(token){
-                setPerfil(token.perfil)
-                if(token.perfil === "Medico"){
-                    setIdadePaciente(moment.duration(moment().diff(moment(consulta.paciente.dataNascimento))).asYears());
-                }
-            }
-        })
-
+        if(perfil === "Medico"){
+            setIdadePaciente(moment.duration(moment().diff(moment(consulta.paciente.dataNascimento))).asYears());
+        }
 
         switch (consulta.prioridade.prioridade) {
             case 1:
@@ -88,7 +79,7 @@ export const CardConsulta = ({ consulta, navigation, statusConsulta, onPressCanc
                 <ViewRow>
                     <HorarioBox statusConsulta={statusConsulta}>
                         <AntDesign name="clockcircle" size={14} color={statusConsulta == "Agendada" ? "#49B3BA" : "#4E4B59"} />
-                        <HorarioText statusConsulta={statusConsulta}>{consulta.horario}</HorarioText>
+                        <HorarioText statusConsulta={statusConsulta}>{moment(consulta.dataConsulta).format("HH:mm")}</HorarioText>
                     </HorarioBox>
                     <CardTextCancelApointment
                         statusConsulta={statusConsulta}

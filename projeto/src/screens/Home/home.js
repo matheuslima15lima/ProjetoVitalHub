@@ -48,7 +48,6 @@ export const Home = ({ navigation, route }) => {
     const ListarConsultasUsuario = async (perfil, id) => {
         await api.get(`/${perfil}s/BuscarPorData?data=${dataAtual}&id=${id}`)
             .then(retornoApi => {
-                alert(`/${perfil}s/BuscarPorData?data=${dataAtual}&id=${id}`)
                 console.log(`/${perfil}s/BuscarPorData?data=${dataAtual}&id=${id}`);
                 setListaDeConsultas(retornoApi.data)
             })
@@ -63,21 +62,22 @@ export const Home = ({ navigation, route }) => {
                     ListarConsultasUsuario(token.perfil, token.idUsuario)
                 }
             })
-        console.log(listaDeConsultas);
 
-    }, [])
+    }, [1000])
 
     useEffect(() => {
         if (infoUsuario !== null) {
             ListarConsultasUsuario(infoUsuario.perfil, infoUsuario.idUsuario)
         }
-
-        console.log(listaDeConsultas);
     }, [dataAtual, 1000])
 
     return (
         <ContainerHome>
-            <Header />
+            { infoUsuario !== null ?
+            <Header 
+                nomeUsuario={infoUsuario.nome}
+                idUsuario={infoUsuario.idUsuario}
+            /> : null}
             <Calendario
                 setDataAtual={setDataAtual}
             />
@@ -120,13 +120,13 @@ export const Home = ({ navigation, route }) => {
 
             {/* Modal Cancelar */}
 
-            {infoConsulta !== null ?
+            {infoConsulta !== null && infoUsuario !== null ?
                 <>
                     <CancelattionModal
                         setShowModalCancel={setShowModalCancel}
                         visible={showModalCancel}
-                        idConsulta={infoConsulta.id}
                         ListarConsultas={() => ListarConsultasUsuario(infoUsuario.perfil, infoUsuario.idUsuario)}
+                        infoConsulta={infoConsulta}
                     />
 
 
@@ -146,6 +146,7 @@ export const Home = ({ navigation, route }) => {
                         setShowModal={setShowModalConsulta}
                         navigation={navigation}
                         consulta={infoConsulta}
+                        perfilUsuario={infoUsuario.perfil}
                     />
 
 

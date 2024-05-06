@@ -18,6 +18,7 @@ export const ListaConsultas = ({navigation, perfilUsuario, dados, statusConsulta
                         onPressConsulta={onPressConsulta}
                         loadInfoConsulta={loadInfoConsulta}
                         navigation={navigation}
+                        perfil={perfilUsuario}
                     />)
                     : null
 

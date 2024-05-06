@@ -21,6 +21,8 @@ namespace WebAPI.Repositories
 
                 //if (paciente.Foto != null)
                 //    pacienteBuscado!.IdNavigation.Foto = paciente.Foto;
+                if (paciente.Rg != null)
+                    pacienteBuscado!.Rg = paciente.Rg;
 
                 if (paciente.DataNascimento != null)
                     pacienteBuscado!.DataNascimento = paciente.DataNascimento;
