@@ -92,7 +92,7 @@ export const ApointmentModal = ({
   ...resto
 }) => {
   const NavegarPaginaDeProntuario = () => {
-    navigation.replace("PaginaDeProntuario", {consulta: informacoes, pacienteId: idUsuario});
+    navigation.replace("PaginaDeProntuario", {consulta: informacoes, idUsuario: idUsuario});
     setShowModalApointment(false);
   };
 

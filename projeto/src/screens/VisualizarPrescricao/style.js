@@ -59,3 +59,8 @@ export const ImageInputBoxText = styled.Text`
     font-family: "MontserratAlternates_500Medium"; 
     text-align: center;
 `
+
+export const SendImageOCRBox = styled.View`
+    width: 100%;
+    gap: 20px;
+`

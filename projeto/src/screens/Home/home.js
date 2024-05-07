@@ -70,7 +70,7 @@ export const Home = ({ navigation, route }) => {
   }, []);
 
   useEffect(() => {
-    alert(dataAtual);
+    
 
     if (infoUsuario !== null) {
       ListarConsultasUsuario(infoUsuario.perfil, infoUsuario.idUsuario);
@@ -136,7 +136,7 @@ export const Home = ({ navigation, route }) => {
           {/* Modal Prontuário */}
 
           <ApointmentModal
-            idUsuario={infoUsuario.idUsuario}
+            idUsuario={infoUsuario.perfil === "Paciente" ? infoConsulta.medicoClinica.medico.idNavigation.id : infoConsulta.paciente.idNavigation.id}
             setShowModalApointment={setShowModalApointment}
             visible={showModalApointment}
             informacoes={infoConsulta}
