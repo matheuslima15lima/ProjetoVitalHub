@@ -4,7 +4,7 @@ import { AgeUserText, ButtonTitle, EmailUserText, InputLabel, Title, UserNamePer
 import { UserImagePerfil } from "../../components/UserImage/styled"
 import { UserContentBox } from "../../components/Box/style"
 import { ContainerProntuario, LoadingContainer } from "../../components/Container/style"
-import { ApointmentFormBox, ProntuarioBox, UserDataApointment } from "./style"
+import { ApointmentFormBox, ProntuarioBox, SendImageOCRBox, UserDataApointment } from "./style"
 import { BoxInputField } from "../../components/Box"
 import { Button } from "../../components/Button/styled"
 import { LinkCancel } from "../../components/Link"
@@ -68,30 +68,30 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
         setFrmEditData(consulta);
         setEditavel(true)
         // setFrmEdit(true);
-      }
+    }
 
     const AbortarEdicaoProntuario = () => {
         setFrmEditData({})
         setEditavel(false)
     }
-    
+
     // const [descricao, setDescricao] = useState({})
     // const [diagnostico, setDiagnostico] = useState({})
-    const EditProntuario = async ()=>{
-            try {
-              
-              await api.put("/Consultas/Prontuario", {
+    const EditProntuario = async () => {
+        try {
+
+            await api.put("/Consultas/Prontuario", {
                 consultaId: route.params.consulta.id,
                 descricao: frmEditData.descricao,
-                diagnostico:frmEditData.diagnostico,
+                diagnostico: frmEditData.diagnostico,
                 medicamento: route.params.consulta.receita.medicamento
-              })
-  
-          
-            } catch (error) {
-              console.log(error);
-            }
-            setEditavel(false)
+            })
+
+
+        } catch (error) {
+            console.log(error);
+        }
+        setEditavel(false)
     }
 
     useEffect(() => {
@@ -198,39 +198,42 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
 
 
                     {/* Campos Para envio de Exames (só para pacientes) */}
-                    <ImageInputBox>
-                        <InputLabel>Exames médicos:</InputLabel>
-                        <ImageInputBoxField>
-                            <MaterialCommunityIcons name="file-upload-outline" size={24} color="#4E4B59" />
-                            <ImageInputBoxText>Nenhuma foto informada</ImageInputBoxText>
-                        </ImageInputBoxField>
-                    </ImageInputBox>
-                    <ImageSubmitBox>
-                        <ButtonImageSubmit
-                            underlayColor={"#496BBA"}
-                            activeOpacity={1}
-                            onPress={() => setOpenModalCamera(true)}
-                        >
-                            <ButtonImageSubmitContent>
-                                <MaterialCommunityIcons name="camera-plus-outline" size={24} color="white" />
-                                <ButtonImageSubmitText>Enviar</ButtonImageSubmitText>
-                            </ButtonImageSubmitContent>
-                        </ButtonImageSubmit>
-                        <CancelImageSubmit>Cancelar</CancelImageSubmit>
-                    </ImageSubmitBox>
+                    {perfilUsuario === "Paciente" ?
+                        <SendImageOCRBox>
+                            <ImageInputBox>
+                                <InputLabel>Exames médicos:</InputLabel>
+                                <ImageInputBoxField>
+                                    <MaterialCommunityIcons name="file-upload-outline" size={24} color="#4E4B59" />
+                                    <ImageInputBoxText>Nenhuma foto informada</ImageInputBoxText>
+                                </ImageInputBoxField>
+                            </ImageInputBox>
+                            <ImageSubmitBox>
+                                <ButtonImageSubmit
+                                    underlayColor={"#496BBA"}
+                                    activeOpacity={1}
+                                    onPress={() => setOpenModalCamera(true)}
+                                >
+                                    <ButtonImageSubmitContent>
+                                        <MaterialCommunityIcons name="camera-plus-outline" size={24} color="white" />
+                                        <ButtonImageSubmitText>Enviar</ButtonImageSubmitText>
+                                    </ButtonImageSubmitContent>
+                                </ButtonImageSubmit>
+                                <CancelImageSubmit>Cancelar</CancelImageSubmit>
+                            </ImageSubmitBox>
 
-                    <View
-                        style={{ height: 2, backgroundColor: "#8C8A97", width: "100%", borderRadius: 5 }}
-                    >
-                    </View>
+                            <View
+                                style={{ height: 2, backgroundColor: "#8C8A97", width: "100%", borderRadius: 5 }}
+                            >
+                            </View>
 
-                    <Input
-                        inputPerfil
-                        placeholderText={"Resultados..."}
-                        fieldHeight="60"
-                        fieldvalue={dadosPrescricao.resultados}
-                    />
-
+                            <Input
+                                inputPerfil
+                                placeholderText={"Resultados..."}
+                                fieldHeight="60"
+                                fieldvalue={dadosPrescricao.resultados}
+                            />
+                        </SendImageOCRBox>
+                        : null}
 
                     {/* Link Para voltar para a Home */}
                     <LinkCancel onPress={

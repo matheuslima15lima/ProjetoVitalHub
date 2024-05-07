@@ -58,7 +58,7 @@ export const CardConsulta = ({perfil, consulta, statusConsulta, onPressCancel, o
     }, [])
 
     return (
-        <CardBox onPress={() => AbrirModal("localConsulta")}>
+        <CardBox onPress={statusConsulta !== "Cancelada" ? () => AbrirModal("localConsulta") : null}>
             <UserImageCart
                 source={{uri: imageSource}}
             />
@@ -137,7 +137,7 @@ export const CardMedico = ({ dados, selecionarMedico = null, selecionado = false
             
         >
             <UserImageCart
-                source={require("../../assets/images/doctor_image_select.png")}
+                source={{uri: dados.idNavigation.foto}}
             />
             <CardSelectContent>
                 <TitleSelectCard>{dados.idNavigation.nome}</TitleSelectCard>

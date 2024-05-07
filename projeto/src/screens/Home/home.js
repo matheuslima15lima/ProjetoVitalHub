@@ -48,7 +48,6 @@ export const Home = ({ navigation, route }) => {
     const ListarConsultasUsuario = async (perfil, id) => {
         await api.get(`/${perfil}s/BuscarPorData?data=${dataAtual}&id=${id}`)
             .then(retornoApi => {
-                console.log(`/${perfil}s/BuscarPorData?data=${dataAtual}&id=${id}`);
                 setListaDeConsultas(retornoApi.data)
             })
     }

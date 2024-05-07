@@ -75,7 +75,6 @@ export const SelecionarMedico = ({ navigation, route }) => {
     }
 
     useEffect(() => {
-        console.log(route.params);
         BuscarMedicos(route.params.agendamento.clinicaId)
     }, [route.params])
 
@@ -118,17 +117,6 @@ export const SelecionarData = ({ navigation, route }) => {
 
         setShowModalConfirmarConsulta(true)
     }
-    useEffect(() => {
-        console.log(route.params);
-    }, [route.params])
-
-    useEffect(() => {
-        console.log(dataSelecionada);
-    }, [dataSelecionada])
-
-    useEffect(() => {
-        console.log(horaSelecionada);
-    }, [horaSelecionada])
     return (
         <ContainerSelectPage>
             <TitleSelecao>Selecionar Data</TitleSelecao>

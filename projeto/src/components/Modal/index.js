@@ -287,7 +287,8 @@ export const ConsultaModalCard = ({ perfilUsuario, consulta, visible, setShowMod
             <PatientModal>
                 <ModalContent>
                     <UserImageModal
-                        source={require("../../assets/images/doctor_image_modal.png")}
+                        source={{uri: perfilUsuario === "Paciente" ? consulta.medicoClinica.medico.idNavigation.foto
+                        : consulta.paciente.idNavigation.foto}}
                     />
 
                     <Title>{perfilUsuario === "Paciente" ? consulta.medicoClinica.medico.idNavigation.nome

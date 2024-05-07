@@ -38,10 +38,7 @@ export const LocalConsulta = ({ navigation, route }) => {
   const [coordsClinica, setCoordsClinica] = useState({})
   const [latitude, setLatitude] = useState({});
   const [longitude, setLongitude] = useState({});
-  const [finalPosition, setFinalPosition] = useState({
-    latitude: coordsClinica.latitude,
-    longitude: coordsClinica.longitude,
-  });
+  const [finalPosition, setFinalPosition] = useState({});
   const mapReference = useRef(null);
 
   const [initialPosition, setInitialPosition] = useState(null);
@@ -49,7 +46,6 @@ export const LocalConsulta = ({ navigation, route }) => {
   //DADOS DA CLINICA
   const ClinicaInfo = async () => {
     try {
-      console.log( `/Clinica/BuscarPorId?id=${route.params.clinicaId}` )
       //id mocado
       // const id= '4ca5872c-e27d-42dc-81cb-0185b57940c9'
       const retornoGet = await api.get(
@@ -81,7 +77,6 @@ export const LocalConsulta = ({ navigation, route }) => {
 
       setInitialPosition(currentPosition);
 
-      console.log(initialPosition);
     }
   };
 
@@ -118,7 +113,7 @@ export const LocalConsulta = ({ navigation, route }) => {
         await setInitialPosition(response)
       })
 
-  }, [1000]);
+  }, []);
 
   useEffect(() => {
     if (dataClinic == null) {
@@ -193,7 +188,6 @@ export const LocalConsulta = ({ navigation, route }) => {
                     // image={}
                   />
                 </MapView>
-                {console.log(initialPosition)}
               </>
             ) : (
               <LoadingIndicator/>
@@ -210,7 +204,7 @@ export const LocalConsulta = ({ navigation, route }) => {
           <ContainerForm>
             <BoxInputField
               labelText={"Endereço:"}
-              placeholderText={"Rua Vicenso Silva, 987"}
+              placeholderText={"Rua da Clínica"}
               inputPerfil
             />
 
@@ -218,14 +212,14 @@ export const LocalConsulta = ({ navigation, route }) => {
               <BoxInputField
                 labelText={"Número:"}
                 placeholderText={`${numero}`}
-                fieldWidth={47}
+                fieldWidth={35}
                 inputPerfil
                 // fieldValue={numero}
               />
               <BoxInputField
                 labelText={"Bairro:"}
                 placeholderText={logradouro}
-                fieldWidth={47}
+                fieldWidth={57}
                 inputPerfil
               />
             </BoxInputRow>
