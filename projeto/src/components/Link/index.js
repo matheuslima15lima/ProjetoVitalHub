@@ -46,9 +46,9 @@ export const LinkVerifyEmail = ({ url, children }) =>
         {children}
     </LinkSemiBoldVerifyEmail>
 
-export const LinkReenviarEmail = ({ url, children }) =>
+export const LinkReenviarEmail = ({ onPress, children }) =>
     <LinkSemiBoldReenviarEmail
-        onPress={() => abrirUrl(url)}
+        onPress={onPress}
     >
         {children}
     </LinkSemiBoldReenviarEmail>
