@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import moment from "moment";
 
 export const Input = ({
-    placeholderText, keyType = "default", onChangeText = null, maxLength, fieldvalue = null, verifyEmail = false, inputPerfil = false, editable = false, fieldHeight = "16", apointment = false, center = false, multiline = true, secure = false
+    placeholderText, keyType = "default", onChangeText = null, maxLength, fieldvalue = null, verifyEmail = false, inputPerfil = false, editable = false, fieldHeight = "16", apointment = false, center = false, multiline = true, secure = false, inputWidth = 100
 }) => {
     if (verifyEmail) {
         return (
@@ -27,6 +27,7 @@ export const Input = ({
     } else if (inputPerfil) {
         return (
             <PerfilInputField
+                inputWidth={inputWidth}
                 secureTextEntry={secure}
                 multiline={multiline}
                 placeholder={placeholderText}
@@ -41,6 +42,7 @@ export const Input = ({
     } else if (apointment) {
         return (
             <ApointmentInputField
+                inputWidth={inputWidth}
                 secureTextEntry={secure}
                 multiline={multiline}
                 placeholder={placeholderText}
@@ -57,6 +59,7 @@ export const Input = ({
         return (
             <InputField
                 secureTextEntry={secure}
+                inputWidth={inputWidth}
                 multiline={multiline}
                 placeholder={placeholderText}
                 keyboardType={keyType}
