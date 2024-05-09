@@ -72,11 +72,11 @@ export const Home = ({ navigation, route }) => {
 
     return (
         <ContainerHome>
-            { infoUsuario !== null ?
-            <Header 
-                nomeUsuario={infoUsuario.nome}
-                idUsuario={infoUsuario.idUsuario}
-            /> : null}
+            {infoUsuario !== null ?
+                <Header
+                    nomeUsuario={infoUsuario.nome}
+                    idUsuario={infoUsuario.idUsuario}
+                /> : null}
             <Calendario
                 setDataAtual={setDataAtual}
             />
@@ -132,6 +132,7 @@ export const Home = ({ navigation, route }) => {
                     {/* Modal Prontuário */}
 
                     <ApointmentModal
+                        idUsuario={infoUsuario.perfil === "Paciente" ? infoConsulta.medicoClinica.medico.idNavigation.id : infoConsulta.paciente.idNavigation.id}
                         setShowModalApointment={setShowModalApointment}
                         visible={showModalApointment}
                         informacoes={infoConsulta}
