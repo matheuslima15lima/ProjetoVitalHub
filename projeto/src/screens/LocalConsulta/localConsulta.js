@@ -26,20 +26,19 @@ import {
 
 import { mapsKey } from "../../utils/MapsKey";
 import MapViewDirections from "react-native-maps-directions";
-import api from "../../services/service";
+import { api } from "../../services/service";
 import { LinkCancel } from "../../components/Link";
+import { LoadingIndicator } from "../../components/LoadingIndicator";
 
 export const LocalConsulta = ({ navigation, route }) => {
   const [dataClinic, setDataClinic] = useState(null);
   const [numero, setNumero] = useState({});
   const [cidade, setCidade] = useState({});
   const [logradouro, setLogradouro] = useState({});
+  const [coordsClinica, setCoordsClinica] = useState({})
   const [latitude, setLatitude] = useState({});
   const [longitude, setLongitude] = useState({});
-  const [finalPosition, setFinalPosition] = useState({
-    latitude: -23.5068153,
-    longitude: -46.5159653,
-  });
+  const [finalPosition, setFinalPosition] = useState({});
   const mapReference = useRef(null);
 
   const [initialPosition, setInitialPosition] = useState(null);
@@ -47,14 +46,11 @@ export const LocalConsulta = ({ navigation, route }) => {
   //DADOS DA CLINICA
   const ClinicaInfo = async () => {
     try {
-      console.log( `/Clinica/BuscarPorId?id=${route.params.clinicaId}` )
       //id mocado
       // const id= '4ca5872c-e27d-42dc-81cb-0185b57940c9'
       const retornoGet = await api.get(
         `/Clinica/BuscarPorId?id=${route.params.clinicaId}`
       );
-
-      console.log("AQUIIIIIIII");
       setNumero(retornoGet.data.endereco.numero);
       setCidade(retornoGet.data.endereco.cidade);
       setLogradouro(retornoGet.data.endereco.logradouro);
@@ -62,7 +58,12 @@ export const LocalConsulta = ({ navigation, route }) => {
       setLongitude(retornoGet.data.endereco.longitude)
       setDataClinic(retornoGet.data);
 
-      console.log(retornoGet.data);
+      //define as coordenadas da clínica
+      setCoordsClinica({
+        latitude: retornoGet.data.endereco.latitude,
+        longitude: retornoGet.data.endereco.longitude
+      })
+      setFinalPosition(coordsClinica)
     } catch (error) {
       console.log(error);
     }
@@ -76,7 +77,6 @@ export const LocalConsulta = ({ navigation, route }) => {
 
       setInitialPosition(currentPosition);
 
-      console.log(initialPosition);
     }
   };
 
@@ -103,6 +103,16 @@ export const LocalConsulta = ({ navigation, route }) => {
 
   useEffect(() => {
     CapturarLocalizacao();
+
+    //capturar localmente
+    watchPositionAsync({
+        accuracy: LocationAccuracy.High,
+        timeInterval: 1000,
+        distanceInterval: 1
+      }, async response => {
+        await setInitialPosition(response)
+      })
+
   }, []);
 
   useEffect(() => {
@@ -110,6 +120,10 @@ export const LocalConsulta = ({ navigation, route }) => {
       ClinicaInfo();
     }
   }, [dataClinic]);
+
+  useEffect(() => {
+    RecarregarVisualizacaoMapa()
+  }, [initialPosition])
 
   return (
     <ContainerLocalConsulta>
@@ -174,14 +188,9 @@ export const LocalConsulta = ({ navigation, route }) => {
                     // image={}
                   />
                 </MapView>
-                {console.log(initialPosition)}
               </>
             ) : (
-              <>
-                <Text>Carregando...</Text>
-
-                <ActivityIndicator />
-              </>
+              <LoadingIndicator/>
             )}
           </View>
 
@@ -195,7 +204,7 @@ export const LocalConsulta = ({ navigation, route }) => {
           <ContainerForm>
             <BoxInputField
               labelText={"Endereço:"}
-              placeholderText={"Rua Vicenso Silva, 987"}
+              placeholderText={"Rua da Clínica"}
               inputPerfil
             />
 
@@ -203,14 +212,14 @@ export const LocalConsulta = ({ navigation, route }) => {
               <BoxInputField
                 labelText={"Número:"}
                 placeholderText={`${numero}`}
-                fieldWidth={47}
+                fieldWidth={35}
                 inputPerfil
                 // fieldValue={numero}
               />
               <BoxInputField
                 labelText={"Bairro:"}
                 placeholderText={logradouro}
-                fieldWidth={47}
+                fieldWidth={57}
                 inputPerfil
               />
             </BoxInputRow>

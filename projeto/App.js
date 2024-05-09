@@ -42,10 +42,9 @@ export default function App() {
       <NavigationContainer>
         {/* Navigator - componente que realiza a navegação */}
         <Stack.Navigator
-          screenOptions={{
-            headerShown: false
-          }}
-        >
+        screenOptions={{
+          headerShown: false
+        }}>
           {/* Telas - a tela a ser carregada
                 name: nome da tela
                 component: o componente que será carregado como tela
@@ -99,11 +98,6 @@ export default function App() {
             name="PaginaDeProntuario"
             component={PaginaDeProntuario}
             options={{title: "Página de Prontuário"}}
-          />
-          <Stack.Screen
-            name="PaginaHomePaciente"
-            component={HomePaciente}
-            options={{title: "Home Paciente"}}
           />
           <Stack.Screen
             name="SelecionarClinica"

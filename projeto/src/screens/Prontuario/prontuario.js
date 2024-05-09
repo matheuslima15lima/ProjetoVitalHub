@@ -1,94 +1,257 @@
 import { useEffect, useState } from "react"
 import { ContainerApp } from "../../components/Container/style/"
-import { AgeUserText, ButtonTitle, EmailUserText, Title, UserNamePerfilText } from "../../components/Text/style"
+import { AgeUserText, ButtonTitle, EmailUserText, InputLabel, Title, UserNamePerfilText } from "../../components/Text/style"
 import { UserImagePerfil } from "../../components/UserImage/styled"
 import { UserContentBox } from "../../components/Box/style"
-import { ContainerProntuario } from "../../components/Container/style"
-import { ApointmentFormBox, ProntuarioBox, UserDataApointment } from "./style"
+import { ContainerProntuario, LoadingContainer } from "../../components/Container/style"
+import { ApointmentFormBox, ProntuarioBox, SendImageOCRBox, UserDataApointment } from "./style"
 import { BoxInputField } from "../../components/Box"
 import { Button } from "../../components/Button/styled"
 import { LinkCancel } from "../../components/Link"
-import { UserDecodeToken } from "../../utils/Auth"
+import { LoadProfile } from "../../utils/Auth"
+import { ButtonImageSubmit, ButtonImageSubmitContent, ButtonImageSubmitText, CancelImageSubmit, ImageInputBox, ImageInputBoxField, ImageInputBoxText, ImageSubmitBox } from "../VisualizarPrescricao/style"
 
-export const PaginaDeProntuario = ({navigation}) => {
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { View } from "react-native"
+import { Input } from "../../components/Input"
+import moment from "moment"
+
+export const PaginaDeProntuario = ({ navigation, route }) => {
+
+    const [openModalCamera, setOpenModalCamera] = useState(false)
+
+    const [descricaoExame, setDescricaoExame] = useState("")
+
+    const [foto, setFoto] = useState("")
 
     const [editavel, setEditavel] = useState(false)
 
-    const [nome , setNome] = useState("")
+    const [perfilUsuario, setPerfilUsuario] = useState("")
 
-    const [email, setEmail] = useState("")
+    const [frmEditData, setFrmEditData] = useState({})
 
-    const ProfileLoad = async ()=>{
-        const token = await UserDecodeToken()
+    const [nome, setNome] = useState("");
 
-        if (token){
-            setNome(token.nome)
-            setEmail(token.email)
-            console.log(token);
+    const [email, setEmail] = useState("");
+
+    const [consulta, setConsulta] = useState(null);
+
+    const [medicamento, setMedicamento] = useState("");
+
+    const [idadePaciente, setIdadePaciente] = useState(null)
+
+    useEffect(() => {
+        setConsulta(route.params.consulta);
+        setMedicamento(route.params.consulta.receita.medicamento)
+
+        LoadProfile()
+            .then(token => {
+                setPerfilUsuario(token.perfil);
+            })
+    }, [])
+
+    const ProntuarioInfo = async () => {
+        try {
+            // const id = "8E942765-8128-4948-966B-45550C15962E"
+            const retornoGet = await api.get(
+                `/Pacientes/BuscarPorId?id=${route.params.pacienteId}`
+            );
+            setNome(retornoGet.data.idNavigation.nome);
+            setEmail(retornoGet.data.idNavigation.email);
+            setIdadePaciente(moment.duration(moment().diff(moment(retornoGet.data.dataNascimento))).asYears())
+        } catch (error) {
+            console.log(error);
         }
+    };
+
+    function showUpdateForm(consulta) {
+        setFrmEditData(consulta);
+        setEditavel(true)
+        // setFrmEdit(true);
     }
 
+    const AbortarEdicaoProntuario = () => {
+        setFrmEditData({})
+        setEditavel(false)
+    }
 
-    // const ProntuarioInfo = async ()=>{
-    //     try {
-    //         const retornoGet = await api.get(``)
-    //     } catch (error) {
-            
-    //     }
-    // }
+    // const [descricao, setDescricao] = useState({})
+    // const [diagnostico, setDiagnostico] = useState({})
+    const EditProntuario = async () => {
+        try {
 
-    useEffect(()=>{
-            ProfileLoad()
-           
-    },[])
+            await api.put("/Consultas/Prontuario", {
+                consultaId: route.params.consulta.id,
+                descricao: frmEditData.descricao,
+                diagnostico: frmEditData.diagnostico,
+                medicamento: route.params.consulta.receita.medicamento
+            })
 
-    return (
-        <ContainerProntuario>
-            <UserImagePerfil
-                source={require("../../assets/images/user1-image.png")}
-            />
-            <ProntuarioBox>
-                <UserNamePerfilText editavel={true}>{nome}</UserNamePerfilText>
-                <UserDataApointment>
-                    <AgeUserText>18 anos</AgeUserText>
-                    <EmailUserText editavel={true}>{email}</EmailUserText>
-                </UserDataApointment>
-                <ApointmentFormBox>
-                    <BoxInputField
-                        apointment
-                        fieldHeight="84"
-                        placeholderText={"Descrição"}
-                        labelText={"Descrição da consulta"}
-                        editable
-                    />
-                    <BoxInputField
-                        apointment
-                        placeholderText={"Diagnóstico"}
-                        labelText={"Diagnóstico do paciente"}
-                        editable
-                    />
-                    <BoxInputField
-                        apointment
-                        fieldHeight="84"
-                        placeholderText={"Prescrição médica"}
-                        labelText={"Prescrição médica"}
-                        editable
-                    />
-                </ApointmentFormBox>
-                {editavel ? 
-                <>
-                    <Button onPress={() => setEditavel(false)}>
-                        <ButtonTitle>Salvar Edições</ButtonTitle>
-                    </Button> 
-                </>
-                : <Button onPress={() => setEditavel(true)}>
-                    <ButtonTitle>Editar</ButtonTitle>
-                </Button>}
-                    
-            <LinkCancel onPress={ 
-                editavel ? () => setEditavel(false) : () => navigation.replace("Main")
-            }>Cancelar</LinkCancel>
-            </ProntuarioBox>
-        </ContainerProntuario>
+
+        } catch (error) {
+            console.log(error);
+        }
+        setEditavel(false)
+    }
+
+    useEffect(() => {
+        setFrmEditData(route.params.consulta)
+        if (route.params != undefined) {
+            ProntuarioInfo();
+        }
+    }, [route.params]);
+
+    const InserirExame = async () => {
+        const idConsulta = "121C2076-6457-4253-9DA1-8B36E6B2A90C"
+
+
+        const formData = new FormData()
+        formData.append("ConsultaId", idConsulta)
+        formData.append("Imagem", {
+            uri: foto,
+            name: `image.${foto.split(".").pop()}`,
+            type: `image/${foto.split(".").pop()}`
+        });
+
+
+        await api.post(`/Exame`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        }).then(retornoApi => {
+            //vai somando todos os arquivos enviados
+            setDescricaoExame(descricaoExame + "\n" + retornoApi.data.descricao)
+        }).catch(error => {
+            console.log(error);
+        })
+    }
+
+    useEffect(() => {
+        if (foto !== "") {
+            InserirExame()
+        }
+
+    }, [foto])
+
+    return (consulta !== null ? (
+        <>
+            <ContainerProntuario>
+                <UserImagePerfil
+                    source={require("../../assets/images/user1-image.png")}
+                />
+                <ProntuarioBox>
+                    <UserNamePerfilText editavel={true}>{nome}</UserNamePerfilText>
+                    <UserDataApointment>
+                        <AgeUserText>{idadePaciente} anos</AgeUserText>
+                        <EmailUserText editavel={true}>{email}</EmailUserText>
+                    </UserDataApointment>
+                    <ApointmentFormBox>
+                        <BoxInputField
+                            apointment={(perfilUsuario === "Medico" && editavel) ? true : false}
+                            inputPerfil={!editavel ? true : false}
+                            fieldHeight="84"
+                            placeholderText={"Descrição"}
+                            labelText={"Descrição da consulta"}
+                            fieldValue={editavel ? frmEditData.descricao : consulta.descricao}
+                            onChangeText={txt => setFrmEditData({ ...frmEditData, descricao: txt })}
+                            editable={editavel}
+                        />
+                        <BoxInputField
+                            apointment={(perfilUsuario === "Medico" && editavel) ? true : false}
+                            inputPerfil={!editavel ? true : false}
+                            placeholderText={"Diagnóstico"}
+                            labelText={"Diagnóstico do paciente"}
+                            fieldValue={editavel ? frmEditData.diagnostico : consulta.diagnostico}
+                            onChangeText={txt => setFrmEditData({ ...frmEditData, diagnostico: txt })}
+                            editable={editavel}
+                        />
+                        <BoxInputField
+                            apointment={(perfilUsuario === "Medico" && editavel) ? true : false}
+                            inputPerfil={!editavel ? true : false}
+                            fieldHeight="84"
+                            placeholderText={"Prescrição médica"}
+                            labelText={"Prescrição médica"}
+                            fieldValue={medicamento}
+                            editable={false}
+                        />
+                    </ApointmentFormBox>
+
+                    {/* Botões para alterar o usuário (só para médicos) */}
+                    {perfilUsuario === "Medico" ? (
+                        editavel ?
+                            <>
+                                <Button onPress={() => EditProntuario()}>
+                                    <ButtonTitle>Salvar Edições</ButtonTitle>
+                                </Button>
+                            </>
+                            :
+                            <>
+                                <Button onPress={() => showUpdateForm(consulta)}>
+                                    <ButtonTitle>Editar</ButtonTitle>
+                                </Button>
+                                <LinkCancel onPress={
+                                    () => AbortarEdicaoProntuario()
+                                }>Cancelar</LinkCancel>
+                            </>
+                    ) : null}
+
+
+
+                    {/* Campos Para envio de Exames (só para pacientes) */}
+                    {perfilUsuario === "Paciente" ?
+                        <SendImageOCRBox>
+                            <ImageInputBox>
+                                <InputLabel>Exames médicos:</InputLabel>
+                                <ImageInputBoxField>
+                                    <MaterialCommunityIcons name="file-upload-outline" size={24} color="#4E4B59" />
+                                    <ImageInputBoxText>Nenhuma foto informada</ImageInputBoxText>
+                                </ImageInputBoxField>
+                            </ImageInputBox>
+                            <ImageSubmitBox>
+                                <ButtonImageSubmit
+                                    underlayColor={"#496BBA"}
+                                    activeOpacity={1}
+                                    onPress={() => setOpenModalCamera(true)}
+                                >
+                                    <ButtonImageSubmitContent>
+                                        <MaterialCommunityIcons name="camera-plus-outline" size={24} color="white" />
+                                        <ButtonImageSubmitText>Enviar</ButtonImageSubmitText>
+                                    </ButtonImageSubmitContent>
+                                </ButtonImageSubmit>
+                                <CancelImageSubmit>Cancelar</CancelImageSubmit>
+                            </ImageSubmitBox>
+
+                            <View
+                                style={{ height: 2, backgroundColor: "#8C8A97", width: "100%", borderRadius: 5 }}
+                            >
+                            </View>
+
+                            <Input
+                                inputPerfil
+                                placeholderText={"Resultados..."}
+                                fieldHeight="60"
+                                fieldvalue={dadosPrescricao.resultados}
+                            />
+                        </SendImageOCRBox>
+                        : null}
+
+                    {/* Link Para voltar para a Home */}
+                    <LinkCancel onPress={
+                        () => navigation.replace("Main")
+                    }>Voltar Para a Home</LinkCancel>
+                </ProntuarioBox>
+            </ContainerProntuario>
+
+            {/* Modal Para abrir a câmera (só para paciente) */}
+            {perfilUsuario === "Paciente" ?
+                <ModalCamera
+                    visible={openModalCamera}
+                    setShowModal={setOpenModalCamera}
+                    enviarFoto={setFoto}
+                    getMediaLibrary
+                />
+                : null}
+        </>)
+        : <LoadingContainer />
     )
 }

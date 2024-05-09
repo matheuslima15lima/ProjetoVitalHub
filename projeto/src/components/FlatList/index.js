@@ -2,29 +2,23 @@ import { View } from "react-native"
 import { FlatListStyle } from "./style"
 import { CardClinica, CardConsulta, CardMedico } from "../Card"
 
-export const ListaConsultas = ({ dados, statusConsulta, loadInfoConsulta, permissaoUsuario, MostrarModal = null }) => {
+export const ListaConsultas = ({navigation, perfilUsuario, dados, statusConsulta, onPressCancel, onPressApointment, loadInfoConsulta, onPressConsulta }) => {
     return (
         <FlatListStyle
             data={dados}
             keyExtractor={item => item.id}
             renderItem={({ item }) =>
-                statusConsulta == item.situacao.situacao ? (
+                statusConsulta === item.situacao.situacao ? (
                     <CardConsulta
                         consulta={item}
-                        permissaoUsuario={permissaoUsuario}
-                        dadosUsuario={permissaoUsuario == "Paciente" ? item.medicoClinica.medico : item.paciente }
-                        dataConsulta={item.dataConsulta}
-                        prioridade={item.prioridade.prioridade}
-                        // imageSource={item.foto}
+                        imageSource={perfilUsuario === "Paciente" ? item.medicoClinica.medico.idNavigation.foto :  item.paciente.idNavigation.foto}
                         statusConsulta={statusConsulta}
-
-                        onPressCancel={() => MostrarModal('cancelar', item)}
-                        onPressApointment={() => MostrarModal('prontuario', item)}
-                        onPressCard = {() => MostrarModal('medico', item)}
-
-                        // onPressCancel={onPressCancel}
-                        // onPressApointment={onPressApointment}
+                        onPressCancel={onPressCancel}
+                        onPressApointment={onPressApointment}
+                        onPressConsulta={onPressConsulta}
                         loadInfoConsulta={loadInfoConsulta}
+                        navigation={navigation}
+                        perfil={perfilUsuario}
                     />)
                     : null
 
@@ -34,16 +28,28 @@ export const ListaConsultas = ({ dados, statusConsulta, loadInfoConsulta, permis
     )
 }
 
-export const ListaClinicas = ({ dados }) =>
+export const ListaClinicas = ({ dados, selecionarClinica, clinicaSelecionada }) =>
     <FlatListStyle
         data={dados}
         keyExtractor={item => item.id}
-        renderItem={({ item, index }) => <CardClinica firstItem={index === 0 ? true : false} dados={item} />}
+        renderItem={({ item }) => 
+            <CardClinica 
+                selecionarClinica={selecionarClinica} 
+                selecionada={item.id === clinicaSelecionada.clinicaId ? true : false} 
+                dados={item} 
+            />
+        }
     />
 
-export const ListaMedicos = ({ dados }) =>
+export const ListaMedicos = ({ dados, selecionarMedico, medicoSelecionado }) =>
     <FlatListStyle
         data={dados}
         keyExtractor={item => item.id}
-        renderItem={({ item, index }) => <CardMedico firstItem={index === 0 ? true : false} dados={item}  />}
+        renderItem={({ item }) => 
+            <CardMedico 
+                selecionarMedico={selecionarMedico} 
+                selecionado={item.idNavigation.id === medicoSelecionado.medicoId ? true : false}
+                dados={item} 
+            />
+        }
     />

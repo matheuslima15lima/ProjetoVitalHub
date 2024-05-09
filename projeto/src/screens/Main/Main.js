@@ -4,31 +4,16 @@ import { PerfilDeMedico, PerfilDeUsuario } from "../PerfilDeUsuario/perfil-de-us
 import { ContentIcon, TextIcon } from "./style";
 
 import { FontAwesome, FontAwesome5 } from "@expo/vector-icons"
-import { useEffect, useState } from "react";
-import { UserDecodeToken } from "../../utils/Auth";
+import { useState } from "react";
 
 const BottomTab = createBottomTabNavigator();
 
-const Main = ({route}) => {
+const Main = ({ route, initialPage = "Home" }) => {
     const ativado = route.params
-
-    const [perfil, setPerfil] = useState("paciente")
-
-    const ProfileLoad = async () => {
-        const token = await UserDecodeToken()
-
-        if(token){
-            setPerfil(token.perfil)
-        }
-    }
-
-    useEffect(() => {
-        ProfileLoad()
-    }, [])
 
     return (
         <BottomTab.Navigator
-            initialRouteName="Home"
+            initialRouteName={initialPage}
             screenOptions={({ route }) => ({
                 tabBarStyle: {
                     backgroundColor: "#FFFFFF",
@@ -70,18 +55,13 @@ const Main = ({route}) => {
                 name="Home"
                 component={Home}
             /> */}
-            {(perfil === "Paciente") ? (
-                <BottomTab.Screen
-                    name="PaginaHomePaciente"
-                    component={HomePaciente}
-                    initialParams={{ativado: ativado ? true : false }}
-                />
-            ) : (
-                <BottomTab.Screen
-                    name="Home"
-                    component={Home}
-                />
-            )}
+            
+            <BottomTab.Screen
+                name="Home"
+                component={Home}
+                initialParams={{ ativado: ativado ? true : false }}
+            />
+
 
             <BottomTab.Screen
                 name="PerfilDeUsuario"

@@ -7,12 +7,13 @@ import { InputContentBox } from "./style";
 
 export const BoxInputField = ({
     labelText, placeholderText, fieldWidth = "100",
-    keyType = "default", onChangeText = null, maxLength, fieldValue = null, editable = false, fieldHeight = "16", apointment = false, inputPerfil, center = false
+    keyType = "default", onChangeText = null, maxLength, fieldValue = null, editable = false, fieldHeight = "16", apointment = false, inputPerfil, center = false, multiline = true
 }) =>
     <InputContentBox fieldWidth={fieldWidth}>
         <InputLabel>{labelText}</InputLabel>
 
         <Input
+            multiline={multiline}
             placeholderText={placeholderText}
             keyboardType={keyType}
             maxLength={maxLength}
@@ -35,13 +36,15 @@ export const ButtonContinuarBox = ({manipulationFunction = null, openModalFuncti
         <LinkCancel onPress={functionCancel}>Cancelar</LinkCancel>
     </>
 
-export const BoxInputSelect = ({labelText}) => {
+export const BoxInputSelect = ({labelText, selecionarHora}) => {
     return(
         <InputContentBox
             fieldWidth={"90"}
         >
             <InputLabel>{labelText}</InputLabel>
-            <InputSelect/>
+            <InputSelect
+                selecionarHora={selecionarHora}
+            />
         </InputContentBox>
     )
 }

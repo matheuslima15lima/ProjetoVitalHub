@@ -1,8 +1,6 @@
 import styled, { css } from "styled-components";
 
 export const Button = styled.TouchableOpacity`
-    flex-direction: row;
-    gap: 10px;
     padding: 12px 8px;
     border: 1px solid ${props => props.modal ? "#60BFC5" : "#496bba"};
     width: ${props => (props.width != null) ? `${props.width}%` : `100%`};
@@ -37,4 +35,17 @@ export const ButtonCamera = styled(Button)`
         background-color: #E35B5B;
         border: 1px solid #E35B5B;
     `}
+`
+
+export const ButtonEditPhoto = styled(Button)`
+    width: 45px;
+    height: 45px;
+    border: 1px solid #FBFBFB;
+    background-color: #496BBA;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    right: 20px;
+    bottom: -20px;
+    z-index: 1000;
 `

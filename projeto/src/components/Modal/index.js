@@ -1,7 +1,7 @@
-import { Modal, StyleSheet, View } from "react-native"
-import { BoxInputConsulta, CameraContent, ConsultaModal, DadosConsultaBox, DadosConsultaText, DadosConsultaTitle, LinhaDadosConsulta, ModalConsultaForm, ModalContent, ModalSubtitle, ModalText, ModalTextRow, PatientModal, ResumoConsultaBox } from "./style"
+import { Modal, StyleSheet, TouchableOpacity, View } from "react-native"
+import { BoxInputConsulta, CameraContent, ConsultaModal, DadosConsultaBox, DadosConsultaText, DadosConsultaTitle, ImageContent, ImagemRecebida, LastPhoto, LinhaDadosConsulta, ModalConsultaForm, ModalContent, ModalSubtitle, ModalText, ModalTextRow, PatientModal, ResumoConsultaBox } from "./style"
 import { ButtonTitle, SemiBoldText, TextRegular, Title } from "../Text/style"
-import { ButtonCamera, ButtonModal } from "../Button/styled"
+import { Button, ButtonCamera, ButtonModal } from "../Button/styled"
 import { LinkCancel } from "../Link"
 import { UserImageModal } from "../UserImage/styled"
 import { useEffect, useRef, useState } from "react"
@@ -13,10 +13,26 @@ import { Input } from "../Input"
 import { AntDesign } from '@expo/vector-icons';
 
 import * as MediaLibrary from 'expo-media-library'
+import * as ImagePicker from 'expo-image-picker'
 
 import { Camera, CameraType } from 'expo-camera'
+import moment from "moment"
+import { api } from "../../services/service"
+import { LoadProfile, UserDecodeToken } from "../../utils/Auth"
 
-export const CancelattionModal = ({ visible, setShowModalCancel, ...rest }) => {
+export const CancelattionModal = ({ infoConsulta, visible, setShowModalCancel, ListarConsultas = null, ...rest }) => {
+    const CancelarConsulta = async () => {
+        await api.put(`/Consultas/Status?idConsulta=${infoConsulta.id}&status=Cancelada`)
+            .then(() => {
+                
+                ListarConsultas()
+                setShowModalCancel(false)
+            }).catch(error => {
+                alert(`Erro ao cancelar consult. Erro: ${error}`)
+                console.log(`/Consultas/Status?idConsulta=${infoConsulta.id}&status=Cancelada`);
+            })
+    }
+
     return (
         <Modal {...rest}
             visible={visible}
@@ -30,8 +46,8 @@ export const CancelattionModal = ({ visible, setShowModalCancel, ...rest }) => {
 
 
 
-                    <ButtonModal onPress={() => setShowModalCancel(false)}>
-                        <ButtonTitle onPress={() => setShowModalCancel(false)}>Confirmar</ButtonTitle>
+                    <ButtonModal onPress={() => CancelarConsulta()}>
+                        <ButtonTitle onPress={() => CancelarConsulta()}>Confirmar</ButtonTitle>
                     </ButtonModal>
 
                     <LinkCancel onPress={() => setShowModalCancel(false)}>Cancelar</LinkCancel>
@@ -41,7 +57,8 @@ export const CancelattionModal = ({ visible, setShowModalCancel, ...rest }) => {
     )
 }
 
-export const ApointmentModal = ({ visible, setShowModalApointment, informacoes, navigation, perfilUsuario, ...resto }) => {
+export const ApointmentModal = ({ visible, setShowModalApointment, informacoes, navigation, ...resto }) => {
+
 
     return (
         <Modal {...resto}
@@ -83,6 +100,20 @@ export const AgendarConsultaModal = ({ visible, setShowModal, navigation, ...res
 
     // state para o nível de consulta
     const [nivelConsulta, setNivelConsulta] = useState("")
+    const [agendamento, setAgendamento] = useState(null);
+
+    const handleContinue = async () => {
+        await setShowModal(false)
+        navigation.replace("SelecionarClinica", { agendamento: agendamento })
+    }
+
+    const IncluirNivelPrioridade = (id, label) => {
+        setAgendamento({
+            ...agendamento,
+            prioridadeId: id,
+            prioridadeLabel: label
+        })
+    }
 
     return (
         <Modal
@@ -103,18 +134,27 @@ export const AgendarConsultaModal = ({ visible, setShowModal, navigation, ...res
                                     situacao={"rotina"}
                                     actived={nivelConsulta === "rotina"}
                                     manipulationFunction={setNivelConsulta}
+                                    idPrioridade="41D4F148-8757-439A-859F-F505B51B5CCD"
+                                    labelPrioridade="Rotina"
+                                    manipularAgendamento={IncluirNivelPrioridade}
                                 />
                                 <ButtonModalConsulta
                                     buttonText={"Exame"}
                                     situacao={"exame"}
                                     actived={nivelConsulta === "exame"}
                                     manipulationFunction={setNivelConsulta}
+                                    idPrioridade="1EC174BF-389B-418A-88FA-9D475178905F"
+                                    labelPrioridade="Exame"
+                                    manipularAgendamento={IncluirNivelPrioridade}
                                 />
                                 <ButtonModalConsulta
                                     buttonText={"Urgência"}
                                     situacao={"urgencia"}
                                     actived={nivelConsulta === "urgencia"}
                                     manipulationFunction={setNivelConsulta}
+                                    idPrioridade="3F8EA35F-31FB-43D6-A67D-11536CB33DF9"
+                                    labelPrioridade="Urgência"
+                                    manipularAgendamento={IncluirNivelPrioridade}
                                 />
                             </BoxButtonRow>
                         </BoxInputConsulta>
@@ -125,13 +165,15 @@ export const AgendarConsultaModal = ({ visible, setShowModal, navigation, ...res
                                 apointment
                                 editable
                                 center
+                                onChangeText={text => setAgendamento({
+                                    ...agendamento,
+                                    localizacao: text
+                                })}
+                                fieldvalue={agendamento ? agendamento.localizacao : null}
                             />
                         </BoxInputConsulta>
                     </ModalConsultaForm>
-                    <ButtonModal onPress={() => {
-                        setShowModal(false)
-                        navigation.replace("SelecionarClinica")
-                    }}>
+                    <ButtonModal onPress={() => handleContinue()}>
                         <ButtonTitle>Continuar</ButtonTitle>
                     </ButtonModal>
                     <LinkCancel onPress={() => setShowModal(false)}>Cancelar</LinkCancel>
@@ -141,7 +183,33 @@ export const AgendarConsultaModal = ({ visible, setShowModal, navigation, ...res
     )
 }
 
-export const ConfirmarConsultaModal = ({ visible, setShowModal = null, navigation, ...resto }) => {
+export const ConfirmarConsultaModal = ({ agendamento, visible, setShowModal = null, navigation, ...resto }) => {
+    const [idUsuario, setIdUsuario] = useState(null)
+
+    const HandleConfirm = async () => {
+        await api.post(`/Consultas/Cadastrar`, {
+            situacaoId: "558E9B82-71DD-46DC-A4C5-5B9D65B3D0A0",
+            pacienteId: idUsuario,
+            medicoClinicaId: agendamento.medicoClinicaId,
+            prioridadeId: agendamento.prioridadeId,
+            dataConsulta: agendamento.dataConsulta
+        }).then(() => {
+            setShowModal(false)
+
+            navigation.replace("Main")
+        }).catch(erro => {
+            console.log(erro);
+            console.log(idUsuario);
+        })
+    }
+
+    useEffect(() => {
+        LoadProfile()
+            .then(token => {
+                setIdUsuario(token.idUsuario)
+            })
+    }, [])
+
     return (
         <Modal
             {...resto}
@@ -150,48 +218,66 @@ export const ConfirmarConsultaModal = ({ visible, setShowModal = null, navigatio
             animationType="fade"
         >
             <PatientModal>
-                <ModalContent>
-                    <Title>Agendar consulta</Title>
-                    <ResumoConsultaBox>
-                        <TextRegular>Consulte os dados selecionados para a sua consulta</TextRegular>
-                        <DadosConsultaBox>
-                            <LinhaDadosConsulta>
-                                <DadosConsultaTitle>Data da consulta</DadosConsultaTitle>
-                                <DadosConsultaText>1 de Novembro de 2023</DadosConsultaText>
-                            </LinhaDadosConsulta>
-                            <LinhaDadosConsulta>
-                                <DadosConsultaTitle>Médico(a) da consulta</DadosConsultaTitle>
-                                <DadosConsultaText>Dra Alessandra</DadosConsultaText>
-                                <DadosConsultaText>Demartologa, Esteticista</DadosConsultaText>
-                            </LinhaDadosConsulta>
-                            <LinhaDadosConsulta>
-                                <DadosConsultaTitle>Local da consulta</DadosConsultaTitle>
-                                <DadosConsultaText>São Paulo, SP</DadosConsultaText>
-                            </LinhaDadosConsulta>
-                            <LinhaDadosConsulta>
-                                <DadosConsultaTitle>Tipo da consulta</DadosConsultaTitle>
-                                <DadosConsultaText>Rotina</DadosConsultaText>
-                            </LinhaDadosConsulta>
-                        </DadosConsultaBox>
-                    </ResumoConsultaBox>
-                    <ButtonContinuarBox
-                        manipulationFunction={() => navigation.replace("Main")}
-                        functionCancel={() => setShowModal(false)}
-                        buttonText="Confirmar"
-                    />
-                </ModalContent>
+                {agendamento ?
+                    <ModalContent>
+                        <Title>Agendar consulta</Title>
+                        <ResumoConsultaBox>
+                            <TextRegular>Consulte os dados selecionados para a sua consulta</TextRegular>
+                            <DadosConsultaBox>
+                                <LinhaDadosConsulta>
+                                    <DadosConsultaTitle>Data da consulta</DadosConsultaTitle>
+                                    <DadosConsultaText>{moment(agendamento.dataConsulta).format("DD/MM/YYYY HH:mm")}</DadosConsultaText>
+                                </LinhaDadosConsulta>
+                                <LinhaDadosConsulta>
+                                    <DadosConsultaTitle>Médico(a) da consulta</DadosConsultaTitle>
+                                    <DadosConsultaText>{agendamento.medicoNome}</DadosConsultaText>
+                                    <DadosConsultaText>{agendamento.medicoEspecialidade}</DadosConsultaText>
+                                </LinhaDadosConsulta>
+                                <LinhaDadosConsulta>
+                                    <DadosConsultaTitle>Clínica da consulta</DadosConsultaTitle>
+                                    <DadosConsultaText>{agendamento.nomeFantasia}</DadosConsultaText>
+                                </LinhaDadosConsulta>
+                                <LinhaDadosConsulta>
+                                    <DadosConsultaTitle>Local da consulta</DadosConsultaTitle>
+                                    <DadosConsultaText>{agendamento.localizacao}</DadosConsultaText>
+                                </LinhaDadosConsulta>
+                                <LinhaDadosConsulta>
+                                    <DadosConsultaTitle>Tipo da consulta</DadosConsultaTitle>
+                                    <DadosConsultaText>{agendamento.prioridadeLabel}</DadosConsultaText>
+                                </LinhaDadosConsulta>
+                            </DadosConsultaBox>
+                        </ResumoConsultaBox>
+                        <ButtonContinuarBox
+                            manipulationFunction={() => HandleConfirm()}
+                            functionCancel={() => setShowModal(false)}
+                            buttonText="Confirmar"
+                        />
+                    </ModalContent>
+                    : null}
             </PatientModal>
         </Modal>
     )
 }
 
-export const MedicoModal = ({ visible, setShowModal = null, informacoes, perfilUsuario, navigation, ...resto }) => {
-    
-    function handleClose(){
-        navigation.navigate("LocalConsulta", { clinicaId : informacoes.medicoClinica.clinicaId })
+export const ConsultaModalCard = ({ perfilUsuario, consulta, visible, setShowModal = null, navigation, ...resto }) => {
+
+    const [idadePaciente, setIdadePaciente] = useState(null)
+
+    const HandlePress = () => {
+        setShowModal(false)
+        navigation.replace("LocalConsulta", { clinicaId: consulta.medicoClinica.clinicaId });
     }
-    
-    return (
+
+    useEffect(() => {
+
+        if (perfilUsuario === "Medico") {
+            const diferenca = moment().diff(moment(consulta.paciente.dataNascimento))
+            setIdadePaciente(moment.duration(diferenca).asYears());
+        }
+
+    }, [])
+
+    return (consulta !== null ?
         <Modal
             {...resto}
             visible={visible}
@@ -201,60 +287,157 @@ export const MedicoModal = ({ visible, setShowModal = null, informacoes, perfilU
             <PatientModal>
                 <ModalContent>
                     <UserImageModal
-                        source={require("../../assets/images/doctor_image_modal.png")}
+                        source={{uri: perfilUsuario === "Paciente" ? consulta.medicoClinica.medico.idNavigation.foto
+                        : consulta.paciente.idNavigation.foto}}
                     />
 
-                    <Title>Dr. Fulano</Title>
+                    <Title>{perfilUsuario === "Paciente" ? consulta.medicoClinica.medico.idNavigation.nome
+                        : consulta.paciente.idNavigation.nome}</Title>
 
                     <ModalTextRow>
-                        <ModalText>Clínico Geral</ModalText>
-                        <ModalText>CRM-11204</ModalText>
+                        {perfilUsuario === "Paciente" ? (
+                            <>
+                                <ModalText>{consulta.medicoClinica.medico.especialidade.especialidade1}</ModalText>
+                                <ModalText>CRM-{consulta.medicoClinica.medico.crm}</ModalText>
+                            </>
+                        ) : (
+                            <>
+                                <TextAge>{idadePaciente} anos</TextAge>
+                                <ModalText>{consulta.paciente.idNavigation.email}</ModalText>
+                            </>
+                        )
+                        }
                     </ModalTextRow>
 
-                    <ButtonModal onPress={() => handleClose()}>
-                        <ButtonTitle>Ver Local da Consulta</ButtonTitle>
+                    <ButtonModal onPress={HandlePress}>
+                        <ButtonTitle onPress={HandlePress}>Ver Local da Consulta</ButtonTitle>
                     </ButtonModal>
 
                     <LinkCancel onPress={() => setShowModal(false)}>Cancelar</LinkCancel>
                 </ModalContent>
             </PatientModal>
         </Modal>
-    )
+        : null)
 }
 
-                    <ButtonModal onPress={() => HandlePress("LocalConsulta")}>
-                        <ButtonTitle onPress={() => HandlePress("LocalConsulta")}>Ver Local da Consulta</ButtonTitle>
-                    </ButtonModal>
-
-                    <LinkCancel onPress={() => setShowModal(false)}>Cancelar</LinkCancel>
-                </ModalContent>
-            </PatientModal>
-        </Modal>
-    )
-}
-
-export const ModalCamera = ({ visible, setShowModal = null, enviarFoto, ...resto }) => {
+export const ModalCamera = ({ visible, setShowModal = null, enviarFoto, getMediaLibrary = false, ...resto }) => {
     const cameraRef = useRef(null)
+
+    const [lastPhoto, setLastPhoto] = useState(null)
+    const [photo, setPhoto] = useState(null)
+
+    const [showModalImage, setShowModalImage] = useState(false)
+
+    const GetLatestPhoto = async () => {
+        //ordena a lista de fotos da galeria do maior ao menor e pega o primeiro item
+        const { assets } = await MediaLibrary.getAssetsAsync({ sortBy: [[MediaLibrary.SortBy.creationTime, false]], first: 1 })
+
+
+        console.log(assets);
+
+        if (assets.length > 0) {
+            setLastPhoto(assets[0].uri)
+        }
+    }
 
     useEffect(() => {
         (async () => {
             const { status: cameraStatus } = Camera.requestCameraPermissionsAsync()
             const { status: mediaStatus } = MediaLibrary.requestPermissionsAsync()
         })()
+
+        //verificar se tem a necessidade de mostrar a galeria
+        if (getMediaLibrary) {
+            GetLatestPhoto()
+        }
     }, [])
 
     const CapturarFoto = async () => {
         if (cameraRef) {
             const captura = await cameraRef.current.takePictureAsync()
 
-            enviarFoto(captura.uri)
-
-                .then(() => {
-                    console.warn("Foto capturada com sucesso")
-                }).catch(erro => {
-                    console.warn(erro)
-                })
+            setPhoto(captura.uri)
+            setShowModalImage(true)
         }
+    }
+
+    const SelectImageGalery = async () => {
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            quality: 1
+        })
+
+        if (!result.canceled) {
+            setPhoto(result.assets[0].uri)
+            setShowModalImage(true)
+        }
+    }
+
+    return (
+        <>
+            <Modal {...resto}
+                visible={visible}
+                transparent
+                animationType="fade"
+
+            >
+                <PatientModal>
+
+                    <CameraContent>
+                        <View style={{ height: "90%", width: "100%", borderRadius: 15 }}>
+                            <Camera
+                                ref={cameraRef}
+                                ratio='15:9'
+                                type={CameraType.back}
+                                style={styles.camera}
+                            />
+                        </View>
+                        <View style={{ width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 30 }}>
+                            <ButtonCamera onPress={() => CapturarFoto()}>
+                                <AntDesign name="camera" size={24} color="white" />
+                            </ButtonCamera>
+                            <ButtonCamera
+                                onPress={() => setShowModal(false)}
+                                close
+                            >
+                                <AntDesign name="close" size={24} color="white" />
+                            </ButtonCamera>
+
+                            <TouchableOpacity onPress={() => SelectImageGalery()}>
+                                {
+                                    lastPhoto !== null ?
+                                        <LastPhoto
+                                            source={{ uri: lastPhoto }}
+                                        />
+                                        : (
+                                            null
+                                        )
+                                }
+                            </TouchableOpacity>
+                        </View>
+                    </CameraContent>
+
+                </PatientModal>
+            </Modal>
+
+            <ModalImageCamera
+                visible={showModalImage}
+                setShowModalImage={setShowModalImage}
+                setShowModalCamera={setShowModal}
+                setFotoFinal={enviarFoto}
+                image={photo}
+
+            />
+        </>
+    )
+}
+
+
+export const ModalImageCamera = ({ visible, setShowModalImage, setShowModalCamera, image, setFotoFinal, ...resto }) => {
+    const RetornarFoto = (foto) => {
+        setFotoFinal(foto)
+        setShowModalImage(false)
+        setShowModalCamera(false)
     }
 
     return (
@@ -265,56 +448,17 @@ export const ModalCamera = ({ visible, setShowModal = null, enviarFoto, ...resto
 
         >
             <PatientModal>
-                <CameraContent>
-                    <View style={{ height: "90%", width: "100%", borderRadius: 15 }}>
-                        <Camera
-                            ref={cameraRef}
-                            ratio='15:9'
-                            type={CameraType.back}
-                            style={styles.camera}
-                        />
-                    </View>
-                    <View style={{ width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 30 }}>
-                        <ButtonCamera onPress={() => CapturarFoto()}>
-                            <AntDesign name="camera" size={24} color="white" />
-                        </ButtonCamera>
-                        <ButtonCamera
-                            onPress={() => setShowModal(false)}
-                            close
-                        >
-                            <AntDesign name="close" size={24} color="white" />
-                        </ButtonCamera>
-                    </View>
-                </CameraContent>
-            </PatientModal>
-        </Modal>
-    )
-}
+                <ImageContent>
+                    <ImagemRecebida
+                        source={{ uri: image }}
+                    />
+                    <Button onPress={() => RetornarFoto(image)}>
+                        <ButtonTitle>Confirmar</ButtonTitle>
+                    </Button>
+                    {/* <TextRegular>{image}</TextRegular> */}
+                    <LinkCancel onPress={() => setShowModalImage(false)}>Voltar</LinkCancel>
+                </ImageContent>
 
-
-export const ErrorModal = ({ visible, setShowModalError, ...rest }) => {
-    return (
-        <Modal {...rest}
-            visible={visible}
-            transparent={true}
-            animationType="fade"
-        >
-            <PatientModal>
-                <ModalContent>
-                    <Title>Email ou senha incorretos</Title>
-                    <ModalText>email ou senha icorretos, digite novamente</ModalText>
-
-
-
-                    <ButtonModal onPress={() => setShowModalError(false)}>
-                        <ButtonTitle onPress={() => setShowModalError(false)}>Tentar novamente</ButtonTitle>
-                    </ButtonModal>
-
-                    <LinkCancel onPress={() => {
-
-                        setShowModalError(false)
-                    }}>fechar </LinkCancel>
-                </ModalContent>
             </PatientModal>
         </Modal>
     )
@@ -326,4 +470,3 @@ const styles = StyleSheet.create({
         height: "100%"
     }
 })
-
