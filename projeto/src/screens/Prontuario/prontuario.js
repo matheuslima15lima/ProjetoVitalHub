@@ -57,7 +57,7 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
 
   const [consulta, setConsulta] = useState(null);
 
-  const [medicamento, setMedicamento] = useState("");
+  const [medicamento, setMedicamento] = useState(null);
 
   const [idadePaciente, setIdadePaciente] = useState(null);
 
@@ -67,7 +67,10 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
 
   useEffect(() => {
     setConsulta(route.params.consulta);
-    setMedicamento(route.params.consulta.receita.medicamento);
+
+    if(route.params.consulta.receita !== undefined){
+      setMedicamento(route.params.consulta.receita.medicamento);
+    }
 
     LoadProfile().then((token) => {
       setPerfilUsuario(token.perfil);
@@ -127,7 +130,7 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
         consultaId: route.params.consulta.id,
         descricao: frmEditData.descricao,
         diagnostico: frmEditData.diagnostico,
-        medicamento: route.params.consulta.receita.medicamento,
+        medicamento: medicamento,
       });
     } catch (error) {
       console.log(error);
@@ -253,10 +256,10 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
               apointment={perfilUsuario === "Medico" && editavel ? true : false}
               inputPerfil={!editavel ? true : false}
               fieldHeight="84"
+              editable
               placeholderText={"Prescrição médica"}
               labelText={"Prescrição médica"}
-              fieldValue={medicamento}
-              editable={false}
+              fieldValue={medicamento ? medicamento : null}
             />
           </ApointmentFormBox>
 
