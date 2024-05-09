@@ -15,7 +15,7 @@ import { AntDesign } from '@expo/vector-icons';
 import * as MediaLibrary from 'expo-media-library'
 import * as ImagePicker from 'expo-image-picker'
 
-import { Camera, CameraType } from 'expo-camera'
+import { CameraView } from 'expo-camera'
 import moment from "moment"
 import { api } from "../../services/service"
 import { LoadProfile, UserDecodeToken } from "../../utils/Auth"
@@ -403,10 +403,10 @@ export const ModalCamera = ({ visible, setShowModal = null, enviarFoto, getMedia
 
                     <CameraContent>
                         <View style={{ height: "90%", width: "100%", borderRadius: 15 }}>
-                            <Camera
+                            <CameraView
                                 ref={cameraRef}
                                 ratio='15:9'
-                                type={CameraType.back}
+                                facing={'back'}
                                 style={styles.camera}
                             />
                         </View>

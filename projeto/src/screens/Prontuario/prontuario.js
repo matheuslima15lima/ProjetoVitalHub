@@ -1,42 +1,18 @@
 import { useEffect, useState } from "react";
-import { ContainerApp } from "../../components/Container/style/";
-import {
-  AgeUserText,
-  ButtonTitle,
-  EmailUserText,
-  InputLabel,
-  Title,
-  UserNamePerfilText,
-} from "../../components/Text/style";
+import { LoadProfile } from "../../utils/Auth";
+import { api } from "../../services/service";
+import moment from "moment";
+import { ContainerProntuario, LoadingContainer } from "../../components/Container/style";
 import { UserImagePerfil } from "../../components/UserImage/styled";
-import { UserContentBox } from "../../components/Box/style";
-import {
-  ContainerProntuario,
-  LoadingContainer,
-} from "../../components/Container/style";
-import { ApointmentFormBox, ProntuarioBox, UserDataApointment } from "./style";
+import { ApointmentFormBox, ButtonImageSubmit, ButtonImageSubmitContent, ButtonImageSubmitText, ImageInputBox, ImageInputBoxField, ImageInputBoxText, ImageSubmitBox, ProntuarioBox, SendImageOCRBox, UserDataApointment } from "./style";
+import { AgeUserText, ButtonTitle, EmailUserText, InputLabel, UserNamePerfilText } from "../../components/Text/style";
 import { BoxInputField } from "../../components/Box";
 import { Button } from "../../components/Button/styled";
 import { LinkCancel } from "../../components/Link";
-import { LoadProfile } from "../../utils/Auth";
-import {
-  ButtonImageSubmit,
-  ButtonImageSubmitContent,
-  ButtonImageSubmitText,
-  CancelImageSubmit,
-  ImageInputBox,
-  ImageInputBoxField,
-  ImageInputBoxText,
-  ImageSubmitBox,
-  SendImageOCRBox,
-} from "../VisualizarPrescricao/style";
-
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { View } from "react-native";
 import { Input } from "../../components/Input";
-import moment from "moment";
 import { ModalCamera } from "../../components/Modal";
-import { api } from "../../services/service";
 
 export const PaginaDeProntuario = ({ navigation, route }) => {
   const [openModalCamera, setOpenModalCamera] = useState(false);
@@ -141,7 +117,7 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
   useEffect(() => {
     setFrmEditData(route.params.consulta);
     console.log(route.params.idUsuario);
-    if (route.params != undefined) {
+    if (route.params) {
       ProntuarioInfo(perfilUsuario);
     }
   }, [route.params]);
@@ -205,8 +181,6 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
         />
 
         <ProntuarioBox>
-
-
           <UserNamePerfilText editavel={true}>{nome}</UserNamePerfilText>
           <UserDataApointment>
             <AgeUserText>{ perfilUsuario == "Medico" ?
