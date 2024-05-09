@@ -50,12 +50,16 @@ export const RedefinirSenha = ({navigation, route}) => {
                 placeholderText={"Nova senha"}
                 editable
                 fieldvalue={senha}
+                multiline={false}
+                secure={true}
                 onChangeText={text => setSenha(text)}
             />
             <Input
                 placeholderText={"confirmar nova senha"}
                 editable
                 fieldvalue={confirmaSenha}
+                multiline={false}
+                secure={true}
                 onChangeText={text => setConfirmaSenha(text)}
             />
         </BoxInput>

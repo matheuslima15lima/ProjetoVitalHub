@@ -40,12 +40,12 @@ export const Cadastro = ({ navigation }) => {
   const [senhaConfirma, setSenhaConfirma] = useState("");
 
   const BuscarEnderecoPorCep = async () => {
-    if (conta.cep.length < 8) {
+    if (conta.cep.length < 9) {
       return null;
     }else{
       // alert("pronto para buscar o cep")
     await apiViaCep
-      .get(`${conta.cep}/json/`)
+      .get(`${desmascararCep(conta.cep)}/json/`)
       .then((retornoApi) => {
         setConta({
           ...conta,
@@ -139,17 +139,22 @@ export const Cadastro = ({ navigation }) => {
             editable
             placeholderText={"Senha"}
             fieldvalue={conta.senha}
+            multiline={false}
+            secure={true}
             onChangeText={(text) => setConta({ ...conta, senha: text })}
           />
           <Input
             editable
             placeholderText={"Confirmar Senha"}
             fieldvalue={senhaConfirma}
+            multiline={false}
+            secure={true}
             onChangeText={(text) => setSenhaConfirma(text)}
           />
           <Input
             editable
             placeholderText={"Rg"}
+            keyType="numeric"
             fieldvalue={mascararRg(conta.rg)}
             onChangeText={(text) =>
               setConta({ ...conta, rg: text})
@@ -158,6 +163,7 @@ export const Cadastro = ({ navigation }) => {
           <Input
             editable
             placeholderText={"Cpf"}
+            keyType="numeric"
             fieldvalue={mascararCpf(conta.cpf)}
             onChangeText={(text) =>
               setConta({ ...conta, cpf: text})
@@ -170,7 +176,7 @@ export const Cadastro = ({ navigation }) => {
               editable
               keyType="numeric"
               placeholderText={"Cep"}
-              fieldvalue={conta.cep}
+              fieldvalue={mascararCep(conta.cep)}
               onChangeText={(text) => setConta({ ...conta, cep: text })}
             />
 
@@ -186,7 +192,8 @@ export const Cadastro = ({ navigation }) => {
               inputWidth={47}
               editable
               placeholderText={"Numero"}
-              fieldValue={conta.senha}
+              keyType="numeric"
+              fieldvalue={conta.senha}
               onChangeText={(text) => setConta({
                 ...conta,
                 numero: text
@@ -196,6 +203,7 @@ export const Cadastro = ({ navigation }) => {
               inputWidth={47}
               editable
               placeholderText={"Data de nascimento"}
+              keyType="numeric"
               fieldvalue={mascararData(conta.dataNascimento)}
               onChangeText={(text) => setConta({
                 ...conta,
@@ -205,7 +213,7 @@ export const Cadastro = ({ navigation }) => {
           </BoxInputRow>
 
           <Input 
-            placeholderText={`${conta.logradouro}`} 
+            placeholderText='Logradouro' 
             fieldvalue={conta.logradouro} 
           />
         </BoxInput>
