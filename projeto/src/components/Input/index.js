@@ -9,11 +9,12 @@ import React, { useEffect, useState } from "react";
 import moment from "moment";
 
 export const Input = ({
-    placeholderText, keyType = "default", onChangeText = null, maxLength, fieldvalue = null, verifyEmail = false, inputPerfil = false, editable = false, fieldHeight = "16", apointment = false, center = false, multiline = true, secure = false
+    placeholderText, keyType = "default", onChangeText = null, maxLength, fieldvalue = null, verifyEmail = false, inputPerfil = false, editable = false, fieldHeight = "16", apointment = false, center = false, multiline = true, secure = false, inputWidth = "100"
 }) => {
     if (verifyEmail) {
         return (
             <InputVirifyEmail
+                inputWidth={inputWidth}
                 secureTextEntry={secure}
                 multiline={multiline}
                 placeholder={placeholderText}
@@ -27,6 +28,7 @@ export const Input = ({
     } else if (inputPerfil) {
         return (
             <PerfilInputField
+                inputWidth={inputWidth}
                 secureTextEntry={secure}
                 multiline={multiline}
                 placeholder={placeholderText}
@@ -41,6 +43,7 @@ export const Input = ({
     } else if (apointment) {
         return (
             <ApointmentInputField
+                inputWidth={inputWidth}
                 secureTextEntry={secure}
                 multiline={multiline}
                 placeholder={placeholderText}
@@ -56,6 +59,7 @@ export const Input = ({
     } else {
         return (
             <InputField
+                inputWidth={inputWidth}
                 secureTextEntry={secure}
                 multiline={multiline}
                 placeholder={placeholderText}
@@ -71,7 +75,7 @@ export const Input = ({
 
 }
 
-export const VerificarEmaiInput = React.forwardRef(({ placeholderText, keyType = "default", onChangeText = null, maxLength, fieldvalue = null, inputPerfil = false, editable = false, fieldHeight = "16", apointment = false, center = false, multiline = true, secure = false}, ref) => {
+export const VerificarEmaiInput = React.forwardRef(({ placeholderText, keyType = "default", onChangeText = null, maxLength, fieldvalue = null, inputPerfil = false, editable = false, fieldHeight = "16", apointment = false, center = false, multiline = true, secure = false }, ref) => {
     return (
         <InputVirifyEmail
             ref={ref}

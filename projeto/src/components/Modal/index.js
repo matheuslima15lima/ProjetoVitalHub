@@ -24,7 +24,7 @@ export const CancelattionModal = ({ infoConsulta, visible, setShowModalCancel, L
     const CancelarConsulta = async () => {
         await api.put(`/Consultas/Status?idConsulta=${infoConsulta.id}&status=Cancelada`)
             .then(() => {
-                
+
                 ListarConsultas()
                 setShowModalCancel(false)
             }).catch(error => {
@@ -57,45 +57,61 @@ export const CancelattionModal = ({ infoConsulta, visible, setShowModalCancel, L
     )
 }
 
-export const ApointmentModal = ({ visible, setShowModalApointment, informacoes, navigation, ...resto }) => {
+export const ApointmentModal = ({
+    visible,
+    setShowModalApointment,
+    informacoes,
+    navigation,
+    idUsuario,
+    ...resto
+}) => {
+    
+    const NavegarPaginaDeProntuario = () => {
+        navigation.replace("PaginaDeProntuario", { consulta: informacoes, idUsuario: idUsuario });
+        setShowModalApointment(false);
+    };
 
+    const [idadePaciente, setIdadePaciente] = useState( moment.duration(moment().diff(moment(informacoes.paciente.dataNascimento))).asYears());
 
     return (
-        <Modal {...resto}
-            visible={visible}
-            transparent={true}
-            animationType="fade"
-        >
+        <Modal {...resto} visible={visible} transparent={true} animationType="fade">
             <PatientModal>
                 <ModalContent>
                     <UserImageModal
-                        source={require("../../assets/images/nicolle_image_modal.png")}
+                        source={{uri: informacoes.paciente.idNavigation.foto}}
                     />
 
-                    <Title>{informacoes.nome}</Title>
+                    <Title>
+                        {informacoes.paciente.idNavigation.nome}
+                    </Title>
 
                     <ModalTextRow>
-                        <ModalText>{informacoes.idade} anos</ModalText>
-                        <ModalText>{informacoes.email}</ModalText>
+                        <ModalText>
+                            {Math.round(idadePaciente)} anos
+                        </ModalText>
+                        <ModalText>
+                            {informacoes.paciente.idNavigation.email}
+                        </ModalText>
                     </ModalTextRow>
 
-                    <ButtonModal onPress={() => {
-                        navigation.navigate("PaginaDeProntuario")
-                        setShowModalApointment(false)
-                    }}>
-                        <ButtonTitle onPress={() => {
-                            navigation.navigate("PaginaDeProntuario")
-                            setShowModalApointment(false)
-                        }}>Inserir Prontuário</ButtonTitle>
+                    <ButtonModal
+                        onPress={() => NavegarPaginaDeProntuario()}
+                    >
+                        <ButtonTitle
+                            onPress={() => NavegarPaginaDeProntuario()}
+                        >
+                            Inserir Prontuário
+                        </ButtonTitle>
                     </ButtonModal>
 
-                    <LinkCancel onPress={() => setShowModalApointment(false)}>Cancelar</LinkCancel>
+                    <LinkCancel onPress={() => setShowModalApointment(false)}>
+                        Cancelar
+                    </LinkCancel>
                 </ModalContent>
             </PatientModal>
         </Modal>
-    )
-}
-
+    );
+};
 export const AgendarConsultaModal = ({ visible, setShowModal, navigation, ...resto }) => {
 
     // state para o nível de consulta
@@ -287,8 +303,10 @@ export const ConsultaModalCard = ({ perfilUsuario, consulta, visible, setShowMod
             <PatientModal>
                 <ModalContent>
                     <UserImageModal
-                        source={{uri: perfilUsuario === "Paciente" ? consulta.medicoClinica.medico.idNavigation.foto
-                        : consulta.paciente.idNavigation.foto}}
+                        source={{
+                            uri: perfilUsuario === "Paciente" ? consulta.medicoClinica.medico.idNavigation.foto
+                                : consulta.paciente.idNavigation.foto
+                        }}
                     />
 
                     <Title>{perfilUsuario === "Paciente" ? consulta.medicoClinica.medico.idNavigation.nome
