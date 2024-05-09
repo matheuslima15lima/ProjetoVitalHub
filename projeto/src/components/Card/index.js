@@ -7,11 +7,9 @@ import { GerarNotaClinica } from "../../utils/funcoesUteis";
 import { LoadProfile } from "../../utils/Auth";
 import moment from "moment";
 
-export const CardConsulta = ({perfil , consulta, navigation, statusConsulta, onPressCancel, onPressApointment, loadInfoConsulta, onPressConsulta, imageSource }) => {
+export const CardConsulta = ({perfil, consulta, statusConsulta, onPressCancel, onPressApointment, loadInfoConsulta, onPressConsulta, imageSource }) => {
     const [idadePaciente, setIdadePaciente] = useState(null)
     const [prioridadeConsulta, setPrioridadeConsulta] = useState("")
-
-    // const [perfil, setPerfil] = useState("")
 
     const AbrirModal = modal => {
         loadInfoConsulta(consulta)
@@ -35,7 +33,7 @@ export const CardConsulta = ({perfil , consulta, navigation, statusConsulta, onP
     }
 
     useEffect(() => {
-        if (perfil === "Medico") {
+        if(perfil === "Medico"){
             setIdadePaciente(moment.duration(moment().diff(moment(consulta.paciente.dataNascimento))).asYears());
         }
 
@@ -59,8 +57,8 @@ export const CardConsulta = ({perfil , consulta, navigation, statusConsulta, onP
 
     }, [])
 
-    return ( consulta !== null ?
-        <CardBox onPress={() => AbrirModal("localConsulta")}>
+    return (
+        <CardBox onPress={statusConsulta !== "Cancelada" ? () => AbrirModal("localConsulta") : null}>
             <UserImageCart
                 source={{uri: imageSource}}
             />
@@ -81,7 +79,7 @@ export const CardConsulta = ({perfil , consulta, navigation, statusConsulta, onP
                 <ViewRow>
                     <HorarioBox statusConsulta={statusConsulta}>
                         <AntDesign name="clockcircle" size={14} color={statusConsulta == "Agendada" ? "#49B3BA" : "#4E4B59"} />
-                        <HorarioText statusConsulta={statusConsulta}>{consulta.horario}</HorarioText>
+                        <HorarioText statusConsulta={statusConsulta}>{moment(consulta.dataConsulta).format("HH:mm")}</HorarioText>
                     </HorarioBox>
                     <CardTextCancelApointment
                         statusConsulta={statusConsulta}
@@ -92,7 +90,7 @@ export const CardConsulta = ({perfil , consulta, navigation, statusConsulta, onP
                 </ViewRow>
             </CardContent>
         </CardBox>
-    : null)
+    )
 }
 
 export const CardClinica = ({ dados, selecionarClinica = null, selecionada = false }) => {
@@ -139,7 +137,7 @@ export const CardMedico = ({ dados, selecionarMedico = null, selecionado = false
             
         >
             <UserImageCart
-                source={require("../../assets/images/doctor_image_select.png")}
+                source={{uri: dados.idNavigation.foto}}
             />
             <CardSelectContent>
                 <TitleSelectCard>{dados.idNavigation.nome}</TitleSelectCard>

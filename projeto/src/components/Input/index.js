@@ -5,19 +5,20 @@ import { ActivityIndicator, StyleSheet, View } from "react-native";
 
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons'
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import moment from "moment";
 
 export const Input = ({
-    placeholderText, keyType = "default", onChangeText = null, maxLength, fieldvalue = null, verifyEmail = false, inputPerfil = false, editable = false, fieldHeight = "16", apointment = false, center = false, multiline = true, secure = false, inputWidth = 100
+    placeholderText, keyType = "default", onChangeText = null, maxLength, fieldvalue = null, verifyEmail = false, inputPerfil = false, editable = false, fieldHeight = "16", apointment = false, center = false, multiline = true, secure = false, inputWidth = "100"
 }) => {
     if (verifyEmail) {
         return (
             <InputVirifyEmail
+                inputWidth={inputWidth}
                 secureTextEntry={secure}
                 multiline={multiline}
                 placeholder={placeholderText}
-                keyboardType={keyType}
+                keyboardType="numeric"
                 onChangeText={onChangeText}
                 maxLength={maxLength}
                 value={fieldvalue}
@@ -58,8 +59,8 @@ export const Input = ({
     } else {
         return (
             <InputField
-                secureTextEntry={secure}
                 inputWidth={inputWidth}
+                secureTextEntry={secure}
                 multiline={multiline}
                 placeholder={placeholderText}
                 keyboardType={keyType}
@@ -73,6 +74,22 @@ export const Input = ({
     }
 
 }
+
+export const VerificarEmaiInput = React.forwardRef(({ placeholderText, keyType = "default", onChangeText = null, maxLength, fieldvalue = null, inputPerfil = false, editable = false, fieldHeight = "16", apointment = false, center = false, multiline = true, secure = false }, ref) => {
+    return (
+        <InputVirifyEmail
+            ref={ref}
+            secureTextEntry={secure}
+            multiline={multiline}
+            placeholder={placeholderText}
+            keyboardType={keyType}
+            onChangeText={onChangeText}
+            maxLength={maxLength}
+            value={fieldvalue}
+            editable={editable}
+        />
+    )
+});
 
 export const InputSelect = ({ selecionarHora }) => {
     const dataAtual = moment().format("YYYY-MM-DD")
@@ -119,7 +136,7 @@ export const InputSelect = ({ selecionarHora }) => {
                     onValueChange={(value) => selecionarHora(value)}
                     items={arrayOptions}
                 />
-                : <ActivityIndicator/>}
+                : <ActivityIndicator />}
         </View>
     )
 }

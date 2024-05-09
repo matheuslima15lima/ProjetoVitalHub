@@ -50,22 +50,21 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("AlterarFotoPerfil")]
-        public async Task<IActionResult> UploadProfileImage(Guid idUsuario,[FromForm] UsuarioViewModel user)
+        public async Task<IActionResult> UploadProfileImage(Guid idUsuario, [FromForm] UsuarioViewModel user)
         {
             try
             {
                 Usuario usuarioBuscado = usuarioRepository.BuscarPorId(idUsuario);
 
-                if(usuarioBuscado == null)
+                if (usuarioBuscado == null)
                 {
                     return NotFound("Usuário com o id especificado não foi encontrado");
                 }
 
                 //Lógica para upload de imagem
+                var containerName = "containervitalhubmurilosouza";
 
-                var containerName = "containervitalhubmatheusl";
-
-                var connectionString = "DefaultEndpointsProtocol=https;AccountName=blobvitalhubmatheusl;AccountKey=cLGrg9vdd0AujgPfTfX7B1SKNL2mNhYCLgAQFkKX4uq0EyB6D5/MLZtXUjmN5j61Ci5sU95aQhJF+ASt3btB+Q==;EndpointSuffix=core.windows.net";
+                var connectionString = "DefaultEndpointsProtocol=https;AccountName=blobvitalhubmurilosouza;AccountKey=xLTBTBQrWWeGAwbhMuF2dRXRnZODofXuT5+7J5zhoH0hh4hMUkWC8K/0g3nKq9gDa8Fnu02+YhPR+AStWEqzWQ==;EndpointSuffix=core.windows.net";
 
 
                 var fotoUrl = await AzureBlobStorageHelper.UploadImageBlobAsync(user.Arquivo!, connectionString, containerName);

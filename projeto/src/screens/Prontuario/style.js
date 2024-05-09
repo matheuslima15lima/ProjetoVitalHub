@@ -19,3 +19,8 @@ export const ApointmentFormBox = styled.View`
     width: 100%;
     gap: 20px;
 `
+
+export const SendImageOCRBox = styled.View`
+    width: 100%;
+    gap: 20px;
+`

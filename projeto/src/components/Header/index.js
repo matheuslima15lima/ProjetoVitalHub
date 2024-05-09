@@ -7,23 +7,36 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useState } from 'react';
 import { LoadProfile } from '../../utils/Auth';
 import { TouchableOpacity } from 'react-native';
+import { api } from '../../services/service';
 
-export const Header = () => {
-    const [nomeUsuario, setNomeUsuario] = useState(null);
+export const Header = ({nomeUsuario, idUsuario}) => {
+    const [fotoUsuario, setFotoUsuario] = useState("")
+
+    const BuscarImagemUsuario = async (idUsuario) => {
+        await api.get(`/Usuario/BuscarPorId?id=${idUsuario}`)
+        .then(retornoApi => {
+            setFotoUsuario(retornoApi.data.foto)
+        }).catch(error => {
+            alert(error)
+        })
+    }
+ 
+    useEffect(() => {
+        BuscarImagemUsuario(idUsuario)
+    }, [])
 
     useEffect(() => {
-        LoadProfile()
-            .then(token => {
-                setNomeUsuario(token.nome);
-            });
-    }, [nomeUsuario])
+        if(idUsuario !== ""){
+            BuscarImagemUsuario(idUsuario)
+        }
+    }, [idUsuario])
 
-    return (nomeUsuario != null ? (
+    return (nomeUsuario !== null && fotoUsuario !== "" ? (
         <ContainerHeader>
             <HeaderContent>
                 <WelcomeView>
                     <UserImageHeader
-                        source={require("../../assets/images/foto-murilo.jpg")}
+                        source={{uri: fotoUsuario}}
                     />
                     <TextHeaderBox>
                         <WelcomeText>Bem Vindo</WelcomeText>

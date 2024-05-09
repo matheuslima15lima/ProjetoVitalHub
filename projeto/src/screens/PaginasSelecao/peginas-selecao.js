@@ -75,7 +75,6 @@ export const SelecionarMedico = ({ navigation, route }) => {
     }
 
     useEffect(() => {
-        console.log(route.params);
         BuscarMedicos(route.params.agendamento.clinicaId)
     }, [route.params])
 
@@ -95,7 +94,7 @@ export const SelecionarMedico = ({ navigation, route }) => {
             }
             <ButtonContinuarBox
                 manipulationFunction={NavegarParaSelecaoDeData}
-                functionCancel={() => navigation.replace("SelecionarClinica")}
+                functionCancel={() => navigation.replace("Main")}
             />
         </ContainerSelectPage>
     )
@@ -118,17 +117,6 @@ export const SelecionarData = ({ navigation, route }) => {
 
         setShowModalConfirmarConsulta(true)
     }
-    useEffect(() => {
-        console.log(route.params);
-    }, [route.params])
-
-    useEffect(() => {
-        console.log(dataSelecionada);
-    }, [dataSelecionada])
-
-    useEffect(() => {
-        console.log(horaSelecionada);
-    }, [horaSelecionada])
     return (
         <ContainerSelectPage>
             <TitleSelecao>Selecionar Data</TitleSelecao>
@@ -142,7 +130,7 @@ export const SelecionarData = ({ navigation, route }) => {
             />
             <ButtonContinuarBox
                 manipulationFunction={() => HandleContinue()}
-                functionCancel={() => navigation.replace("SelecionarMedico", { clinica: route.params.clinica })}
+                functionCancel={() => navigation.replace("Main")}
             />
 
             {agendamento.dataConsulta !== "" ?
