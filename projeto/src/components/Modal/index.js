@@ -388,7 +388,7 @@ export const ModalCamera = ({ visible, setShowModal = null, enviarFoto, getMedia
                             <Camera
                                 ref={cameraRef}
                                 ratio='15:9'
-                                type={CameraType.back}
+                                type={'back'}
                                 style={styles.camera}
                             />
                         </View>
