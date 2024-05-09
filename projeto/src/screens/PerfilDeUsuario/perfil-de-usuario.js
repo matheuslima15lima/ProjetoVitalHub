@@ -201,7 +201,6 @@ export const PerfilDeUsuario = ({ navigation }) => {
                                     labelText={"CRM:"}
                                     keyType="numeric"
                                     placeholderText={"Crm do médico"}
-                                    keyboardType = 'numeric'
                                     editable={editavel}
                                     multiline={false}
                                     inputPerfil

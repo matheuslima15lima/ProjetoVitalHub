@@ -15,7 +15,7 @@ export const BoxInputField = ({
         <Input
             multiline={multiline}
             placeholderText={placeholderText}
-            keyboardType={keyType}
+            keyType={keyType}
             maxLength={maxLength}
             onChangeText={onChangeText}
             fieldvalue={fieldValue}
