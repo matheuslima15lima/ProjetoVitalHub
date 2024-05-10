@@ -67,7 +67,8 @@ export const ImageInputBox = styled(InputContentBox)`
 `
 
 export const ImageInputBoxField = styled.View`
-    padding: 46px 60px;
+    padding: 10px;
+    height: 110px;
     justify-content: center;
     align-items: center;
     flex-direction: row;

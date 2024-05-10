@@ -15,10 +15,11 @@ import { AntDesign } from '@expo/vector-icons';
 import * as MediaLibrary from 'expo-media-library'
 import * as ImagePicker from 'expo-image-picker'
 
-import { CameraView } from 'expo-camera'
+import {Camera, CameraView } from 'expo-camera'
 import moment from "moment"
 import { api } from "../../services/service"
 import { LoadProfile, UserDecodeToken } from "../../utils/Auth"
+import { TextAge } from "../Card/style"
 
 export const CancelattionModal = ({ infoConsulta, visible, setShowModalCancel, ListarConsultas = null, ...rest }) => {
     const CancelarConsulta = async () => {

@@ -5,7 +5,7 @@ namespace WebAPI.ViewModels
 {
     public class ExameViewModel
     {
-        public Guid ConsultaId { get; set; }
+        public Guid? ConsultaId { get; set; }
 
         [NotMapped]
         [JsonIgnore]

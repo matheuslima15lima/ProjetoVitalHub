@@ -2,17 +2,18 @@ import { useEffect, useState } from "react";
 import { LoadProfile } from "../../utils/Auth";
 import { api } from "../../services/service";
 import moment from "moment";
-import { ContainerProntuario, LoadingContainer } from "../../components/Container/style";
+import { ContainerImagePerfil, ContainerProntuario, LoadingContainer } from "../../components/Container/style";
 import { UserImagePerfil } from "../../components/UserImage/styled";
-import { ApointmentFormBox, ButtonImageSubmit, ButtonImageSubmitContent, ButtonImageSubmitText, ImageInputBox, ImageInputBoxField, ImageInputBoxText, ImageSubmitBox, ProntuarioBox, SendImageOCRBox, UserDataApointment } from "./style";
-import { AgeUserText, ButtonTitle, EmailUserText, InputLabel, UserNamePerfilText } from "../../components/Text/style";
+import { ApointmentFormBox, ButtonImageSubmit, ButtonImageSubmitContent, ButtonImageSubmitText, CancelImageSubmit, ImageInputBox, ImageInputBoxField, ImageInputBoxText, ImageSubmitBox, ProntuarioBox, SendImageOCRBox, UserDataApointment } from "./style";
+import { AgeUserText, ButtonTitle, EmailUserText, InputLabel, TextRegular, UserNamePerfilText } from "../../components/Text/style";
 import { BoxInputField } from "../../components/Box";
 import { Button } from "../../components/Button/styled";
 import { LinkCancel } from "../../components/Link";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { View } from "react-native";
+import { Image, View } from "react-native";
 import { Input } from "../../components/Input";
 import { ModalCamera } from "../../components/Modal";
+import { ObjetoEstaVazio } from "../../utils/funcoesUteis";
 
 export const PaginaDeProntuario = ({ navigation, route }) => {
   const [openModalCamera, setOpenModalCamera] = useState(false);
@@ -41,10 +42,14 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
 
   const [especialidade, setEspecialidade] = useState("")
 
+  const [fotoProntuario, setFotoProntuario] = useState("")
+
+  const [listaDeExames, setListaDeExames] = useState([])
+
   useEffect(() => {
     setConsulta(route.params.consulta);
 
-    if(route.params.consulta.receita !== undefined){
+    if (route.params.consulta.receita !== undefined) {
       setMedicamento(route.params.consulta.receita.medicamento);
     }
 
@@ -59,28 +64,24 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
       // const id = "8E942765-8128-4948-966B-45550C15962E"
       const retornoGet = await api.get(
         `/${perfil === "Paciente" ? "Medicos" : "Pacientes"}/BuscarPorId?id=${route.params.idUsuario}`
-      );   
+      );
       setNome(retornoGet.data.idNavigation.nome);
-      console.log(nome);
-      
-      if(perfil === "Paciente"){
+      setFotoProntuario(retornoGet.data.idNavigation.foto)
+
+      if (perfil === "Paciente") {
         setCrm(retornoGet.data.crm)
-        console.log(crm);
         setEspecialidade(retornoGet.data.especialidade.especialidade1)
-        console.log(especialidade);
-      } 
-      else{
+      }
+      else {
         setEmail(retornoGet.data.idNavigation.email)
         setIdadePaciente(
-            moment
-              .duration(moment().diff(moment(retornoGet.data.dataNascimento)))
-              .asYears()
-          );
-          console.log(email);
-          console.log(idadePaciente);
-      } 
-    
-      
+          moment
+            .duration(moment().diff(moment(retornoGet.data.dataNascimento)))
+            .asYears()
+        );
+      }
+
+
 
     } catch (error) {
       console.log(error);
@@ -116,7 +117,6 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
 
   useEffect(() => {
     setFrmEditData(route.params.consulta);
-    console.log(route.params.idUsuario);
     if (route.params) {
       ProntuarioInfo(perfilUsuario);
     }
@@ -124,25 +124,22 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
 
   const InserirExame = async () => {
     const formData = new FormData();
-    formData.append("ConsultaId", route.params.consulta.id);
     formData.append("Imagem", {
       uri: foto,
       name: `image.${foto.split(".").pop()}`,
       type: `image/${foto.split(".").pop()}`,
     });
 
-    await api
-      .post(`/Exame`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((retornoApi) => {
-        //vai somando todos os arquivos enviados
-        setDescricaoExame(
-          descricaoExame + "\n" + retornoApi.data.descricao
-        ).then(() => {});
-      })
+    await api.post(`/Exame`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }).then((retornoApi) => {
+      //vai somando todos os arquivos enviados
+      setDescricaoExame(
+        descricaoExame + "\n" + retornoApi.data
+      )
+    })
       .catch((error) => {
         console.log(error);
       });
@@ -154,49 +151,72 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
     }
   }, [foto]);
 
-//   const  CadastroExame =  async()=>{
-//   try {
-//       retornoGet = await api.post(`/Exame`,{
-//           ConsultaId: route.params.consulta.id,
-//           Imagem:
+  //   const  CadastroExame =  async()=>{
+  //   try {
+  //       retornoGet = await api.post(`/Exame`,{
+  //           ConsultaId: route.params.consulta.id,
+  //           Imagem:
 
-//       })
+  //       })
 
-//   } catch (error) {
+  //   } catch (error) {
 
-//   }
-//   }
+  //   }
+  //   }
 
-    useEffect(()=>{
-        ProntuarioInfo(perfilUsuario);
+  useEffect(() => {
+    ProntuarioInfo(perfilUsuario);
 
-    },[route.params])
+    if(!ObjetoEstaVazio(route.params.consulta.exames)){
+      setListaDeExames(route.params.consulta.exames)
+      listaDeExames.forEach(exame => {
+        setDescricaoExame(
+          descricaoExame + "\n" + exame.descricao
+        )
+      })
+    }
+
+  }, [route.params])
+
+  const CadastrarExame = async () => {
+    await api.post(`/Exame?idConsulta=${route.params.consulta.id}&descricaoExame=${descricaoExame}`).then(() => {
+      alert("Exame cadastrado")
+    }).catch(erro => {
+      console.log(erro);
+    })
+  }
 
   return consulta !== null ? (
     <>
       <ContainerProntuario>
 
-        <UserImagePerfil
-          source={require("../../assets/images/user1-image.png")}
-        />
+        <ContainerImagePerfil>
+          {fotoProntuario !== "" ?
+            <UserImagePerfil
+              source={{ uri: fotoProntuario }}
+            />
+            : null}
 
+        </ContainerImagePerfil>
         <ProntuarioBox>
-          <UserNamePerfilText editavel={true}>{nome}</UserNamePerfilText>
+          <UserNamePerfilText editavel={true}>{
+            perfilUsuario === "Medico" ? "Dr(a)" : "" + nome
+          }</UserNamePerfilText>
           <UserDataApointment>
-            <AgeUserText>{ perfilUsuario == "Medico" ?
-            Math.round(idadePaciente) + " anos"
-            :
-            especialidade
-            } 
-            </AgeUserText> 
+            <AgeUserText>{perfilUsuario == "Medico" ?
+              Math.round(idadePaciente) + " anos"
+              :
+              especialidade
+            }
+            </AgeUserText>
             <EmailUserText editavel={true}>
-                {
-                perfilUsuario == "Medico"?
-                email
-                :
-                "CRM-" + crm
-                
-                }
+              {
+                perfilUsuario == "Medico" ?
+                  email
+                  :
+                  "CRM-" + crm
+
+              }
             </EmailUserText>
           </UserDataApointment>
 
@@ -262,12 +282,21 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
               <ImageInputBox>
                 <InputLabel>Exames médicos:</InputLabel>
                 <ImageInputBoxField>
-                  <MaterialCommunityIcons
-                    name="file-upload-outline"
-                    size={24}
-                    color="#4E4B59"
-                  />
-                  <ImageInputBoxText>Nenhuma foto informada</ImageInputBoxText>
+                  {foto !== "" ? 
+                    <Image
+                      style={{height: "100%", width: "50%"}}
+                      source={{uri: foto}}
+                    />
+                  :
+                    <>
+                      <MaterialCommunityIcons
+                        name="file-upload-outline"
+                        size={24}
+                        color="#4E4B59"
+                      />
+                      <ImageInputBoxText>Nenhuma foto informada</ImageInputBoxText>
+                    </>
+                  }
                 </ImageInputBoxField>
               </ImageInputBox>
               <ImageSubmitBox>
@@ -285,7 +314,7 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
                     <ButtonImageSubmitText>Enviar</ButtonImageSubmitText>
                   </ButtonImageSubmitContent>
                 </ButtonImageSubmit>
-                <CancelImageSubmit>Cancelar</CancelImageSubmit>
+                <CancelImageSubmit onPress={() => setDescricaoExame("")}>Cancelar</CancelImageSubmit>
               </ImageSubmitBox>
 
               <View
@@ -297,17 +326,20 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
                 }}
               ></View>
 
-              <Input
+              <BoxInputField
+                labelText={"Resultados dos Exames"}
                 inputPerfil
                 placeholderText={"Resultados..."}
                 fieldHeight="60"
-                fieldvalue={descricaoExame}
+                fieldValue={descricaoExame}
               />
 
               {descricaoExame != "" ? (
-                <Button>
-                  <ButtonTitle>ENVIAR EXAMES</ButtonTitle>
-                </Button>
+                <>
+                  <Button>
+                    <ButtonTitle>Enviar exames</ButtonTitle>
+                  </Button>
+                </>
               ) : null}
             </SendImageOCRBox>
           ) : null}
