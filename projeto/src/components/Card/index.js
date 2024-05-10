@@ -56,9 +56,12 @@ export const CardConsulta = ({perfil, consulta, statusConsulta, onPressCancel, o
         }
 
     }, [])
+    
+    //moment() > consulta.dataConsulta?
+    //alert("Não se pode inserir prontuario no momento") :
 
     return (
-        <CardBox onPress={statusConsulta !== "Cancelada" ? () => AbrirModal("localConsulta") : null}>
+        <CardBox onPress={statusConsulta !== "Cancelada" ?  () => AbrirModal("prontuario"): null}>
             <UserImageCart
                 source={{uri: imageSource}}
             />

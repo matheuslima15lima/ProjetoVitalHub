@@ -14,9 +14,9 @@ import moment from "moment";
 import { LoadingIndicator } from "../../components/LoadingIndicator";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import * as MediaLibrary from 'expo-media-library'
-import * as ImagePicker from 'expo-image-picker'
-import { ModalCamera } from "../../components/Modal";
+import * as MediaLibrary from 'expo-media-library';
+import * as ImagePicker from 'expo-image-picker';
+import {ModalCamera}  from "../../components/Modal";
 
 import {mascararCep, mascararCpf, mascararRg, desmascararCep, desmascararRg, desmascararCpf, mascararData} from "../../utils/StringMask"
 

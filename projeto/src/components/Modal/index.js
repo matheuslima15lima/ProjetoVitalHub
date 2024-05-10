@@ -11,11 +11,11 @@ import { ButtonContinuarBox } from "../Box"
 import { ApointmentInputField } from "../Input/style"
 import { Input } from "../Input"
 import { AntDesign } from '@expo/vector-icons';
-
+import { TextAge } from "../Card/style"
 import * as MediaLibrary from 'expo-media-library'
 import * as ImagePicker from 'expo-image-picker'
 
-import { Camera, CameraType } from 'expo-camera'
+import { Camera, CameraType, CameraView } from 'expo-camera'
 import moment from "moment"
 import { api } from "../../services/service"
 import { LoadProfile, UserDecodeToken } from "../../utils/Auth"
@@ -150,7 +150,7 @@ export const AgendarConsultaModal = ({ visible, setShowModal, navigation, ...res
                                     situacao={"rotina"}
                                     actived={nivelConsulta === "rotina"}
                                     manipulationFunction={setNivelConsulta}
-                                    idPrioridade="41D4F148-8757-439A-859F-F505B51B5CCD"
+                                    idPrioridade="6D4C5F95-E9F9-4ADD-982C-A84FD47BBE22"
                                     labelPrioridade="Rotina"
                                     manipularAgendamento={IncluirNivelPrioridade}
                                 />
@@ -159,7 +159,7 @@ export const AgendarConsultaModal = ({ visible, setShowModal, navigation, ...res
                                     situacao={"exame"}
                                     actived={nivelConsulta === "exame"}
                                     manipulationFunction={setNivelConsulta}
-                                    idPrioridade="1EC174BF-389B-418A-88FA-9D475178905F"
+                                    idPrioridade="DDC1888D-3D72-44A1-810B-B85E5796615E"
                                     labelPrioridade="Exame"
                                     manipularAgendamento={IncluirNivelPrioridade}
                                 />
@@ -168,7 +168,7 @@ export const AgendarConsultaModal = ({ visible, setShowModal, navigation, ...res
                                     situacao={"urgencia"}
                                     actived={nivelConsulta === "urgencia"}
                                     manipulationFunction={setNivelConsulta}
-                                    idPrioridade="3F8EA35F-31FB-43D6-A67D-11536CB33DF9"
+                                    idPrioridade="3155EBF9-5619-4627-BE07-3813C950956F"
                                     labelPrioridade="Urgência"
                                     manipularAgendamento={IncluirNivelPrioridade}
                                 />
@@ -204,7 +204,7 @@ export const ConfirmarConsultaModal = ({ agendamento, visible, setShowModal = nu
 
     const HandleConfirm = async () => {
         await api.post(`/Consultas/Cadastrar`, {
-            situacaoId: "558E9B82-71DD-46DC-A4C5-5B9D65B3D0A0",
+            situacaoId: "2C3F1E2C-3232-45EB-B341-DEBFE8AF5DBB",
             pacienteId: idUsuario,
             medicoClinicaId: agendamento.medicoClinicaId,
             prioridadeId: agendamento.prioridadeId,
@@ -403,10 +403,10 @@ export const ModalCamera = ({ visible, setShowModal = null, enviarFoto, getMedia
 
                     <CameraContent>
                         <View style={{ height: "90%", width: "100%", borderRadius: 15 }}>
-                            <Camera
+                            <CameraView
                                 ref={cameraRef}
                                 ratio='15:9'
-                                type={'back'}
+                                facing={'back'}
                                 style={styles.camera}
                             />
                         </View>

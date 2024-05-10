@@ -45,6 +45,26 @@ export const Home = ({ navigation, route }) => {
         }
     }, [])
 
+
+        function  handlePressApointmwent() {
+            
+                
+                if (moment()< infoConsulta){
+                    (setShowModalApointment(true))
+                    
+                   
+                }
+
+                else{
+                    (alert("Nâo é posível inserir prontuário no momento"))
+                }
+            
+        }
+
+       
+        {/* moment() > consulta.dataConsulta?
+    alert("Não se pode inserir prontuario no momento") : */}
+
     const ListarConsultasUsuario = async (perfil, id) => {
         await api.get(`/${perfil}s/BuscarPorData?data=${dataAtual}&id=${id}`)
             .then(retornoApi => {
@@ -106,7 +126,7 @@ export const Home = ({ navigation, route }) => {
                         dados={listaDeConsultas}
                         statusConsulta={statusFiltro}
                         onPressCancel={() => setShowModalCancel(true)}
-                        onPressApointment={() => setShowModalApointment(true)}
+                        onPressApointment={() => handlePressApointmwent()}
                         onPressConsulta={() => setShowModalConsulta(true)}
                         loadInfoConsulta={setInfoConsulta}
                         perfilUsuario={infoUsuario.perfil}
@@ -115,7 +135,8 @@ export const Home = ({ navigation, route }) => {
                     : null
                 }
             </HomeContent>
-
+            {/* moment() > consulta.dataConsulta?
+    alert("Não se pode inserir prontuario no momento") : */}
 
             {/* Modal Cancelar */}
 
