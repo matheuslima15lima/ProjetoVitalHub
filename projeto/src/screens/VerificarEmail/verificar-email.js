@@ -20,6 +20,8 @@ export const VerificarEmail = ({ navigation, route }) => {
 
     const [email, setEmail] = useState("")
 
+    const [mostrarLoading, setMostrarLoading] = useState(false)
+
     const HandlePress = async () => {
         const codigoCompleto = `${primeiroCodigo}${segndoCodigo}${terceiroCodigo}${quartoCodigo}`
 
@@ -27,12 +29,14 @@ export const VerificarEmail = ({ navigation, route }) => {
             alert("Preencha todos os campos!")
             return null
         } else {
+            setMostrarLoading(true)
             await api.post(`/RecuperarSenha/ValidarCodigoRecuperacaoSenha?email=${email}&codigo=${codigoCompleto}`)
                 .then(retoronApi => {
                     navigation.replace("RedefinirSenha", { userEmail: email })
                 }).catch(erro => {
                     alert(erro)
                 })
+            setMostrarLoading(false)
         }
     }
 
@@ -103,7 +107,12 @@ export const VerificarEmail = ({ navigation, route }) => {
                 />
             </BoxInputRow>
             <Button onPress={() => HandlePress()}>
-                <ButtonTitle onPress={() => HandlePress()}>Confirmar</ButtonTitle>
+                {mostrarLoading ?
+                    <ActivityIndicator color={"#FBFBFB"} />
+                    :
+                    <ButtonTitle onPress={() => HandlePress()}>Confirmar</ButtonTitle>
+                }
+
             </Button>
             <LinkReenviarEmail onPress={() => ReenviarEmail(route.params.userEmail)}>Reenviar Código</LinkReenviarEmail>
         </ContainerProfile>

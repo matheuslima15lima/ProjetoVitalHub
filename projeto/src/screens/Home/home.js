@@ -78,7 +78,7 @@ export const Home = ({ navigation, route }) => {
                         console.log(error);
                     })
                 });
-                
+
             }).catch(erro => {
                 console.log(erro);
             })
@@ -118,7 +118,6 @@ export const Home = ({ navigation, route }) => {
             {infoUsuario !== null ?
                 <Header
                     nomeUsuario={infoUsuario.nome}
-                    idUsuario={infoUsuario.idUsuario}
                     fotoUsuario={fotoUsuario}
                 /> : null}
             <Calendario

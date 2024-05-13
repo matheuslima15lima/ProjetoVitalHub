@@ -4,17 +4,18 @@ import { api } from "../../services/service";
 import moment from "moment";
 import { ContainerImagePerfil, ContainerProntuario, LoadingContainer } from "../../components/Container/style";
 import { UserImagePerfil } from "../../components/UserImage/styled";
-import { ApointmentFormBox, ButtonImageSubmit, ButtonImageSubmitContent, ButtonImageSubmitText, CancelImageSubmit, ImageInputBox, ImageInputBoxField, ImageInputBoxText, ImageSubmitBox, NenhumaImagemBox, ProntuarioBox, ResultadosOCRText, SendImageOCRBox, UserDataApointment } from "./style";
+import { ApointmentFormBox, ButtonImageSubmit, ButtonImageSubmitContent, ButtonImageSubmitText, CancelImageSubmit, EditProntuarioButton, ImageInputBox, ImageInputBoxField, ImageInputBoxText, ImageSubmitBox, NenhumaImagemBox, ProntuarioBox, ResultadosOCRText, SendImageOCRBox, UserDataApointment } from "./style";
 import { AgeUserText, ButtonTitle, EmailUserText, InputLabel, TextRegular, UserNamePerfilText } from "../../components/Text/style";
 import { BoxInputField } from "../../components/Box";
 import { Button } from "../../components/Button/styled";
 import { LinkCancel } from "../../components/Link";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { Image, View } from "react-native";
+import { ActivityIndicator, Image, View } from "react-native";
 import { Input } from "../../components/Input";
 import { ModalCamera } from "../../components/Modal";
 import { ObjetoEstaVazio } from "../../utils/funcoesUteis";
 import { useFocusEffect } from "@react-navigation/native";
+import codegenNativeCommands from "react-native/Libraries/Utilities/codegenNativeCommands";
 
 export const PaginaDeProntuario = ({ navigation, route }) => {
   const [openModalCamera, setOpenModalCamera] = useState(false);
@@ -48,6 +49,10 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
   const [listaDeExames, setListaDeExames] = useState([])
 
   const [resultadosOCR, setResultadosOCR] = useState("")
+
+  const [mostrarLoading, setMostrarLoading] = useState(false)
+
+  const [mostrarLoadingOCR, setMostrarLoadingOCR] = useState(false)
 
   useEffect(() => {
     setConsulta(route.params.consulta);
@@ -92,7 +97,10 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
   };
 
   function showUpdateForm(consulta) {
-    setFrmEditData(consulta);
+    setFrmEditData({
+      ...consulta,
+      medicamento: medicamento
+    });
     setEditavel(true);
     // setFrmEdit(true);
   }
@@ -105,12 +113,13 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
   // const [descricao, setDescricao] = useState({})
   // const [diagnostico, setDiagnostico] = useState({})
   const EditProntuario = async () => {
+    setMostrarLoading(true)
     try {
       await api.put("/Consultas/Prontuario", {
         consultaId: route.params.consulta.id,
         descricao: frmEditData.descricao,
         diagnostico: frmEditData.diagnostico,
-        medicamento: frmEditData.receita.medicamento,
+        medicamento: frmEditData.medicamento,
       });
 
       setConsulta({
@@ -119,10 +128,11 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
         diagnostico: frmEditData.diagnostico
       })
 
-      setMedicamento(frmEditData.receita.medicamento)
+      setMedicamento(frmEditData.medicamento)
     } catch (error) {
       console.log(error);
     }
+    setMostrarLoading(false)
     setEditavel(false);
   };
 
@@ -180,12 +190,14 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
   }, [route.params])
 
   const CadastrarExame = async () => {
-    setDescricaoExame(descricaoExame + "\n" + resultadosOCR)
-    await api.post(`/Exame?idConsulta=${route.params.consulta.id}&descricaoExame=${descricaoExame}`).then(() => {
+    setMostrarLoadingOCR(true)
+    await api.post(`/Exame?idConsulta=${route.params.consulta.id}&descricaoExame=${resultadosOCR}`).then(() => {
+      setDescricaoExame(descricaoExame + "\n" + resultadosOCR)
       alert("Exame cadastrado")
     }).catch(erro => {
       console.log(erro);
     })
+    setMostrarLoadingOCR(false)
     setResultadosOCR("")
   }
 
@@ -194,21 +206,21 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
     setResultadosOCR("")
   }
 
-  function PreencherDescricaoExame(){
+  function PreencherDescricaoExame() {
     let resultadoForEach = ""
 
     route.params.consulta.exames.forEach(exame => {
-        resultadoForEach = resultadoForEach + "\n" + exame.descricao
-      })
+      resultadoForEach = resultadoForEach + "\n" + exame.descricao
+    })
 
     return resultadoForEach
-  } 
+  }
 
   useEffect(() => {
     const examesConsulta = PreencherDescricaoExame()
-    if(examesConsulta !== descricaoExame){
+    if (examesConsulta !== descricaoExame) {
 
-      setDescricaoExame(descricaoExame + "\n" +  examesConsulta)
+      setDescricaoExame(descricaoExame + "\n" + examesConsulta)
     }
   }, [])
 
@@ -226,7 +238,7 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
         </ContainerImagePerfil>
         <ProntuarioBox>
           <UserNamePerfilText editavel={true}>{
-            perfilUsuario === "Medico" ? "Dr(a)" : "" + nome
+            `${(perfilUsuario === "Medico" ? "" : "Dr(a)")} ${nome}`
           }</UserNamePerfilText>
           <UserDataApointment>
             <AgeUserText>{perfilUsuario == "Medico" ?
@@ -267,7 +279,7 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
               labelText={"Diagnóstico do paciente"}
               fieldValue={
                 editavel ? frmEditData.diagnostico : consulta.diagnostico
-              } 
+              }
               onChangeText={(txt) =>
                 setFrmEditData({ ...frmEditData, diagnostico: txt })
               }
@@ -277,16 +289,13 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
               apointment={perfilUsuario === "Medico" && editavel ? true : false}
               inputPerfil={!editavel ? true : false}
               fieldHeight="84"
-              editable
+              editable={editavel}
               placeholderText={"Ainda não há prescrições médicas para esta consulta"}
               labelText={"Prescrição médica"}
-              fieldValue={editavel ? frmEditData.receita.medicamento : medicamento}
+              fieldValue={editavel ? frmEditData.medicamento : medicamento}
               onChangeText={(text) => setFrmEditData({
                 ...frmEditData,
-                receita: {
-                  ...receita,
-                  medicamento: text
-                }
+                medicamento: text
               })}
             />
           </ApointmentFormBox>
@@ -294,20 +303,24 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
           {/* Botões para alterar o usuário (só para médicos) */}
           {perfilUsuario === "Medico" ? (
             editavel ? (
-              <>
+              <EditProntuarioButton>
                 <Button onPress={() => EditProntuario()}>
-                  <ButtonTitle>Salvar Edições</ButtonTitle>
+                  {mostrarLoading ?
+                    <ActivityIndicator color={"#FBFBFB"} />
+                    :
+                    <ButtonTitle>Salvar Edições</ButtonTitle>
+                  }
                 </Button>
                 <LinkCancel onPress={() => AbortarEdicaoProntuario()}>
                   Cancelar
                 </LinkCancel>
-              </>
+              </EditProntuarioButton>
             ) : (
-              <>
+              <EditProntuarioButton>
                 <Button onPress={() => showUpdateForm(consulta)}>
                   <ButtonTitle>Editar</ButtonTitle>
                 </Button>
-              </>
+              </EditProntuarioButton>
             )
           ) : null}
 
@@ -316,9 +329,9 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
               <ImageInputBox>
                 <InputLabel>Exames médicos:</InputLabel>
                 <ImageInputBoxField>
-                  {resultadosOCR !== "" ? 
+                  {resultadosOCR !== "" ?
                     <ResultadosOCRText>{resultadosOCR}</ResultadosOCRText>
-                  :
+                    :
                     <NenhumaImagemBox>
                       <MaterialCommunityIcons
                         name="file-upload-outline"
@@ -337,7 +350,7 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
                   onPress={() => setOpenModalCamera(true)}
                 >
                   <ButtonImageSubmitContent
-                  
+
                   >
                     <MaterialCommunityIcons
                       name="camera-plus-outline"
@@ -353,30 +366,35 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
               {resultadosOCR != "" ? (
                 <>
                   <Button onPress={CadastrarExame}>
+                    {mostrarLoadingOCR ?
+                    <ActivityIndicator color={"#FBFBFB"} />
+                    : 
                     <ButtonTitle onPress={CadastrarExame}>Enviar exames</ButtonTitle>
+                    }
                   </Button>
                 </>
               ) : null}
-
-              <View
-                style={{
-                  height: 2,
-                  backgroundColor: "#8C8A97",
-                  width: "100%",
-                  borderRadius: 5,
-                  marginBottom: 10
-                }}
-              ></View>
             </SendImageOCRBox>
           ) : null}
 
+          <View
+            style={{
+              height: 2,
+              backgroundColor: "#8C8A97",
+              width: "100%",
+              borderRadius: 5,
+              marginBottom: 10,
+              marginTop: 20
+            }}
+          ></View>
+
           <BoxInputField
-                labelText={"Resultados dos Exames"}
-                inputPerfil
-                placeholderText={"Ainda não há resultados de exames submetidos"}
-                fieldHeight="60"
-                fieldValue={descricaoExame}
-              />
+            labelText={"Resultados dos Exames"}
+            inputPerfil
+            placeholderText={"Ainda não há resultados de exames submetidos"}
+            fieldHeight="60"
+            fieldValue={descricaoExame}
+          />
           {/* Campos Para envio de Exames (só para pacientes) */}
 
           {/* Link Para voltar para a Home */}

@@ -1,5 +1,5 @@
-import { Modal, StyleSheet, TouchableOpacity, View } from "react-native"
-import { BoxInputConsulta, CameraContent, ConsultaModal, DadosConsultaBox, DadosConsultaText, DadosConsultaTitle, ImageContent, ImagemRecebida, LastPhoto, LinhaDadosConsulta, ModalConsultaForm, ModalContent, ModalSubtitle, ModalText, ModalTextRow, PatientModal, ResumoConsultaBox } from "./style"
+import { ActivityIndicator, Modal, StyleSheet, TouchableOpacity, View } from "react-native"
+import { BoxInputConsulta, CameraContent, ConsultaModal, DadosConsultaBox, DadosConsultaText, DadosConsultaTitle, ImageContent, ImagemRecebida, LastPhoto, LinhaDadosConsulta, ModalConsultaForm, ModalContent, ModalSubtitle, ModalText, ModalTextRow, PatientModal, ResumoConsultaBox, SwitchCameraTypeButton, SwitchCameraTypeIcon } from "./style"
 import { ButtonTitle, SemiBoldText, TextRegular, Title } from "../Text/style"
 import { Button, ButtonCamera, ButtonModal } from "../Button/styled"
 import { LinkCancel } from "../Link"
@@ -15,14 +15,17 @@ import { AntDesign } from '@expo/vector-icons';
 import * as MediaLibrary from 'expo-media-library'
 import * as ImagePicker from 'expo-image-picker'
 
-import {Camera, CameraView } from 'expo-camera'
+import { Camera, CameraView } from 'expo-camera'
 import moment from "moment"
 import { api } from "../../services/service"
 import { LoadProfile, UserDecodeToken } from "../../utils/Auth"
 import { TextAge } from "../Card/style"
 
 export const CancelattionModal = ({ infoConsulta, visible, setShowModalCancel, ListarConsultas = null, ...rest }) => {
+    const [mostrarLoading, setMostrarLoading] = useState(false)
+
     const CancelarConsulta = async () => {
+        setMostrarLoading(true)
         await api.put(`/Consultas/Status?idConsulta=${infoConsulta.id}&status=Cancelada`)
             .then(() => {
 
@@ -32,6 +35,7 @@ export const CancelattionModal = ({ infoConsulta, visible, setShowModalCancel, L
                 alert(`Erro ao cancelar consult. Erro: ${error}`)
                 console.log(`/Consultas/Status?idConsulta=${infoConsulta.id}&status=Cancelada`);
             })
+        setMostrarLoading(false)
     }
 
     return (
@@ -48,7 +52,11 @@ export const CancelattionModal = ({ infoConsulta, visible, setShowModalCancel, L
 
 
                     <ButtonModal onPress={() => CancelarConsulta()}>
-                        <ButtonTitle onPress={() => CancelarConsulta()}>Confirmar</ButtonTitle>
+                        {mostrarLoading ?
+                            <ActivityIndicator color={"#FBFBFB"} />
+                            :
+                            <ButtonTitle onPress={() => CancelarConsulta()}>Confirmar</ButtonTitle>
+                        }
                     </ButtonModal>
 
                     <LinkCancel onPress={() => setShowModalCancel(false)}>Cancelar</LinkCancel>
@@ -66,20 +74,20 @@ export const ApointmentModal = ({
     idUsuario,
     ...resto
 }) => {
-    
+
     const NavegarPaginaDeProntuario = () => {
         navigation.replace("PaginaDeProntuario", { consulta: informacoes, idUsuario: idUsuario });
         setShowModalApointment(false);
     };
 
-    const [idadePaciente, setIdadePaciente] = useState( moment.duration(moment().diff(moment(informacoes.paciente.dataNascimento))).asYears());
+    const [idadePaciente, setIdadePaciente] = useState(moment.duration(moment().diff(moment(informacoes.paciente.dataNascimento))).asYears());
 
     return (
         <Modal {...resto} visible={visible} transparent={true} animationType="fade">
             <PatientModal>
                 <ModalContent>
                     <UserImageModal
-                        source={{uri: informacoes.paciente.idNavigation.foto}}
+                        source={{ uri: informacoes.paciente.idNavigation.foto }}
                     />
 
                     <Title>
@@ -113,15 +121,21 @@ export const ApointmentModal = ({
         </Modal>
     );
 };
+
 export const AgendarConsultaModal = ({ visible, setShowModal, navigation, ...resto }) => {
 
     // state para o nível de consulta
     const [nivelConsulta, setNivelConsulta] = useState("")
     const [agendamento, setAgendamento] = useState(null);
 
-    const idRotina = "CFFD0762-BE13-4615-9D23-111467A1C50C"
-    const idExame = "AB926C59-CC1B-4DDF-9409-2D600654D5F6"
-    const idUrgencia = "A958B6ED-9FAF-4592-B1BF-7E5A16249904"
+    // const idRotina = "CFFD0762-BE13-4615-9D23-111467A1C50C"
+    const idRotina = "41D4F148-8757-439A-859F-F505B51B5CCD"
+
+    // const idExame = "AB926C59-CC1B-4DDF-9409-2D600654D5F6"
+    const idExame = "1EC174BF-389B-418A-88FA-9D475178905F"
+
+    // const idUrgencia = "A958B6ED-9FAF-4592-B1BF-7E5A16249904"
+    const idUrgencia = "3F8EA35F-31FB-43D6-A67D-11536CB33DF9"
 
     const handleContinue = async () => {
         await setShowModal(false)
@@ -207,9 +221,13 @@ export const AgendarConsultaModal = ({ visible, setShowModal, navigation, ...res
 export const ConfirmarConsultaModal = ({ agendamento, visible, setShowModal = null, navigation, ...resto }) => {
     const [idUsuario, setIdUsuario] = useState(null)
 
-    const situacaoAgendada = "04609AD7-6EB2-465A-B5AC-A13DAEB56E5F"
+    const [mostrarLoading, setMostrarLoading] = useState(false)
+
+    // const situacaoAgendada = "04609AD7-6EB2-465A-B5AC-A13DAEB56E5F"
+    const situacaoAgendada = "558E9B82-71DD-46DC-A4C5-5B9D65B3D0A0"
 
     const HandleConfirm = async () => {
+        setMostrarLoading(true)
         await api.post(`/Consultas/Cadastrar`, {
             situacaoId: situacaoAgendada,
             pacienteId: idUsuario,
@@ -224,6 +242,7 @@ export const ConfirmarConsultaModal = ({ agendamento, visible, setShowModal = nu
             console.log(erro);
             console.log(idUsuario);
         })
+        setMostrarLoading(false)
     }
 
     useEffect(() => {
@@ -270,11 +289,15 @@ export const ConfirmarConsultaModal = ({ agendamento, visible, setShowModal = nu
                                 </LinhaDadosConsulta>
                             </DadosConsultaBox>
                         </ResumoConsultaBox>
-                        <ButtonContinuarBox
-                            manipulationFunction={() => HandleConfirm()}
-                            functionCancel={() => setShowModal(false)}
-                            buttonText="Confirmar"
-                        />
+
+                        <Button onPress={() => HandleConfirm()}>
+                            {mostrarLoading ?
+                                <ActivityIndicator color={"#FBFBFB"} />
+                                :
+                                <ButtonTitle>Confirmar</ButtonTitle>
+                            }
+                        </Button>
+                        <LinkCancel onPress={() => setShowModal(false)}>Cancelar</LinkCancel>
                     </ModalContent>
                     : null}
             </PatientModal>
@@ -348,6 +371,8 @@ export const ConsultaModalCard = ({ perfilUsuario, consulta, visible, setShowMod
 export const ModalCamera = ({ visible, setShowModal = null, enviarFoto, getMediaLibrary = false, ...resto }) => {
     const cameraRef = useRef(null)
 
+    const [tipoCamera, setTipoCamera] = useState("back")
+
     const [lastPhoto, setLastPhoto] = useState(null)
     const [photo, setPhoto] = useState(null)
 
@@ -409,11 +434,18 @@ export const ModalCamera = ({ visible, setShowModal = null, enviarFoto, getMedia
                 <PatientModal>
 
                     <CameraContent>
+                        <SwitchCameraTypeButton
+                            onPress={() => setTipoCamera(tipoCamera === "front" ? "back" : "front")}
+                        >
+                            <SwitchCameraTypeIcon
+                                source={require("../../assets/images/switch_image_icon.png")}
+                            />
+                        </SwitchCameraTypeButton>
                         <View style={{ height: "90%", width: "100%", borderRadius: 15 }}>
                             <CameraView
                                 ref={cameraRef}
                                 ratio='15:9'
-                                facing={'back'}
+                                facing={tipoCamera}
                                 style={styles.camera}
                             />
                         </View>

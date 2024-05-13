@@ -20,7 +20,11 @@ export const CardConsulta = ({idUsuario, navigation, perfil, consulta, statusCon
                 break;
         
             case "prontuario":
-                onPressApointment()
+                if (moment() > moment(consulta.dataConsulta)) {
+                    onPressApointment()
+                }else {
+                    (alert("Nâo é posível inserir prontuário no momento"))
+                }
                 break;
 
             case "cancelar":
@@ -71,7 +75,7 @@ export const CardConsulta = ({idUsuario, navigation, perfil, consulta, statusCon
                     <ProfileData>
                     {perfil === "Paciente" ?
                         <TextAge>{consulta.medicoClinica.medico.crm}</TextAge> : 
-                        <TextAge>{idadePaciente} anos</TextAge>
+                        <TextAge>{Math.round(idadePaciente)} anos</TextAge>
                     }
                         <TextTipoConsulta>{prioridadeConsulta}</TextTipoConsulta>
                     </ProfileData>

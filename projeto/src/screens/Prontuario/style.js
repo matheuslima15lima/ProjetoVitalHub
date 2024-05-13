@@ -25,7 +25,6 @@ export const ApointmentFormBox = styled.View`
 export const SendImageOCRBox = styled.View`
     width: 100%;
     gap: 20px;
-    margin-bottom: 20px;
 `
 
 export const ButtonImageSubmit = styled.TouchableOpacity`
@@ -98,4 +97,9 @@ export const ImageInputBoxText = styled.Text`
     color: #4E4B59;
     font-family: "MontserratAlternates_500Medium"; 
     text-align: center;
+`
+
+export const EditProntuarioButton = styled.View`
+    width:100%;
+    margin: 0px 0 30px;
 `

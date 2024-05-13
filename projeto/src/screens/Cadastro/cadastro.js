@@ -12,7 +12,7 @@ import {
   TitleCadastro,
 } from "../../components/Text/style";
 import { api, apiViaCep } from "../../services/service";
-import { ScrollView } from "react-native";
+import { ActivityIndicator, ScrollView } from "react-native";
 import { Scroll } from "../../components/Scroll/style";
 import {
   desmascararCep,
@@ -36,6 +36,8 @@ export const Cadastro = ({ navigation }) => {
     cidade: "",
     dataNascimento: ""
   });
+
+  const [mostrarLoading, setMostrarLoading] = useState(false)
 
   const [senhaConfirma, setSenhaConfirma] = useState("");
 
@@ -88,16 +90,19 @@ export const Cadastro = ({ navigation }) => {
       form.append("dataNascimento", `${dataNascimentoFormatada}`)
       form.append("idTipoUsuario", `${idTipoPaciente}`);
 
-      const response = await api.post("/Pacientes", form, {
+      setMostrarLoading(true)
+      await api.post("/Pacientes", form, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      });
-      console.log(response);
-      if (response.data.sucess) {
+      }).then(() => {
         console.log("cadastrado com sucesso!!!");
-      }
-      navigation.replace("Login");
+        navigation.replace("Login");
+      }).catch(error => {
+        alert(error)
+      })
+      setMostrarLoading(false)
+      
 
       // return null
     } else {
@@ -221,10 +226,11 @@ export const Cadastro = ({ navigation }) => {
         <Button //</ContainerApp>onPress={() => navigation.replace("Login")}
           onPress={() => CriarConta()}
         >
-          <ButtonTitle //onPress={() => navigation.replace("Login")}
-          >
-            Cadastrar
-          </ButtonTitle>
+          {mostrarLoading ?
+                    <ActivityIndicator color={"#FBFBFB"} />
+                    : 
+                    <ButtonTitle>Cadastrar</ButtonTitle>
+                    }
         </Button>
       </Scroll>
       <LinkCancel onPress={() => navigation.replace("Login")}>

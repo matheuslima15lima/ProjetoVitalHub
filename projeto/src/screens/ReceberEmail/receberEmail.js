@@ -7,18 +7,23 @@ import { LogoVitalHub } from "../../components/Logo";
 import { IconContainer, IconImage } from "../../components/NavigationIcons/style";
 import { ButtonTitle, TextRegular, TitleRedefinirSenha } from "../../components/Text/style";
 import { api } from "../../services/service";
+import { ActivityIndicator } from "react-native";
 
 export const ReceberEmail = ({ navigation }) => {
+
+    const [mostrarLoading, setMostrarLoading] = useState(false)
 
     const [email, setEmail] = useState("")
 
     const HandlePrees = async () => {
+        setMostrarLoading(true)
         await api.post(`/RecuperarSenha?email=${email}`)
-        .then( () => {
-            navigation.replace("VerificarEmail", {userEmail: email})
-        }).catch(error => {
-            alert(error)
-        })
+            .then(() => {
+                navigation.replace("VerificarEmail", { userEmail: email })
+            }).catch(error => {
+                alert(error)
+            })
+        setMostrarLoading(false)
     }
 
     return (
@@ -42,7 +47,11 @@ export const ReceberEmail = ({ navigation }) => {
                 />
             </BoxInput>
             <Button onPress={() => HandlePrees()}>
-                <ButtonTitle>Confirmar</ButtonTitle>
+                {mostrarLoading ?
+                    <ActivityIndicator color={"#FBFBFB"} />
+                    :
+                    <ButtonTitle>Confirmar</ButtonTitle>
+                }
             </Button>
         </ContainerProfile>
     )

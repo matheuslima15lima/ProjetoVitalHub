@@ -9,9 +9,7 @@ import { LoadProfile } from '../../utils/Auth';
 import { TouchableOpacity } from 'react-native';
 import { api } from '../../services/service';
 
-export const Header = ({nomeUsuario, idUsuario, fotoUsuario}) => {
-
-
+export const Header = ({nomeUsuario, fotoUsuario}) => {
     return (nomeUsuario !== null && fotoUsuario !== "" ? (
         <ContainerHeader>
             <HeaderContent>

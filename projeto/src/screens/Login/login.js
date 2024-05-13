@@ -10,6 +10,7 @@ import { LinkSemiBold } from "../../components/Link/style";
 import { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { api } from "../../services/service";
+import { ActivityIndicator } from "react-native";
 
 export const Login = ({ navigation }) => {
     const [dadosLogin, setDadosLogin] = useState({
@@ -17,7 +18,10 @@ export const Login = ({ navigation }) => {
         senha: ""
     });
 
+    const [mostrarLoading, setMostrarLoading] = useState(false)
+
     const Login = async () => {
+        setMostrarLoading(true)
         await api.post("/Login", {
             email: dadosLogin.email,
             senha: dadosLogin.senha
@@ -27,6 +31,7 @@ export const Login = ({ navigation }) => {
         }).catch(error => {
             alert(error)
         })
+        setMostrarLoading(false)
     }
 
     return (
@@ -52,7 +57,11 @@ export const Login = ({ navigation }) => {
             </BoxInput>
             <BoxButton>
                 <Button onPress={() => Login()}>
+                    {mostrarLoading ?
+                    <ActivityIndicator color={"#FBFBFB"} />
+                    : 
                     <ButtonTitle>Entrar</ButtonTitle>
+                    }
                 </Button>
                 <ButtonGoogle onPress={() => Login()}>
                     <AntDesign name="google" size={20} color={"#496BBA"} />
