@@ -51,7 +51,6 @@ namespace WebAPI.Repositories
                 if (buscada.ReceitaId != null)
                 {
                     buscada.Receita = consulta.Receita;
-
                 }
                 else
                 {
@@ -67,6 +66,7 @@ namespace WebAPI.Repositories
                 throw;
             }
         }
+
 
         public void EditarStatus(Guid idConsulta, string status)
         {

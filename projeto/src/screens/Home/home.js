@@ -49,7 +49,7 @@ export const Home = ({ navigation, route }) => {
         function  handlePressApointmwent() {
             
                 
-                if (moment()< infoConsulta){
+                if (moment()>moment(infoConsulta.dataConsulta) || moment()==moment(infoConsulta.dataConsulta)){
                     (setShowModalApointment(true))
                     
                    

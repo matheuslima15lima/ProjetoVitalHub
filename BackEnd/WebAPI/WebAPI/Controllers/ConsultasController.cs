@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
+using WebAPI.Contexts;
 using WebAPI.Domains;
 using WebAPI.Interfaces;
 using WebAPI.Repositories;
@@ -15,10 +17,12 @@ namespace WebAPI.Controllers
     {
 
         private IConsultaRepository consultaRepository;
+        private readonly VitalContext _context;
 
         public ConsultasController()
         {
             consultaRepository = new ConsultaRepository();
+            _context = new VitalContext();
         }
 
         [Authorize]
@@ -114,7 +118,13 @@ namespace WebAPI.Controllers
 
                 if (consulta.ReceitaId != null && prontuarioviewModel.Medicamento != null)
                 {
-                    consulta.Receita!.Medicamento = prontuarioviewModel.Medicamento;
+                    Receita receitaBuscada = _context.Receitas.FirstOrDefault(r => r.Medicamento == prontuarioviewModel.Medicamento)!;
+
+                    if (receitaBuscada != null)
+                    {
+                        consulta.ReceitaId = receitaBuscada.Id;
+                    }
+
                 }
                 if (consulta.ReceitaId == null && prontuarioviewModel.Medicamento != null)
                 {
