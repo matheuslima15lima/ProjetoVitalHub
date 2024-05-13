@@ -54,7 +54,8 @@ namespace WebAPI.Repositories
                 }
                 else
                 {
-                    ctx.Add(consulta.Receita);
+                    ctx.Receitas.Add(consulta.Receita!);
+                    buscada.ReceitaId = consulta.Receita!.Id;
                 }
 
                 ctx.Update(buscada);

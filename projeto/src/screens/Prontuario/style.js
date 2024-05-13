@@ -25,6 +25,7 @@ export const ApointmentFormBox = styled.View`
 export const SendImageOCRBox = styled.View`
     width: 100%;
     gap: 20px;
+    margin-bottom: 20px;
 `
 
 export const ButtonImageSubmit = styled.TouchableOpacity`
@@ -68,14 +69,28 @@ export const ImageInputBox = styled(InputContentBox)`
 
 export const ImageInputBoxField = styled.View`
     padding: 10px;
-    height: 110px;
+    height: auto;
+    justify-content: center;
+    align-items: center;
+    border-color: #F5F3F3;
+    background-color: #F5F3F3;
+    color: #4E4B59;
+`
+
+export const ResultadosOCRText = styled.Text`
+    color: #4E4B59;
+    text-align: justify;
+    font-size: 14px;
+    font-family: "MontserratAlternates_500Medium";
+`
+
+export const NenhumaImagemBox = styled.View`
     justify-content: center;
     align-items: center;
     flex-direction: row;
     gap: 5px;
-    border-color: #F5F3F3;
-    background-color: #F5F3F3;
-    color: #4E4B59;
+    width: 100%;
+    padding: 40px 0;
 `
 
 export const ImageInputBoxText = styled.Text`

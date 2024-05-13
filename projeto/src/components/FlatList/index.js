@@ -10,6 +10,7 @@ export const ListaConsultas = ({navigation, perfilUsuario, dados, statusConsulta
             renderItem={({ item }) =>
                 statusConsulta === item.situacao.situacao ? (
                     <CardConsulta
+                        idUsuario={perfilUsuario === "Paciente" ? item.medicoClinica.medico.idNavigation.id : item.paciente.idNavigation.id}
                         consulta={item}
                         imageSource={perfilUsuario === "Paciente" ? item.medicoClinica.medico.idNavigation.foto :  item.paciente.idNavigation.foto}
                         statusConsulta={statusConsulta}

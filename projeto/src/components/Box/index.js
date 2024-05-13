@@ -7,7 +7,7 @@ import { InputContentBox } from "./style";
 
 export const BoxInputField = ({
     labelText, placeholderText, fieldWidth = "100",
-    keyType = "default", onChangeText = null, maxLength, fieldValue = null, editable = false, fieldHeight = "16", apointment = false, inputPerfil, center = false, multiline = true
+    keyType = "default", onChangeText = null, maxLength, fieldValue = null, editable = false, fieldHeight = "20", apointment = false, inputPerfil, center = false, multiline = true
 }) =>
     <InputContentBox fieldWidth={fieldWidth}>
         <InputLabel>{labelText}</InputLabel>

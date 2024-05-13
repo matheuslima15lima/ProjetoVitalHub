@@ -39,6 +39,7 @@ export const LocalConsulta = ({ navigation, route }) => {
   const [latitude, setLatitude] = useState({});
   const [longitude, setLongitude] = useState({});
   const [finalPosition, setFinalPosition] = useState({});
+
   const mapReference = useRef(null);
 
   const [initialPosition, setInitialPosition] = useState(null);
@@ -89,8 +90,8 @@ export const LocalConsulta = ({ navigation, route }) => {
             longitude: initialPosition.coords.longitude,
           },
           {
-            latitude: finalPosition.latitude,
-            longitude: finalPosition.longitude,
+            latitude: coordsClinica.latitude,
+            longitude: coordsClinica.longitude,
           },
         ],
         {

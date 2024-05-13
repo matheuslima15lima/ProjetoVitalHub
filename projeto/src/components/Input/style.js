@@ -1,7 +1,7 @@
 import styled, { css } from "styled-components";
 
 export const InputField = styled.TextInput.attrs({
-    placeholderTextColor: '#34898F'
+    placeholderTextColor: '#49B3BA'
 })`
     border: 2px solid #49B3BA;
     border-radius: 5px;
@@ -38,7 +38,7 @@ export const PerfilInputField = styled(InputField).attrs({
 `
 
 export const ApointmentInputField = styled(InputField).attrs({
-    placeholderTextColor: "#34898F"
+    placeholderTextColor: "#49B3BA"
 })
 `
     background-color: transparent;

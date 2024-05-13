@@ -119,6 +119,10 @@ export const AgendarConsultaModal = ({ visible, setShowModal, navigation, ...res
     const [nivelConsulta, setNivelConsulta] = useState("")
     const [agendamento, setAgendamento] = useState(null);
 
+    const idRotina = "CFFD0762-BE13-4615-9D23-111467A1C50C"
+    const idExame = "AB926C59-CC1B-4DDF-9409-2D600654D5F6"
+    const idUrgencia = "A958B6ED-9FAF-4592-B1BF-7E5A16249904"
+
     const handleContinue = async () => {
         await setShowModal(false)
         navigation.replace("SelecionarClinica", { agendamento: agendamento })
@@ -151,7 +155,7 @@ export const AgendarConsultaModal = ({ visible, setShowModal, navigation, ...res
                                     situacao={"rotina"}
                                     actived={nivelConsulta === "rotina"}
                                     manipulationFunction={setNivelConsulta}
-                                    idPrioridade="41D4F148-8757-439A-859F-F505B51B5CCD"
+                                    idPrioridade={idRotina}
                                     labelPrioridade="Rotina"
                                     manipularAgendamento={IncluirNivelPrioridade}
                                 />
@@ -160,7 +164,7 @@ export const AgendarConsultaModal = ({ visible, setShowModal, navigation, ...res
                                     situacao={"exame"}
                                     actived={nivelConsulta === "exame"}
                                     manipulationFunction={setNivelConsulta}
-                                    idPrioridade="1EC174BF-389B-418A-88FA-9D475178905F"
+                                    idPrioridade={idExame}
                                     labelPrioridade="Exame"
                                     manipularAgendamento={IncluirNivelPrioridade}
                                 />
@@ -169,7 +173,7 @@ export const AgendarConsultaModal = ({ visible, setShowModal, navigation, ...res
                                     situacao={"urgencia"}
                                     actived={nivelConsulta === "urgencia"}
                                     manipulationFunction={setNivelConsulta}
-                                    idPrioridade="3F8EA35F-31FB-43D6-A67D-11536CB33DF9"
+                                    idPrioridade={idUrgencia}
                                     labelPrioridade="Urgência"
                                     manipularAgendamento={IncluirNivelPrioridade}
                                 />
@@ -203,9 +207,11 @@ export const AgendarConsultaModal = ({ visible, setShowModal, navigation, ...res
 export const ConfirmarConsultaModal = ({ agendamento, visible, setShowModal = null, navigation, ...resto }) => {
     const [idUsuario, setIdUsuario] = useState(null)
 
+    const situacaoAgendada = "04609AD7-6EB2-465A-B5AC-A13DAEB56E5F"
+
     const HandleConfirm = async () => {
         await api.post(`/Consultas/Cadastrar`, {
-            situacaoId: "558E9B82-71DD-46DC-A4C5-5B9D65B3D0A0",
+            situacaoId: situacaoAgendada,
             pacienteId: idUsuario,
             medicoClinicaId: agendamento.medicoClinicaId,
             prioridadeId: agendamento.prioridadeId,

@@ -7,7 +7,7 @@ import { GerarNotaClinica } from "../../utils/funcoesUteis";
 import { LoadProfile } from "../../utils/Auth";
 import moment from "moment";
 
-export const CardConsulta = ({perfil, consulta, statusConsulta, onPressCancel, onPressApointment, loadInfoConsulta, onPressConsulta, imageSource }) => {
+export const CardConsulta = ({idUsuario, navigation, perfil, consulta, statusConsulta, onPressCancel, onPressApointment, loadInfoConsulta, onPressConsulta, imageSource }) => {
     const [idadePaciente, setIdadePaciente] = useState(null)
     const [prioridadeConsulta, setPrioridadeConsulta] = useState("")
 
@@ -58,7 +58,7 @@ export const CardConsulta = ({perfil, consulta, statusConsulta, onPressCancel, o
     }, [])
 
     return (
-        <CardBox onPress={statusConsulta !== "Cancelada" ? () => AbrirModal("localConsulta") : null}>
+        <CardBox onPress={statusConsulta !== "Cancelada" ? ( perfil === "Paciente" ? () => AbrirModal("localConsulta") : () => AbrirModal("prontuario")) : null}>
             <UserImageCart
                 source={{uri: imageSource}}
             />
@@ -83,7 +83,7 @@ export const CardConsulta = ({perfil, consulta, statusConsulta, onPressCancel, o
                     </HorarioBox>
                     <CardTextCancelApointment
                         statusConsulta={statusConsulta}
-                        onPress={statusConsulta == "Agendada" ? (() => AbrirModal("cancelar")) : (() => AbrirModal("prontuario"))}
+                        onPress={statusConsulta == "Agendada" ? (() => AbrirModal("cancelar")) : (() => navigation.replace("PaginaDeProntuario", { consulta: consulta, idUsuario: idUsuario }))}
                     >
                         {statusConsulta == "Agendada" ? "Cancelar" : (statusConsulta == "Realizada" ? "Ver Prontuário" : null)}
                     </CardTextCancelApointment>

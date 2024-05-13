@@ -115,7 +115,7 @@ namespace WebAPI.Controllers
 
                 consulta.Diagnostico = prontuarioviewModel.Diagnostico;
 
-                if (consulta.ReceitaId != null && prontuarioviewModel.Medicamento != null)
+                if (prontuarioviewModel.Medicamento != null)
                 {
                     Receita receitaBuscada = _context.Receitas.FirstOrDefault(r => r.Medicamento == prontuarioviewModel.Medicamento)!;
 
@@ -123,17 +123,16 @@ namespace WebAPI.Controllers
                     {
                         consulta.ReceitaId = receitaBuscada.Id;
                     }
-
-                }
-                if (consulta.ReceitaId == null && prontuarioviewModel.Medicamento != null)
-                {
-
-                    Receita receita = new Receita
+                    else
                     {
-                        Medicamento = prontuarioviewModel.Medicamento
-                    };
+                        Receita receita = new Receita()
+                        {
+                            Medicamento = prontuarioviewModel.Medicamento
+                        };
 
-                    consulta.Receita = receita;
+                        consulta.Receita = receita;
+                    }
+
                 }
 
                 consultaRepository.EditarProntuario(consulta);

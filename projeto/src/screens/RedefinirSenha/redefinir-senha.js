@@ -7,6 +7,7 @@ import { LogoVitalHub } from "../../components/Logo";
 import { IconContainer, IconImage } from "../../components/NavigationIcons/style";
 import { ButtonTitle, TextRegular, TitleRedefinirSenha } from "../../components/Text/style";
 import { api } from "../../services/service";
+import { faL } from "@fortawesome/free-solid-svg-icons";
 
 export const RedefinirSenha = ({navigation, route}) => {
     const [email, setEmail] = useState("")
@@ -51,12 +52,16 @@ export const RedefinirSenha = ({navigation, route}) => {
                 editable
                 fieldvalue={senha}
                 onChangeText={text => setSenha(text)}
+                multiline={false}
+                secure
             />
             <Input
                 placeholderText={"confirmar nova senha"}
                 editable
                 fieldvalue={confirmaSenha}
                 onChangeText={text => setConfirmaSenha(text)}
+                multiline={false}
+                secure
             />
         </BoxInput>
         <Button onPress={() => HandlePress()}>

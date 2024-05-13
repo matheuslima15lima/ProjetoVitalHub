@@ -131,7 +131,6 @@ export const PerfilDeUsuario = ({ navigation }) => {
                 "Content-Type": "multipart/form-data"
             }
         }).then(response => {
-            console.log(response);
         }).catch(erro => {
             console.log(erro);
         })
@@ -154,8 +153,7 @@ export const PerfilDeUsuario = ({ navigation }) => {
             setLogradouro(retornoApi.data.logradouro)
             setCidade(retornoApi.data.localidade)
         }).catch(error => {
-            console.log(error); 
-            alert(error)
+            console.log(error);
         })
     }
 
@@ -232,7 +230,7 @@ export const PerfilDeUsuario = ({ navigation }) => {
                                     placeholderText={"Data de nascimento do paciente"}
                                     editable={editavel}
                                     inputPerfil
-                                    fieldValue={editavel ? dadosAtualizarUsuario.dataNascimento : moment(dadosUsuario.dataNascimento).format("DD/MM/YYYY")}
+                                    fieldValue={editavel ? mascararData(dadosAtualizarUsuario.dataNascimento) : moment(dadosUsuario.dataNascimento).format("DD/MM/YYYY")}
                                     onChangeText={text => setDadosAtualizarUsuario({
                                         ...dadosAtualizarUsuario,
                                         dataNascimento: text

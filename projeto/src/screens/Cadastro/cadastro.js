@@ -73,8 +73,10 @@ export const Cadastro = ({ navigation }) => {
 
       const dataNascimentoFormatada = `${arrayDataNascimento[2]}-${arrayDataNascimento[1]}-${arrayDataNascimento[0]}`
 
+      const idTipoPaciente = "EDBDD738-C3AF-4A4E-A396-340CFBDD1BD7";
+
       const form = new FormData();
-      form.append("cpf", `${conta.cpf}`)
+      form.append("cpf", `${desmascararCpf(conta.cpf)}`)
       form.append("nome", `${conta.nome}`);
       form.append("email", `${conta.email}`);
       form.append("senha", `${conta.senha}`);
@@ -84,7 +86,7 @@ export const Cadastro = ({ navigation }) => {
       form.append("cep", `${desmascararCep(conta.cep)}`);
       form.append("cidade", `${conta.cidade}`)
       form.append("dataNascimento", `${dataNascimentoFormatada}`)
-      form.append("idTipoUsuario", `42EAB83A-A42C-4C0D-AE47-2C7D47468164`);
+      form.append("idTipoUsuario", `${idTipoPaciente}`);
 
       const response = await api.post("/Pacientes", form, {
         headers: {
@@ -99,17 +101,13 @@ export const Cadastro = ({ navigation }) => {
 
       // return null
     } else {
-      try {
-        alert("Senhas não são iguais");
+      alert("Senhas não são iguais");
 
         // if (retornoApi.status == 201) {
         //   alert("usuário criado");
         // } else {
         //   alert("erro ao criar");
         // }
-      } catch (error) {
-        console.log(error);
-      }
     }
   };
 
@@ -127,11 +125,13 @@ export const Cadastro = ({ navigation }) => {
             placeholderText={"Digite seu nome:"}
             fieldvalue={conta.nome}
             editable
+            multiline={false}
             onChangeText={(text) => setConta({ ...conta, nome: text })}
           />
           <Input
             placeholderText={"Usuário ou email"}
             fieldvalue={conta.email}
+            multiline={false}
             editable
             onChangeText={(text) => setConta({ ...conta, email: text })}
           />
@@ -139,17 +139,22 @@ export const Cadastro = ({ navigation }) => {
             editable
             placeholderText={"Senha"}
             fieldvalue={conta.senha}
+            multiline={false}
+            secure
             onChangeText={(text) => setConta({ ...conta, senha: text })}
           />
           <Input
             editable
             placeholderText={"Confirmar Senha"}
             fieldvalue={senhaConfirma}
+            multiline={false}
+            secure
             onChangeText={(text) => setSenhaConfirma(text)}
           />
           <Input
             editable
             placeholderText={"Rg"}
+            keyType="numeric"
             fieldvalue={mascararRg(conta.rg)}
             onChangeText={(text) =>
               setConta({ ...conta, rg: text})
@@ -158,6 +163,7 @@ export const Cadastro = ({ navigation }) => {
           <Input
             editable
             placeholderText={"Cpf"}
+            keyType="numeric"
             fieldvalue={mascararCpf(conta.cpf)}
             onChangeText={(text) =>
               setConta({ ...conta, cpf: text})
@@ -173,28 +179,10 @@ export const Cadastro = ({ navigation }) => {
               fieldvalue={conta.cep}
               onChangeText={(text) => setConta({ ...conta, cep: text })}
             />
-
-            <Input
-              inputWidth={47}
-              placeholderText={"Cidade"}
-              fieldvalue={conta.cidade}
-            />
-          </BoxInputRow>
-
-          <BoxInputRow>
             <Input
               inputWidth={47}
               editable
-              placeholderText={"Numero"}
-              fieldValue={conta.senha}
-              onChangeText={(text) => setConta({
-                ...conta,
-                numero: text
-                })}
-            />
-            <Input
-              inputWidth={47}
-              editable
+              keyType="numeric"
               placeholderText={"Data de nascimento"}
               fieldvalue={mascararData(conta.dataNascimento)}
               onChangeText={(text) => setConta({
@@ -205,9 +193,30 @@ export const Cadastro = ({ navigation }) => {
           </BoxInputRow>
 
           <Input 
-            placeholderText={`${conta.logradouro}`} 
+            placeholderText={`Logradouro`} 
             fieldvalue={conta.logradouro} 
           />
+
+          <BoxInputRow>
+            <Input
+              inputWidth={47}
+              editable
+              placeholderText={"Nº da Residência"}
+              keyType="numeric"
+              fieldValue={conta.senha}
+              onChangeText={(text) => setConta({
+                ...conta,
+                numero: text
+                })}
+            />
+            <Input
+              inputWidth={47}
+              placeholderText={"Cidade"}
+              fieldvalue={conta.cidade}
+            />
+          </BoxInputRow>
+
+          
         </BoxInput>
         <Button //</ContainerApp>onPress={() => navigation.replace("Login")}
           onPress={() => CriarConta()}

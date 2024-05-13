@@ -4,7 +4,7 @@ import { ContainerApp, ContainerHome } from "../../components/Container/style";
 import { BoxButtonRow } from "../../components/Box/style";
 import { FontAwesome } from '@expo/vector-icons';
 import { ButtonHome } from "../../components/Button";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ListaConsultas } from "../../components/FlatList";
 import { AgendarConsultaModal, ApointmentModal, CancelattionModal, ConsultaModalCard } from "../../components/Modal";
 import { AgendarConsultaButton, HomeContent } from "./style";
@@ -13,6 +13,7 @@ import moment from "moment";
 import { TextRegular } from "../../components/Text/style";
 import { api } from "../../services/service";
 import { LoadingIndicator } from "../../components/LoadingIndicator";
+import { useFocusEffect } from "@react-navigation/native";
 
 export const Home = ({ navigation, route }) => {
     const { ativado } = route.params
@@ -39,6 +40,19 @@ export const Home = ({ navigation, route }) => {
 
     const [listaDeConsultas, setListaDeConsultas] = useState([])
 
+    const CarregarDadosUsuario = () => {
+        LoadProfile()
+            .then(token => {
+                if (token !== null) {
+                    setInfoUsuario(token)
+                    setDataAtual(moment().format("YYYY-MM-DD"))
+                    ListarConsultasUsuario(token.perfil, token.idUsuario)
+                    BuscarImagemUsuario(token.idUsuario)
+                }
+            }
+            )
+    }
+
     useEffect(() => {
         if (ativado === true) {
             setShowAgendarConsulta(true)
@@ -48,21 +62,31 @@ export const Home = ({ navigation, route }) => {
     const ListarConsultasUsuario = async (perfil, id) => {
         await api.get(`/${perfil}s/BuscarPorData?data=${dataAtual}&id=${id}`)
             .then(retornoApi => {
-                setListaDeConsultas(retornoApi.data)
+                retornoApi.data.map(async (consulta) => {
+                    if (consulta.situacao.situacao === "Agendada" && moment(consulta.dataConsulta) < moment()) {
+                        await api.put(`/Consultas/Status?idConsulta=${consulta.id}&status=Realizada`)
+                            .then(() => {
+                                setShowModalCancel(false)
+                            }).catch(error => {
+                                console.log(`Erro ao atualizar status das consultas. Erro: ${error}`)
+                            })
+                    }
+
+                    await api.get(`/${perfil}s/BuscarPorData?data=${dataAtual}&id=${id}`).then(retornoApi => {
+                        setListaDeConsultas(retornoApi.data)
+                    }).catch(error => {
+                        console.log(error);
+                    })
+                });
+                
+            }).catch(erro => {
+                console.log(erro);
             })
     }
 
     useEffect(() => {
-        LoadProfile()
-            .then(token => {
-                if (token !== null) {
-                    setInfoUsuario(token)
-                    setDataAtual(moment().format("YYYY-MM-DD"))
-                    ListarConsultasUsuario(token.perfil, token.idUsuario)
-                }
-            })
-
-    }, [1000])
+        CarregarDadosUsuario()
+    }, [])
 
     useEffect(() => {
         if (infoUsuario !== null) {
@@ -70,12 +94,32 @@ export const Home = ({ navigation, route }) => {
         }
     }, [dataAtual, 1000])
 
+
+    const [fotoUsuario, setFotoUsuario] = useState("")
+
+    const BuscarImagemUsuario = async (idUsuario) => {
+        await api.get(`/Usuario/BuscarPorId?id=${idUsuario}`)
+            .then(retornoApi => {
+                setFotoUsuario(retornoApi.data.foto)
+            }).catch(error => {
+                alert(error)
+            })
+    }
+
+    //Recarrega a imagem no Header
+    useFocusEffect(
+        useCallback(() => {
+            CarregarDadosUsuario()
+        }, [])
+    )
+
     return (
         <ContainerHome>
             {infoUsuario !== null ?
                 <Header
                     nomeUsuario={infoUsuario.nome}
                     idUsuario={infoUsuario.idUsuario}
+                    fotoUsuario={fotoUsuario}
                 /> : null}
             <Calendario
                 setDataAtual={setDataAtual}
