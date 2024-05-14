@@ -6,11 +6,23 @@ export const ObjetoEstaVazio = (objeto) => {
 export const GerarNotaClinica = () => {
     numeroAleatorio = Math.random()
 
-    while(numeroAleatorio > 0.5 || numeroAleatorio < 0.3){
+    while (numeroAleatorio > 0.5 || numeroAleatorio < 0.3) {
         numeroAleatorio = Math.random()
     }
 
     numeroGerado = numeroAleatorio * 10
 
     return numeroGerado.toFixed(1)
+}
+
+export const verificarCamposFormulario = (objetoForm) => {
+    let formValido = true
+    const arrayForm = Object.values(objetoForm)
+    arrayForm.forEach(item => {
+        if (item === "") {
+            formValido = false
+        }
+    })
+
+    return formValido
 }

@@ -7,10 +7,11 @@ import { AntDesign } from '@expo/vector-icons';
 import { ContainerProfile } from "../../components/Container/style";
 import { Button, ButtonGoogle } from "../../components/Button/styled";
 import { LinkSemiBold } from "../../components/Link/style";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { api } from "../../services/service";
 import { ActivityIndicator } from "react-native";
+import { verificarCamposFormulario } from "../../utils/funcoesUteis";
 
 export const Login = ({ navigation }) => {
     const [dadosLogin, setDadosLogin] = useState({
@@ -19,8 +20,10 @@ export const Login = ({ navigation }) => {
     });
 
     const [mostrarLoading, setMostrarLoading] = useState(false)
+    const [enableButton, setEnableButton] = useState(true)
 
     const Login = async () => {
+        setEnableButton(false)
         setMostrarLoading(true)
         await api.post("/Login", {
             email: dadosLogin.email,
@@ -31,8 +34,13 @@ export const Login = ({ navigation }) => {
         }).catch(error => {
             alert(error)
         })
+        setEnableButton(true)
         setMostrarLoading(false)
     }
+
+    useEffect(() => {
+        setEnableButton(verificarCamposFormulario(dadosLogin))
+    }, [dadosLogin])
 
     return (
         <ContainerProfile>
@@ -56,7 +64,10 @@ export const Login = ({ navigation }) => {
                 <LinkRedefinirSenha onPress={() => navigation.navigate("ReceberEmail")}>Esqueceu sua senha?</LinkRedefinirSenha>
             </BoxInput>
             <BoxButton>
-                <Button onPress={() => Login()}>
+                <Button 
+                    onPress={enableButton ? () => Login() : (!mostrarLoading ? () => alert("Preencha todos os campos") : null)}
+                    disable={!enableButton}
+                >
                     {mostrarLoading ?
                     <ActivityIndicator color={"#FBFBFB"} />
                     : 

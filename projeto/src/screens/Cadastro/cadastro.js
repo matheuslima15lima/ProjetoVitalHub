@@ -23,6 +23,7 @@ import {
   mascararData,
   mascararRg,
 } from "../../utils/StringMask";
+import { verificarCamposFormulario } from "../../utils/funcoesUteis";
 
 export const Cadastro = ({ navigation }) => {
   const [conta, setConta] = useState({
@@ -30,7 +31,7 @@ export const Cadastro = ({ navigation }) => {
     senha: "",
     nome: "",
     rg: "",
-    numero: 0,
+    numero: "",
     logradouro: "",
     cep: "",
     cidade: "",
@@ -41,35 +42,41 @@ export const Cadastro = ({ navigation }) => {
 
   const [senhaConfirma, setSenhaConfirma] = useState("");
 
-  const BuscarEnderecoPorCep = async () => {
-    if (conta.cep.length < 8) {
-      return null;
-    }else{
-      // alert("pronto para buscar o cep")
-    await apiViaCep
-      .get(`${conta.cep}/json/`)
-      .then((retornoApi) => {
-        setConta({
-          ...conta,
-          logradouro: retornoApi.data.logradouro,
-          cidade: retornoApi.data.localidade
-        })
+  const [enableButton, setEnableButton] = useState(true)
 
-        console.log(conta);
-        // console.log(retornoApi.data);
-      })
-      .catch((error) => {
-        console.log(error);
-        alert(error);
-      });
+  const BuscarEnderecoPorCep = async () => {
+    if (conta.cep.length < 9) {
+      return null;
+    } else {
+      // alert("pronto para buscar o cep")
+      await apiViaCep
+        .get(`${desmascararCep(conta.cep)}/json/`)
+        .then((retornoApi) => {
+          setConta({
+            ...conta,
+            logradouro: retornoApi.data.logradouro,
+            cidade: retornoApi.data.localidade
+          })
+          // console.log(retornoApi.data);
+        })
+        .catch((error) => {
+          console.log(error);
+          alert(error);
+        });
     }
   };
+
+  useEffect(() => {
+    setEnableButton(verificarCamposFormulario(conta))
+  }, [conta])
 
   useEffect(() => {
     BuscarEnderecoPorCep();
   }, [conta.cep]);
 
-  const CriarConta = async () => {
+  const CriarConta = async () => {    
+    setEnableButton(false)
+
     if (senhaConfirma === conta.senha) {
       const arrayDataNascimento = conta.dataNascimento.split("/")
 
@@ -102,29 +109,28 @@ export const Cadastro = ({ navigation }) => {
         alert(error)
       })
       setMostrarLoading(false)
-      
+      setEnableButton(true)
 
       // return null
     } else {
       alert("Senhas não são iguais");
 
-        // if (retornoApi.status == 201) {
-        //   alert("usuário criado");
-        // } else {
-        //   alert("erro ao criar");
-        // }
+      // if (retornoApi.status == 201) {
+      //   alert("usuário criado");
+      // } else {
+      //   alert("erro ao criar");
+      // }
     }
   };
 
   return (
     <ContainerApp>
       <LogoVitalHub />
-      <TitleCadastro>Criar conta</TitleCadastro>
-      <TextRegular>
-        Insira seu endereço de e-mail e senha para realizar seu cadastro.
-      </TextRegular>
-
-      <Scroll>
+        <TitleCadastro>Criar conta</TitleCadastro>
+        <TextRegular>
+          Insira suas informações de cadastro para criar seu perfil na plataforma.
+        </TextRegular>
+        <Scroll>
         <BoxInput>
           <Input
             placeholderText={"Digite seu nome:"}
@@ -162,7 +168,7 @@ export const Cadastro = ({ navigation }) => {
             keyType="numeric"
             fieldvalue={mascararRg(conta.rg)}
             onChangeText={(text) =>
-              setConta({ ...conta, rg: text})
+              setConta({ ...conta, rg: text })
             }
           />
           <Input
@@ -171,7 +177,7 @@ export const Cadastro = ({ navigation }) => {
             keyType="numeric"
             fieldvalue={mascararCpf(conta.cpf)}
             onChangeText={(text) =>
-              setConta({ ...conta, cpf: text})
+              setConta({ ...conta, cpf: text })
             }
           />
 
@@ -181,7 +187,7 @@ export const Cadastro = ({ navigation }) => {
               editable
               keyType="numeric"
               placeholderText={"Cep"}
-              fieldvalue={conta.cep}
+              fieldvalue={mascararCep(conta.cep)}
               onChangeText={(text) => setConta({ ...conta, cep: text })}
             />
             <Input
@@ -197,9 +203,9 @@ export const Cadastro = ({ navigation }) => {
             />
           </BoxInputRow>
 
-          <Input 
-            placeholderText={`Logradouro`} 
-            fieldvalue={conta.logradouro} 
+          <Input
+            placeholderText={`Logradouro`}
+            fieldvalue={conta.logradouro}
           />
 
           <BoxInputRow>
@@ -212,7 +218,7 @@ export const Cadastro = ({ navigation }) => {
               onChangeText={(text) => setConta({
                 ...conta,
                 numero: text
-                })}
+              })}
             />
             <Input
               inputWidth={47}
@@ -221,16 +227,17 @@ export const Cadastro = ({ navigation }) => {
             />
           </BoxInputRow>
 
-          
+
         </BoxInput>
         <Button //</ContainerApp>onPress={() => navigation.replace("Login")}
-          onPress={() => CriarConta()}
+          onPress={enableButton ? () => CriarConta() : (!mostrarLoading ? () => alert("Preencha todos os campos para continuar") : null)}
+          disable={!enableButton}
         >
           {mostrarLoading ?
-                    <ActivityIndicator color={"#FBFBFB"} />
-                    : 
-                    <ButtonTitle>Cadastrar</ButtonTitle>
-                    }
+            <ActivityIndicator color={"#FBFBFB"} />
+            :
+            <ButtonTitle>Cadastrar</ButtonTitle>
+          }
         </Button>
       </Scroll>
       <LinkCancel onPress={() => navigation.replace("Login")}>

@@ -38,7 +38,7 @@ export const PerfilInputField = styled(InputField).attrs({
 `
 
 export const ApointmentInputField = styled(InputField).attrs({
-    placeholderTextColor: "#49B3BA"
+    placeholderTextColor: "#34898F"
 })
 `
     background-color: transparent;
