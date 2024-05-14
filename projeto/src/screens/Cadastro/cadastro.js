@@ -82,7 +82,8 @@ export const Cadastro = ({ navigation }) => {
 
       const dataNascimentoFormatada = `${arrayDataNascimento[2]}-${arrayDataNascimento[1]}-${arrayDataNascimento[0]}`
 
-      const idTipoPaciente = "EDBDD738-C3AF-4A4E-A396-340CFBDD1BD7";
+      // const idTipoPaciente = "EDBDD738-C3AF-4A4E-A396-340CFBDD1BD7";
+      const idTipoPaciente = "2C48012E-32A6-4FC6-85D4-42C009E9F4D8";
 
       const form = new FormData();
       form.append("cpf", `${desmascararCpf(conta.cpf)}`)

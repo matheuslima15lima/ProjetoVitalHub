@@ -18,26 +18,25 @@ export const VerificarEmail = ({ navigation, route }) => {
     const [terceiroCodigo, setTerceiroCodigo] = useState("")
     const [quartoCodigo, setQuartoCodigo] = useState("")
 
+    const codigoCompleto = ["", "", "", ""]
+
     const [email, setEmail] = useState("")
 
     const [mostrarLoading, setMostrarLoading] = useState(false)
 
-    const HandlePress = async () => {
-        const codigoCompleto = `${primeiroCodigo}${segndoCodigo}${terceiroCodigo}${quartoCodigo}`
+    const [enableButton, setEnableButton] = useState(false)
 
-        if (codigoCompleto.trim().length < 4) {
-            alert("Preencha todos os campos!")
-            return null
-        } else {
-            setMostrarLoading(true)
-            await api.post(`/RecuperarSenha/ValidarCodigoRecuperacaoSenha?email=${email}&codigo=${codigoCompleto}`)
-                .then(retoronApi => {
-                    navigation.replace("RedefinirSenha", { userEmail: email })
-                }).catch(erro => {
-                    alert(erro)
-                })
-            setMostrarLoading(false)
-        }
+    const HandlePress = async (codigo) => {
+        setEnableButton(false)
+        setMostrarLoading(true)
+        await api.post(`/RecuperarSenha/ValidarCodigoRecuperacaoSenha?email=${email}&codigo=${codigo}`)
+            .then(() => {
+                navigation.replace("RedefinirSenha", { userEmail: email })
+            }).catch(erro => {
+                alert(erro)
+            })
+        setMostrarLoading(false)
+        setEnableButton(true)
     }
 
     const ReenviarEmail = async (email) => {
@@ -52,6 +51,26 @@ export const VerificarEmail = ({ navigation, route }) => {
     useEffect(() => {
         setEmail(route.params.userEmail)
     }, [route])
+
+    useEffect(() => {
+        codigoValido = true
+
+        codigoCompleto.forEach(codigo => {
+            if (codigo == "") {
+                codigoValido = false
+            }
+        });
+
+        if (codigoValido) {
+            setEnableButton(true)
+        } else {
+            setEnableButton(false)
+        }
+    }, [codigoCompleto])
+
+    useEffect(() => {
+
+    })
 
     return (
         <ContainerProfile>
@@ -74,43 +93,43 @@ export const VerificarEmail = ({ navigation, route }) => {
                     fieldWidth={"20"}
                     verifyEmail
                     maxLength={1}
-                    fieldvalue={primeiroCodigo}
+                    fieldvalue={codigoCompleto[0]}
                     editable
-                    onChangeText={text => setPrimeiroCodigo(text)}
+                    onChangeText={text => { codigoCompleto[0] = text }}
                 />
                 <Input
                     placeholderText={"0"}
                     fieldWidth={"20"}
                     verifyEmail
                     maxLength={1}
-                    fieldvalue={segndoCodigo}
+                    fieldvalue={codigoCompleto[1]}
                     editable
-                    onChangeText={text => setSegundoCodigo(text)}
+                    onChangeText={text => { codigoCompleto[1] = text }}
                 />
                 <Input
                     placeholderText={"0"}
                     fieldWidth={"20"}
                     verifyEmail
                     maxLength={1}
-                    fieldvalue={terceiroCodigo}
+                    fieldvalue={codigoCompleto[2]}
                     editable
-                    onChangeText={text => setTerceiroCodigo(text)}
+                    onChangeText={text => { codigoCompleto[2] = text }}
                 />
                 <Input
                     placeholderText={"0"}
                     fieldWidth={"20"}
                     verifyEmail
                     maxLength={1}
-                    fieldvalue={quartoCodigo}
+                    fieldvalue={codigoCompleto[3]}
                     editable
-                    onChangeText={text => setQuartoCodigo(text)}
+                    onChangeText={text => { codigoCompleto[3] = text }}
                 />
             </BoxInputRow>
-            <Button onPress={() => HandlePress()}>
+            <Button disable={!enableButton} onPress={enableButton ? () => HandlePress() : null}>
                 {mostrarLoading ?
                     <ActivityIndicator color={"#FBFBFB"} />
                     :
-                    <ButtonTitle onPress={() => HandlePress()}>Confirmar</ButtonTitle>
+                    <ButtonTitle onPress={enableButton ? () => HandlePress() : null}>Confirmar</ButtonTitle>
                 }
 
             </Button>

@@ -14,6 +14,8 @@ export const RedefinirSenha = ({ navigation, route }) => {
     const [senha, setSenha] = useState("")
     const [confirmaSenha, setConfirmaSenha] = useState("")
 
+    const [enableButton, setEnableButton] = useState(true)
+
     const [mostrarLoading, setMostrarLoading] = useState(false)
 
     useEffect(() => {
@@ -22,6 +24,7 @@ export const RedefinirSenha = ({ navigation, route }) => {
 
     const HandlePress = async () => {
         if (senha === confirmaSenha) {
+            setEnableButton(false)
             setMostrarLoading(true)
             await api.put(`/Usuario/AlterarSenha?email=${email}`, {
                 senhaNova: senha
@@ -33,6 +36,7 @@ export const RedefinirSenha = ({ navigation, route }) => {
                 alert(error)
             })
             setMostrarLoading(false)
+            setEnableButton(true)
         } else {
             alert("As senhas não coincidem")
         }
@@ -68,7 +72,7 @@ export const RedefinirSenha = ({ navigation, route }) => {
                     secure
                 />
             </BoxInput>
-            <Button onPress={() => HandlePress()}>
+            <Button disable={!enableButton} onPress={enableButton ? () => HandlePress() : null}>
                 {mostrarLoading ?
                     <ActivityIndicator color={"#FBFBFB"} />
                     :

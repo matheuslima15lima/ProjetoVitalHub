@@ -15,7 +15,10 @@ export const ReceberEmail = ({ navigation }) => {
 
     const [email, setEmail] = useState("")
 
+    const [enableButton, setEnableButton] = useState(true)
+
     const HandlePrees = async () => {
+        enableButton(false)
         setMostrarLoading(true)
         await api.post(`/RecuperarSenha?email=${email}`)
             .then(() => {
@@ -24,6 +27,7 @@ export const ReceberEmail = ({ navigation }) => {
                 alert(error)
             })
         setMostrarLoading(false)
+        setEnableButton(true)
     }
 
     return (
@@ -46,7 +50,7 @@ export const ReceberEmail = ({ navigation }) => {
                     onChangeText={text => setEmail(text)}
                 />
             </BoxInput>
-            <Button onPress={() => HandlePrees()}>
+            <Button disable={!enableButton} onPress={enableButton ? () => HandlePrees() : null}>
                 {mostrarLoading ?
                     <ActivityIndicator color={"#FBFBFB"} />
                     :

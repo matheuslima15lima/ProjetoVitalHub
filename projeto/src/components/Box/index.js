@@ -27,9 +27,9 @@ export const BoxInputField = ({
         />
     </InputContentBox>
 
-export const ButtonContinuarBox = ({manipulationFunction = null, openModalFunction = null, functionCancel = null, buttonText = "Continuar"}) => 
+export const ButtonContinuarBox = ({enable, manipulationFunction = null, openModalFunction = null, functionCancel = null, buttonText = "Continuar"}) => 
     <>
-        <ButtonModal onPress={manipulationFunction}>
+        <ButtonModal disable={!enable}  onPress={manipulationFunction}>
             <ButtonTitle>{buttonText}</ButtonTitle>
         </ButtonModal>
 

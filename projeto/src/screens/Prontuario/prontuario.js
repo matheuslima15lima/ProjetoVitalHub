@@ -13,7 +13,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { ActivityIndicator, Image, View } from "react-native";
 import { Input } from "../../components/Input";
 import { ModalCamera } from "../../components/Modal";
-import { ObjetoEstaVazio } from "../../utils/funcoesUteis";
+import { ObjetoEstaVazio, verificarCamposFormulario } from "../../utils/funcoesUteis";
 import { useFocusEffect } from "@react-navigation/native";
 import codegenNativeCommands from "react-native/Libraries/Utilities/codegenNativeCommands";
 
@@ -28,7 +28,7 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
 
   const [perfilUsuario, setPerfilUsuario] = useState("");
 
-  const [frmEditData, setFrmEditData] = useState({});
+  const [frmEditData, setFrmEditData] = useState(null);
 
   const [nome, setNome] = useState("");
 
@@ -53,6 +53,10 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
   const [mostrarLoading, setMostrarLoading] = useState(false)
 
   const [mostrarLoadingOCR, setMostrarLoadingOCR] = useState(false)
+
+  const [enableButton, setEnableButton] = useState(true)
+
+  const [enableButtonOCR, setEnableButtonOCR] = useState(true)
 
   useEffect(() => {
     setConsulta(route.params.consulta);
@@ -113,6 +117,7 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
   // const [descricao, setDescricao] = useState({})
   // const [diagnostico, setDiagnostico] = useState({})
   const EditProntuario = async () => {
+    setEnableButton(false)
     setMostrarLoading(true)
     try {
       await api.put("/Consultas/Prontuario", {
@@ -133,6 +138,7 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
       console.log(error);
     }
     setMostrarLoading(false)
+    setEnableButton(true)
     setEditavel(false);
   };
 
@@ -172,24 +178,13 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
     }
   }, [foto]);
 
-  //   const  CadastroExame =  async()=>{
-  //   try {
-  //       retornoGet = await api.post(`/Exame`,{
-  //           ConsultaId: route.params.consulta.id,
-  //           Imagem:
-
-  //       })
-
-  //   } catch (error) {
-
-  //   }
-  //   }
 
   useEffect(() => {
     ProntuarioInfo(perfilUsuario);
   }, [route.params])
 
   const CadastrarExame = async () => {
+    setEnableButtonOCR(false)
     setMostrarLoadingOCR(true)
     await api.post(`/Exame?idConsulta=${route.params.consulta.id}&descricaoExame=${resultadosOCR}`).then(() => {
       setDescricaoExame(descricaoExame + "\n" + resultadosOCR)
@@ -198,6 +193,7 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
       console.log(erro);
     })
     setMostrarLoadingOCR(false)
+    setEnableButtonOCR(true)
     setResultadosOCR("")
   }
 
@@ -223,6 +219,12 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
       setDescricaoExame(descricaoExame + "\n" + examesConsulta)
     }
   }, [])
+
+  useEffect(() => {
+    if(frmEditData !== null){
+      setEnableButton(verificarCamposFormulario(frmEditData))
+    }
+  }, [frmEditData])
 
   return consulta !== null ? (
     <>
@@ -304,7 +306,7 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
           {perfilUsuario === "Medico" ? (
             editavel ? (
               <EditProntuarioButton>
-                <Button onPress={() => EditProntuario()}>
+                <Button disable={!enableButton} onPress={enableButton ? () => EditProntuario() : null}>
                   {mostrarLoading ?
                     <ActivityIndicator color={"#FBFBFB"} />
                     :
@@ -365,7 +367,7 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
 
               {resultadosOCR != "" ? (
                 <>
-                  <Button onPress={CadastrarExame}>
+                  <Button disable={!enableButtonOCR} onPress={enableButtonOCR ? CadastrarExame : null}>
                     {mostrarLoadingOCR ?
                     <ActivityIndicator color={"#FBFBFB"} />
                     : 

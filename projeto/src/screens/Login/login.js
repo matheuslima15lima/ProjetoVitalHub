@@ -66,6 +66,7 @@ export const Login = ({ navigation }) => {
             <BoxButton>
                 <Button 
                     onPress={enableButton ? () => Login() : (!mostrarLoading ? () => alert("Preencha todos os campos") : null)}
+                    // onPress={() => Login()}
                     disable={!enableButton}
                 >
                     {mostrarLoading ?

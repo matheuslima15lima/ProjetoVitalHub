@@ -128,14 +128,14 @@ export const AgendarConsultaModal = ({ visible, setShowModal, navigation, ...res
     const [nivelConsulta, setNivelConsulta] = useState("")
     const [agendamento, setAgendamento] = useState(null);
 
-    // const idRotina = "CFFD0762-BE13-4615-9D23-111467A1C50C"
-    const idRotina = "41D4F148-8757-439A-859F-F505B51B5CCD"
+    const idRotina = "CFFD0762-BE13-4615-9D23-111467A1C50C"
+    // const idRotina = "41D4F148-8757-439A-859F-F505B51B5CCD"
 
-    // const idExame = "AB926C59-CC1B-4DDF-9409-2D600654D5F6"
-    const idExame = "1EC174BF-389B-418A-88FA-9D475178905F"
+    const idExame = "AB926C59-CC1B-4DDF-9409-2D600654D5F6"
+    // const idExame = "1EC174BF-389B-418A-88FA-9D475178905F"
 
-    // const idUrgencia = "A958B6ED-9FAF-4592-B1BF-7E5A16249904"
-    const idUrgencia = "3F8EA35F-31FB-43D6-A67D-11536CB33DF9"
+    const idUrgencia = "A958B6ED-9FAF-4592-B1BF-7E5A16249904"
+    // const idUrgencia = "3F8EA35F-31FB-43D6-A67D-11536CB33DF9"
 
     const handleContinue = async () => {
         await setShowModal(false)
@@ -223,10 +223,14 @@ export const ConfirmarConsultaModal = ({ agendamento, visible, setShowModal = nu
 
     const [mostrarLoading, setMostrarLoading] = useState(false)
 
-    // const situacaoAgendada = "04609AD7-6EB2-465A-B5AC-A13DAEB56E5F"
-    const situacaoAgendada = "558E9B82-71DD-46DC-A4C5-5B9D65B3D0A0"
+    const [enableButton, setEnableButton] = useState(true)
+
+    const situacaoAgendada = "04609AD7-6EB2-465A-B5AC-A13DAEB56E5F"
+    // const situacaoAgendada = "558E9B82-71DD-46DC-A4C5-5B9D65B3D0A0"
 
     const HandleConfirm = async () => {
+        setEnableButton(false)
+
         setMostrarLoading(true)
         await api.post(`/Consultas/Cadastrar`, {
             situacaoId: situacaoAgendada,
@@ -243,6 +247,7 @@ export const ConfirmarConsultaModal = ({ agendamento, visible, setShowModal = nu
             console.log(idUsuario);
         })
         setMostrarLoading(false)
+        setEnableButton(true)
     }
 
     useEffect(() => {
@@ -290,7 +295,7 @@ export const ConfirmarConsultaModal = ({ agendamento, visible, setShowModal = nu
                             </DadosConsultaBox>
                         </ResumoConsultaBox>
 
-                        <Button onPress={() => HandleConfirm()}>
+                        <Button disable={!enableButton} onPress={enableButton ? () => HandleConfirm() : null}>
                             {mostrarLoading ?
                                 <ActivityIndicator color={"#FBFBFB"} />
                                 :

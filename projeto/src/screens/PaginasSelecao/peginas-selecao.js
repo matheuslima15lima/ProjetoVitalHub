@@ -6,11 +6,19 @@ import { InputSelect } from "../../components/Input";
 import { ConfirmarConsultaModal } from "../../components/Modal";
 import { ContainerSelectPage, TitleSelecao } from "./style";
 import { api } from "../../services/service";
-import { GerarNotaClinica } from "../../utils/funcoesUteis";
+import { GerarNotaClinica, ObjetoEstaVazio } from "../../utils/funcoesUteis";
 
 export const SelecionarClinica = ({ navigation, route }) => {
     const [clinicaSelecionada, setClinicaSelecionada] = useState({});
     const [lsitaDeClinicas, setListaDeClinicas] = useState([])
+
+    const [enableButton, setEnableButton] = useState(false)
+
+    useEffect(() => {
+        if(!ObjetoEstaVazio(clinicaSelecionada)){
+            setEnableButton(true)
+        }
+    }, [clinicaSelecionada])
 
     const BuscarClinicas = async (localizacao) => {
         await api.get(`/Clinica/BuscarPorCidade?cidade=${localizacao}`)
@@ -20,11 +28,8 @@ export const SelecionarClinica = ({ navigation, route }) => {
     }
 
     const NavegarParaPaginaMedico = () => {
-        if (clinicaSelecionada === "") {
-            alert("Selecione Uma Clínica Para Continuar!")
-        } else {
-            navigation.replace("SelecionarMedico", { agendamento: { ...clinicaSelecionada, ...route.params.agendamento } })
-        }
+        navigation.replace("SelecionarMedico", { agendamento: { ...clinicaSelecionada, ...route.params.agendamento } })
+        
     }
 
     useEffect(() => {
@@ -44,7 +49,8 @@ export const SelecionarClinica = ({ navigation, route }) => {
                 : null
             }
             <ButtonContinuarBox
-                manipulationFunction={NavegarParaPaginaMedico}
+                enable={enableButton}
+                manipulationFunction={enableButton ? NavegarParaPaginaMedico : null}
                 functionCancel={() => navigation.replace("Main", { ativado: true })}
             />
         </ContainerSelectPage>
@@ -54,6 +60,8 @@ export const SelecionarClinica = ({ navigation, route }) => {
 export const SelecionarMedico = ({ navigation, route }) => {
     const [medicoSelecionado, setMedicoSelecionado] = useState({});
     const [listaDeMedicos, setListaDeMedicos] = useState([])
+
+    const [enableButton, setEnableButton] = useState(false)
 
     const BuscarMedicos = async (id) => {
         await api.get(`/Medicos/BuscarPorIdClinica?id=${id}`)
@@ -66,17 +74,19 @@ export const SelecionarMedico = ({ navigation, route }) => {
     }
 
     const NavegarParaSelecaoDeData = () => {
-        if (medicoSelecionado === "") {
-            alert("Selecione um médico para continuar!!")
-        } else {
-            navigation.navigate("SelecionarData", { agendamento: { ...medicoSelecionado, ...route.params.agendamento } })
-            // navigation.navigate("SelecionarData", { agendamento: {...route.params.agendamento, ...medicoSelecionado} })
-        }
+        navigation.navigate("SelecionarData", { agendamento: { ...medicoSelecionado, ...route.params.agendamento } })
+     
     }
 
     useEffect(() => {
         BuscarMedicos(route.params.agendamento.clinicaId)
     }, [route.params])
+
+    useEffect(() => {
+        if(!ObjetoEstaVazio(medicoSelecionado)){
+            setEnableButton(true)
+        }
+    }, [medicoSelecionado])
 
     return (
         <ContainerSelectPage>
@@ -93,8 +103,9 @@ export const SelecionarMedico = ({ navigation, route }) => {
                 : null
             }
             <ButtonContinuarBox
-                manipulationFunction={NavegarParaSelecaoDeData}
-                functionCancel={() => navigation.replace("Main")}
+                enable={enableButton}
+                manipulationFunction={enableButton ? () => NavegarParaSelecaoDeData() : null}
+                functionCancel={() => navigation.replace("Main", {ativado: true})}
             />
         </ContainerSelectPage>
     )
@@ -102,6 +113,7 @@ export const SelecionarMedico = ({ navigation, route }) => {
 
 export const SelecionarData = ({ navigation, route }) => {
     const [showModalConfirmarConsulta, setShowModalConfirmarConsulta] = useState(false)
+    const [enableButton, setEnableButton] = useState(false)
 
     const [agendamento, setAgendamento] = useState({
         dataConsulta: ""
@@ -117,6 +129,13 @@ export const SelecionarData = ({ navigation, route }) => {
 
         setShowModalConfirmarConsulta(true)
     }
+
+    useEffect(() => {
+        if(dataSelecionada !== "" && horaSelecionada !== ""){
+            setEnableButton(true)
+        }
+    }, [dataSelecionada, horaSelecionada])
+
     return (
         <ContainerSelectPage>
             <TitleSelecao>Selecionar Data</TitleSelecao>
@@ -129,8 +148,9 @@ export const SelecionarData = ({ navigation, route }) => {
                 selecionarHora={setHoraSelecionada}
             />
             <ButtonContinuarBox
-                manipulationFunction={() => HandleContinue()}
-                functionCancel={() => navigation.replace("Main")}
+                enable={enableButton}
+                manipulationFunction={enableButton ? () => HandleContinue() : null}
+                functionCancel={() => navigation.replace("Main", {ativado: true})}
             />
 
             {agendamento.dataConsulta !== "" ?
