@@ -105,7 +105,7 @@ export const SelecionarMedico = ({ navigation, route }) => {
             <ButtonContinuarBox
                 enable={enableButton}
                 manipulationFunction={enableButton ? () => NavegarParaSelecaoDeData() : null}
-                functionCancel={() => navigation.replace("Main", {ativado: true})}
+                functionCancel={() => navigation.replace("SelecionarClinica", {agendamento: {...route.params.agendamento}})}
             />
         </ContainerSelectPage>
     )
@@ -136,6 +136,10 @@ export const SelecionarData = ({ navigation, route }) => {
         }
     }, [dataSelecionada, horaSelecionada])
 
+    useEffect(() => {
+        setAgendamento({...route.params.agendamento})
+    }, [])
+
     return (
         <ContainerSelectPage>
             <TitleSelecao>Selecionar Data</TitleSelecao>
@@ -150,7 +154,7 @@ export const SelecionarData = ({ navigation, route }) => {
             <ButtonContinuarBox
                 enable={enableButton}
                 manipulationFunction={enableButton ? () => HandleContinue() : null}
-                functionCancel={() => navigation.replace("Main", {ativado: true})}
+                functionCancel={() => navigation.replace("SelecionarMedico", {agendamento: {...agendamento}})}
             />
 
             {agendamento.dataConsulta !== "" ?

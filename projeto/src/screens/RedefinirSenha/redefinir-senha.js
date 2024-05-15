@@ -8,6 +8,7 @@ import { IconContainer, IconImage } from "../../components/NavigationIcons/style
 import { ButtonTitle, TextRegular, TitleRedefinirSenha } from "../../components/Text/style";
 import { api } from "../../services/service";
 import { faL } from "@fortawesome/free-solid-svg-icons";
+import { ActivityIndicator } from "react-native";
 
 export const RedefinirSenha = ({ navigation, route }) => {
     const [email, setEmail] = useState("")

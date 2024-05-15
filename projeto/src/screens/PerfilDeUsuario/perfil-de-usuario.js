@@ -98,6 +98,8 @@ export const PerfilDeUsuario = ({ navigation }) => {
         const arrayData = dadosAtualizarUsuario.dataNascimento.split("/")
         const dataAtalizada = `${arrayData[2]}-${arrayData[1]}-${arrayData[0]}`
 
+        const tipoUsuario = "2C48012E-32A6-4FC6-85D4-42C009E9F4D8"
+
         await api.put(`/Pacientes?idUsuario=${idUsuario}`, {
             rg: desmascararRg(dadosAtualizarUsuario.rg),
             cpf: desmascararCpf(dadosAtualizarUsuario.cpf),
@@ -107,7 +109,7 @@ export const PerfilDeUsuario = ({ navigation }) => {
             numero: parseInt(dadosAtualizarUsuario.endereco.numero),
             cidade: cidade,
             nome: dadosAtualizarUsuario.idNavigation.nome,
-            idTipoUsuario: "2C48012E-32A6-4FC6-85D4-42C009E9F4D8"
+            idTipoUsuario: tipoUsuario
         }).then(() => {
             CarregarDadosUsuario(idUsuario, perfilUsuario)
                 .then(() => {

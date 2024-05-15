@@ -20,11 +20,7 @@ export const CardConsulta = ({idUsuario, navigation, perfil, consulta, statusCon
                 break;
         
             case "prontuario":
-                if (moment() > moment(consulta.dataConsulta)) {
-                    onPressApointment()
-                }else {
-                    (alert("Nâo é posível inserir prontuário no momento"))
-                }
+                onPressApointment()
                 break;
 
             case "cancelar":

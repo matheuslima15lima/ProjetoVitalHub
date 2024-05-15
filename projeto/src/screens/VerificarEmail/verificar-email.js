@@ -1,4 +1,4 @@
-import { TouchableOpacity } from "react-native";
+import { ActivityIndicator, TouchableOpacity } from "react-native";
 import { BoxInputRow } from "../../components/Box/style";
 import { Button } from "../../components/Button/styled";
 import { ContainerProfile } from "../../components/Container/style";
@@ -14,11 +14,9 @@ import { api } from "../../services/service";
 export const VerificarEmail = ({ navigation, route }) => {
 
     const [primeiroCodigo, setPrimeiroCodigo] = useState("")
-    const [segndoCodigo, setSegundoCodigo] = useState("")
+    const [segundoCodigo, setSegundoCodigo] = useState("")
     const [terceiroCodigo, setTerceiroCodigo] = useState("")
     const [quartoCodigo, setQuartoCodigo] = useState("")
-
-    const codigoCompleto = ["", "", "", ""]
 
     const [email, setEmail] = useState("")
 
@@ -26,10 +24,11 @@ export const VerificarEmail = ({ navigation, route }) => {
 
     const [enableButton, setEnableButton] = useState(false)
 
-    const HandlePress = async (codigo) => {
+    const HandlePress = async () => {
+        const codigoCompleto = `${primeiroCodigo}${segundoCodigo}${terceiroCodigo}${quartoCodigo}`
         setEnableButton(false)
         setMostrarLoading(true)
-        await api.post(`/RecuperarSenha/ValidarCodigoRecuperacaoSenha?email=${email}&codigo=${codigo}`)
+        await api.post(`/RecuperarSenha/ValidarCodigoRecuperacaoSenha?email=${email}&codigo=${codigoCompleto}`)
             .then(() => {
                 navigation.replace("RedefinirSenha", { userEmail: email })
             }).catch(erro => {
@@ -53,20 +52,12 @@ export const VerificarEmail = ({ navigation, route }) => {
     }, [route])
 
     useEffect(() => {
-        codigoValido = true
-
-        codigoCompleto.forEach(codigo => {
-            if (codigo == "") {
-                codigoValido = false
-            }
-        });
-
-        if (codigoValido) {
-            setEnableButton(true)
-        } else {
+        if(primeiroCodigo === "" || segundoCodigo === "" || terceiroCodigo === "" || quartoCodigo === ""){
             setEnableButton(false)
+        }else{
+            setEnableButton(true)
         }
-    }, [codigoCompleto])
+    }, [primeiroCodigo, segundoCodigo, terceiroCodigo, quartoCodigo])
 
     useEffect(() => {
 
@@ -93,36 +84,36 @@ export const VerificarEmail = ({ navigation, route }) => {
                     fieldWidth={"20"}
                     verifyEmail
                     maxLength={1}
-                    fieldvalue={codigoCompleto[0]}
+                    fieldvalue={primeiroCodigo}
                     editable
-                    onChangeText={text => { codigoCompleto[0] = text }}
+                    onChangeText={text => setPrimeiroCodigo(text)}
                 />
                 <Input
                     placeholderText={"0"}
                     fieldWidth={"20"}
                     verifyEmail
                     maxLength={1}
-                    fieldvalue={codigoCompleto[1]}
+                    fieldvalue={segundoCodigo}
                     editable
-                    onChangeText={text => { codigoCompleto[1] = text }}
+                    onChangeText={text => setSegundoCodigo(text)}
                 />
                 <Input
                     placeholderText={"0"}
                     fieldWidth={"20"}
                     verifyEmail
                     maxLength={1}
-                    fieldvalue={codigoCompleto[2]}
+                    fieldvalue={terceiroCodigo}
                     editable
-                    onChangeText={text => { codigoCompleto[2] = text }}
+                    onChangeText={text => setTerceiroCodigo(text)}
                 />
                 <Input
                     placeholderText={"0"}
                     fieldWidth={"20"}
                     verifyEmail
                     maxLength={1}
-                    fieldvalue={codigoCompleto[3]}
+                    fieldvalue={quartoCodigo}
                     editable
-                    onChangeText={text => { codigoCompleto[3] = text }}
+                    onChangeText={text => setQuartoCodigo(text)}
                 />
             </BoxInputRow>
             <Button disable={!enableButton} onPress={enableButton ? () => HandlePress() : null}>

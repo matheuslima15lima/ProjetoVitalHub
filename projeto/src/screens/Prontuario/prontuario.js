@@ -134,6 +134,13 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
       })
 
       setMedicamento(frmEditData.medicamento)
+
+      await api.put(`/Consultas/Status?idConsulta=${route.params.consulta.id}&status=Realizada`)
+      .then(() => {
+
+      }).catch(erro => {
+        console.log(erro);
+      })
     } catch (error) {
       console.log(error);
     }

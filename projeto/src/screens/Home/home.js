@@ -40,6 +40,8 @@ export const Home = ({ navigation, route }) => {
 
     const [listaDeConsultas, setListaDeConsultas] = useState([])
 
+    const [apointmentButton, setApointmentButton] = useState(true)
+
     const CarregarDadosUsuario = () => {
         LoadProfile()
             .then(token => {
@@ -63,7 +65,7 @@ export const Home = ({ navigation, route }) => {
         await api.get(`/${perfil}s/BuscarPorData?data=${dataAtual}&id=${id}`)
             .then(retornoApi => {
                 retornoApi.data.map(async (consulta) => {
-                    if (consulta.situacao.situacao === "Agendada" && moment(consulta.dataConsulta) < moment()) {
+                    if (consulta.situacao.situacao === "Agendada" && moment(consulta.dataConsulta, "YYYY-MM-DD HH:mm").date() > moment().date()) {
                         await api.put(`/Consultas/Status?idConsulta=${consulta.id}&status=Realizada`)
                             .then(() => {
                                 setShowModalCancel(false)

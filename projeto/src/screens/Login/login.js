@@ -12,6 +12,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { api } from "../../services/service";
 import { ActivityIndicator } from "react-native";
 import { verificarCamposFormulario } from "../../utils/funcoesUteis";
+import { ErrorModal } from "../../components/Modal";
 
 export const Login = ({ navigation }) => {
     const [dadosLogin, setDadosLogin] = useState({
@@ -21,6 +22,10 @@ export const Login = ({ navigation }) => {
 
     const [mostrarLoading, setMostrarLoading] = useState(false)
     const [enableButton, setEnableButton] = useState(true)
+
+    const [inputError, setInputError] = useState(false)
+
+    const [showModalError, setShowModalError] = useState(false)
 
     const Login = async () => {
         setEnableButton(false)
@@ -33,6 +38,7 @@ export const Login = ({ navigation }) => {
             navigation.replace("Main")
         }).catch(error => {
             alert(error)
+            setInputError(true)
         })
         setEnableButton(true)
         setMostrarLoading(false)
@@ -48,12 +54,14 @@ export const Login = ({ navigation }) => {
             <TitleLogin>Entrar ou criar conta</TitleLogin>
             <BoxInput>
                 <Input
+                    error={inputError}
                     placeholderText={"Usuário ou email"}
                     fieldvalue={dadosLogin.email}
                     onChangeText={(text) => setDadosLogin({...dadosLogin, email: text})}
                     editable
                 />
                 <Input
+                    error={inputError}
                     placeholderText={"Senha"}
                     fieldvalue={dadosLogin.senha}
                     multiline={false}
@@ -75,15 +83,20 @@ export const Login = ({ navigation }) => {
                     <ButtonTitle>Entrar</ButtonTitle>
                     }
                 </Button>
-                <ButtonGoogle onPress={() => Login()}>
+                {/* <ButtonGoogle onPress={() => Login()}>
                     <AntDesign name="google" size={20} color={"#496BBA"} />
                     <ButtonTitleLight>Entrar com Google</ButtonTitleLight>
-                </ButtonGoogle>
+                </ButtonGoogle> */}
             </BoxButton>
             <ContentAccount>
                 <TextAccount>Não tem conta?</TextAccount>
                 <LinkSemiBold onPress={() => navigation.replace("Cadastro")} > Crie sua conta aqui</LinkSemiBold>
             </ContentAccount>
+
+            <ErrorModal
+                visible={showModalError}
+                setShowModalError={setShowModalError}
+            />
         </ContainerProfile>
     )
 }

@@ -18,7 +18,7 @@ export const ReceberEmail = ({ navigation }) => {
     const [enableButton, setEnableButton] = useState(true)
 
     const HandlePrees = async () => {
-        enableButton(false)
+        setEnableButton(false)
         setMostrarLoading(true)
         await api.post(`/RecuperarSenha?email=${email}`)
             .then(() => {
