@@ -6,7 +6,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { ButtonHome } from "../../components/Button";
 import { useEffect, useState } from "react";
 import { ListaConsultas } from "../../components/FlatList";
-import { AgendarConsultaModal, ApointmentModal, CancelattionModal, ConsultaModalCard } from "../../components/Modal";
+import { AgendarConsultaModal, ApointmentModal, CancelattionModal, ConsultaModalCard} from "../../components/Modal";
 import { AgendarConsultaButton, HomeContent } from "./style";
 import { LoadProfile } from "../../utils/Auth";
 import moment from "moment";
@@ -37,7 +37,9 @@ export const Home = ({ navigation, route }) => {
     //state para armazenar a data seleciondada no calendário
     const [dataAtual, setDataAtual] = useState(moment().format("YYYY-MM-DD"));
 
-    const [listaDeConsultas, setListaDeConsultas] = useState([])
+    const [listaDeConsultas, setListaDeConsultas] = useState([]);
+
+
 
     useEffect(() => {
         if (ativado === true) {
@@ -191,6 +193,8 @@ export const Home = ({ navigation, route }) => {
                 navigation={navigation}
             />
 
+
+         
         </ContainerHome>
     )
 }

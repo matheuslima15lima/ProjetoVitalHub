@@ -10,12 +10,19 @@ import { LinkSemiBold } from "../../components/Link/style";
 import { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { api } from "../../services/service";
+import { ErrorModal } from "../../components/Modal";
 
 export const Login = ({ navigation }) => {
     const [dadosLogin, setDadosLogin] = useState({
         email: "",
         senha: ""
     });
+
+
+
+    
+    const [showModalError, setShowModalError]= useState(false);
+    const [inputError , setInputError] = useState(false);
 
     const Login = async () => {
         await api.post("/Login", {
@@ -25,7 +32,9 @@ export const Login = ({ navigation }) => {
             await AsyncStorage.setItem("token", JSON.stringify(response.data))
             navigation.replace("Main")
         }).catch(error => {
-            alert(error)
+            
+            setShowModalError(true)
+            setInputError(true)
         })
     }
 
@@ -35,12 +44,15 @@ export const Login = ({ navigation }) => {
             <TitleLogin>Entrar ou criar conta</TitleLogin>
             <BoxInput>
                 <Input
+                
+                     error={inputError}
                     placeholderText={"Usuário ou email"}
                     fieldvalue={dadosLogin.email}
                     onChangeText={(text) => setDadosLogin({...dadosLogin, email: text})}
                     editable
                 />
                 <Input
+                    error={inputError}
                     placeholderText={"Senha"}
                     fieldvalue={dadosLogin.senha}
                     multiline={false}
@@ -63,6 +75,12 @@ export const Login = ({ navigation }) => {
                 <TextAccount>Não tem conta?</TextAccount>
                 <LinkSemiBold onPress={() => navigation.replace("Cadastro")} > Crie sua conta aqui</LinkSemiBold>
             </ContentAccount>
+
+
+            <ErrorModal
+                visible={showModalError}
+                setShowModalError={setShowModalError}
+            />
         </ContainerProfile>
     )
 }

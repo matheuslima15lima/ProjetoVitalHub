@@ -1,9 +1,11 @@
 import styled, { css } from "styled-components";
 
 export const InputField = styled.TextInput.attrs({
-    placeholderTextColor: '#34898F'
+    placeholderTextColor: `
+    ${props=> props.error? "#eb483d" :"#49B3BA"}`
 })`
-    border: 2px solid #49B3BA;
+    /* border: 2px solid #49B3BA; */
+    border : 2px solid ${props => props.error ?"#eb483d" :"#49B3BA"};
     border-radius: 5px;
     width: ${props => `${props.inputWidth}%`};
     padding: 16px;
