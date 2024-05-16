@@ -81,6 +81,24 @@ export const CameraContent = styled.View`
     height: 80%;
     align-items: center;
     justify-content: space-between;
+    position: relative;
+`
+
+export const SwitchCameraTypeButton = styled.TouchableOpacity`
+    height: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    right: 5%;
+    bottom: 15%;
+    z-index: 100000000000000;
+`
+
+export const SwitchCameraTypeIcon = styled.Image`
+    width: 30px;
+    height: 30px;
 `
 
 export const LastPhoto = styled.Image`

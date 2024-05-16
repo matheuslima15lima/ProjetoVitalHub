@@ -7,18 +7,33 @@ import { LogoVitalHub } from "../../components/Logo";
 import { IconContainer, IconImage } from "../../components/NavigationIcons/style";
 import { ButtonTitle, TextRegular, TitleRedefinirSenha } from "../../components/Text/style";
 import { api } from "../../services/service";
+import { ActivityIndicator } from "react-native";
+import { ErrorModal } from "../../components/Modal";
 
 export const ReceberEmail = ({ navigation }) => {
 
+    const [mostrarLoading, setMostrarLoading] = useState(false)
+
     const [email, setEmail] = useState("")
 
+    const [enableButton, setEnableButton] = useState(true)
+
+    const [showModalError, setShowModalError] = useState(false)
+    const [inputError, setInputError] = useState(false)
+
+    const [textModal, setTextModal] = useState({title: "", content: ""})
+
     const HandlePrees = async () => {
+        setEnableButton(false)
+        setMostrarLoading(true)
         await api.post(`/RecuperarSenha?email=${email}`)
-        .then( () => {
-            navigation.replace("VerificarEmail", {userEmail: email})
-        }).catch(error => {
-            alert(error)
-        })
+            .then(() => {
+                navigation.replace("VerificarEmail", { userEmail: email })
+            }).catch(error => {
+                alert(error)
+            })
+        setMostrarLoading(false)
+        setEnableButton(true)
     }
 
     return (
@@ -41,9 +56,19 @@ export const ReceberEmail = ({ navigation }) => {
                     onChangeText={text => setEmail(text)}
                 />
             </BoxInput>
-            <Button onPress={() => HandlePrees()}>
-                <ButtonTitle>Confirmar</ButtonTitle>
+            <Button disable={!enableButton} onPress={enableButton ? () => HandlePrees() : null}>
+                {mostrarLoading ?
+                    <ActivityIndicator color={"#FBFBFB"} />
+                    :
+                    <ButtonTitle>Confirmar</ButtonTitle>
+                }
             </Button>
+
+            <ErrorModal
+                visible={showModalError}
+                setShowModalError={setShowModalError}
+                textModal={textModal}
+            />
         </ContainerProfile>
     )
 }

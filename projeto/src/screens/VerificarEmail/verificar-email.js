@@ -1,4 +1,4 @@
-import { TouchableOpacity } from "react-native";
+import { ActivityIndicator, TouchableOpacity } from "react-native";
 import { BoxInputRow } from "../../components/Box/style";
 import { Button } from "../../components/Button/styled";
 import { ContainerProfile } from "../../components/Container/style";
@@ -14,26 +14,28 @@ import { api } from "../../services/service";
 export const VerificarEmail = ({ navigation, route }) => {
 
     const [primeiroCodigo, setPrimeiroCodigo] = useState("")
-    const [segndoCodigo, setSegundoCodigo] = useState("")
+    const [segundoCodigo, setSegundoCodigo] = useState("")
     const [terceiroCodigo, setTerceiroCodigo] = useState("")
     const [quartoCodigo, setQuartoCodigo] = useState("")
 
     const [email, setEmail] = useState("")
 
-    const HandlePress = async () => {
-        const codigoCompleto = `${primeiroCodigo}${segndoCodigo}${terceiroCodigo}${quartoCodigo}`
+    const [mostrarLoading, setMostrarLoading] = useState(false)
 
-        if (codigoCompleto.trim().length < 4) {
-            alert("Preencha todos os campos!")
-            return null
-        } else {
-            await api.post(`/RecuperarSenha/ValidarCodigoRecuperacaoSenha?email=${email}&codigo=${codigoCompleto}`)
-                .then(retoronApi => {
-                    navigation.replace("RedefinirSenha", { userEmail: email })
-                }).catch(erro => {
-                    alert(erro)
-                })
-        }
+    const [enableButton, setEnableButton] = useState(false)
+
+    const HandlePress = async () => {
+        const codigoCompleto = `${primeiroCodigo}${segundoCodigo}${terceiroCodigo}${quartoCodigo}`
+        setEnableButton(false)
+        setMostrarLoading(true)
+        await api.post(`/RecuperarSenha/ValidarCodigoRecuperacaoSenha?email=${email}&codigo=${codigoCompleto}`)
+            .then(() => {
+                navigation.replace("RedefinirSenha", { userEmail: email })
+            }).catch(erro => {
+                alert(erro)
+            })
+        setMostrarLoading(false)
+        setEnableButton(true)
     }
 
     const ReenviarEmail = async (email) => {
@@ -48,6 +50,18 @@ export const VerificarEmail = ({ navigation, route }) => {
     useEffect(() => {
         setEmail(route.params.userEmail)
     }, [route])
+
+    useEffect(() => {
+        if(primeiroCodigo === "" || segundoCodigo === "" || terceiroCodigo === "" || quartoCodigo === ""){
+            setEnableButton(false)
+        }else{
+            setEnableButton(true)
+        }
+    }, [primeiroCodigo, segundoCodigo, terceiroCodigo, quartoCodigo])
+
+    useEffect(() => {
+
+    })
 
     return (
         <ContainerProfile>
@@ -79,7 +93,7 @@ export const VerificarEmail = ({ navigation, route }) => {
                     fieldWidth={"20"}
                     verifyEmail
                     maxLength={1}
-                    fieldvalue={segndoCodigo}
+                    fieldvalue={segundoCodigo}
                     editable
                     onChangeText={text => setSegundoCodigo(text)}
                 />
@@ -102,8 +116,13 @@ export const VerificarEmail = ({ navigation, route }) => {
                     onChangeText={text => setQuartoCodigo(text)}
                 />
             </BoxInputRow>
-            <Button onPress={() => HandlePress()}>
-                <ButtonTitle onPress={() => HandlePress()}>Confirmar</ButtonTitle>
+            <Button disable={!enableButton} onPress={enableButton ? () => HandlePress() : null}>
+                {mostrarLoading ?
+                    <ActivityIndicator color={"#FBFBFB"} />
+                    :
+                    <ButtonTitle onPress={enableButton ? () => HandlePress() : null}>Confirmar</ButtonTitle>
+                }
+
             </Button>
             <LinkReenviarEmail onPress={() => ReenviarEmail(route.params.userEmail)}>Reenviar Código</LinkReenviarEmail>
         </ContainerProfile>

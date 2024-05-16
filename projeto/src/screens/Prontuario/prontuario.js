@@ -1,47 +1,26 @@
-import { useEffect, useState } from "react";
-import { ContainerApp } from "../../components/Container/style/";
-import {
-  AgeUserText,
-  ButtonTitle,
-  EmailUserText,
-  InputLabel,
-  Title,
-  UserNamePerfilText,
-} from "../../components/Text/style";
+import { useCallback, useEffect, useState } from "react";
+import { LoadProfile } from "../../utils/Auth";
+import { api } from "../../services/service";
+import moment from "moment";
+import { ContainerImagePerfil, ContainerProntuario, LoadingContainer } from "../../components/Container/style";
 import { UserImagePerfil } from "../../components/UserImage/styled";
-import { UserContentBox } from "../../components/Box/style";
-import {
-  ContainerProntuario,
-  LoadingContainer,
-} from "../../components/Container/style";
-import { ApointmentFormBox, ProntuarioBox, UserDataApointment } from "./style";
+import { ApointmentFormBox, ButtonImageSubmit, ButtonImageSubmitContent, ButtonImageSubmitText, CancelImageSubmit, EditProntuarioButton, ImageInputBox, ImageInputBoxField, ImageInputBoxText, ImageSubmitBox, NenhumaImagemBox, ProntuarioBox, ResultadosOCRText, SendImageOCRBox, UserDataApointment } from "./style";
+import { AgeUserText, ButtonTitle, EmailUserText, InputLabel, TextRegular, UserNamePerfilText } from "../../components/Text/style";
 import { BoxInputField } from "../../components/Box";
 import { Button } from "../../components/Button/styled";
 import { LinkCancel } from "../../components/Link";
-import { LoadProfile } from "../../utils/Auth";
-import {
-  ButtonImageSubmit,
-  ButtonImageSubmitContent,
-  ButtonImageSubmitText,
-  CancelImageSubmit,
-  ImageInputBox,
-  ImageInputBoxField,
-  ImageInputBoxText,
-  ImageSubmitBox,
-  SendImageOCRBox,
-} from "../VisualizarPrescricao/style";
-
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { View } from "react-native";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { ActivityIndicator, Image, View } from "react-native";
 import { Input } from "../../components/Input";
-import moment from "moment";
 import { ModalCamera } from "../../components/Modal";
-import { api } from "../../services/service";
+import { ObjetoEstaVazio, verificarCamposFormulario } from "../../utils/funcoesUteis";
+import { useFocusEffect } from "@react-navigation/native";
+import codegenNativeCommands from "react-native/Libraries/Utilities/codegenNativeCommands";
 
 export const PaginaDeProntuario = ({ navigation, route }) => {
   const [openModalCamera, setOpenModalCamera] = useState(false);
 
-  const [descricaoExame, setDescricaoExame] = useState("");
+  const [descricaoExame, setDescricaoExame] = useState(PreencherDescricaoExame);
 
   const [foto, setFoto] = useState("");
 
@@ -49,7 +28,7 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
 
   const [perfilUsuario, setPerfilUsuario] = useState("");
 
-  const [frmEditData, setFrmEditData] = useState({});
+  const [frmEditData, setFrmEditData] = useState(null);
 
   const [nome, setNome] = useState("");
 
@@ -57,7 +36,7 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
 
   const [consulta, setConsulta] = useState(null);
 
-  const [medicamento, setMedicamento] = useState("");
+  const [medicamento, setMedicamento] = useState(null);
 
   const [idadePaciente, setIdadePaciente] = useState(null);
 
@@ -65,9 +44,26 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
 
   const [especialidade, setEspecialidade] = useState("")
 
+  const [fotoProntuario, setFotoProntuario] = useState("")
+
+  const [listaDeExames, setListaDeExames] = useState([])
+
+  const [resultadosOCR, setResultadosOCR] = useState("")
+
+  const [mostrarLoading, setMostrarLoading] = useState(false)
+
+  const [mostrarLoadingOCR, setMostrarLoadingOCR] = useState(false)
+
+  const [enableButton, setEnableButton] = useState(true)
+
+  const [enableButtonOCR, setEnableButtonOCR] = useState(true)
+
   useEffect(() => {
     setConsulta(route.params.consulta);
-    setMedicamento(route.params.consulta.receita.medicamento);
+
+    if (route.params.consulta.receita !== undefined) {
+      setMedicamento(route.params.consulta.receita.medicamento);
+    }
 
     LoadProfile().then((token) => {
       setPerfilUsuario(token.perfil);
@@ -80,28 +76,24 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
       // const id = "8E942765-8128-4948-966B-45550C15962E"
       const retornoGet = await api.get(
         `/${perfil === "Paciente" ? "Medicos" : "Pacientes"}/BuscarPorId?id=${route.params.idUsuario}`
-      );   
+      );
       setNome(retornoGet.data.idNavigation.nome);
-      console.log(nome);
-      
-      if(perfil === "Paciente"){
+      setFotoProntuario(retornoGet.data.idNavigation.foto)
+
+      if (perfil === "Paciente") {
         setCrm(retornoGet.data.crm)
-        console.log(crm);
         setEspecialidade(retornoGet.data.especialidade.especialidade1)
-        console.log(especialidade);
-      } 
-      else{
+      }
+      else {
         setEmail(retornoGet.data.idNavigation.email)
         setIdadePaciente(
-            moment
-              .duration(moment().diff(moment(retornoGet.data.dataNascimento)))
-              .asYears()
-          );
-          console.log(email);
-          console.log(idadePaciente);
-      } 
-    
-      
+          moment
+            .duration(moment().diff(moment(retornoGet.data.dataNascimento)))
+            .asYears()
+        );
+      }
+
+
 
     } catch (error) {
       console.log(error);
@@ -109,7 +101,10 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
   };
 
   function showUpdateForm(consulta) {
-    setFrmEditData(consulta);
+    setFrmEditData({
+      ...consulta,
+      medicamento: medicamento
+    });
     setEditavel(true);
     // setFrmEdit(true);
   }
@@ -122,48 +117,63 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
   // const [descricao, setDescricao] = useState({})
   // const [diagnostico, setDiagnostico] = useState({})
   const EditProntuario = async () => {
+    setEnableButton(false)
+    setMostrarLoading(true)
     try {
       await api.put("/Consultas/Prontuario", {
         consultaId: route.params.consulta.id,
         descricao: frmEditData.descricao,
         diagnostico: frmEditData.diagnostico,
-        medicamento: route.params.consulta.receita.medicamento,
+        medicamento: frmEditData.medicamento,
       });
+
+      setConsulta({
+        ...consulta,
+        descricao: frmEditData.descricao,
+        diagnostico: frmEditData.diagnostico
+      })
+
+      setMedicamento(frmEditData.medicamento)
+
+      await api.put(`/Consultas/Status?idConsulta=${route.params.consulta.id}&status=Realizada`)
+      .then(() => {
+
+      }).catch(erro => {
+        console.log(erro);
+      })
     } catch (error) {
       console.log(error);
     }
+    setMostrarLoading(false)
+    setEnableButton(true)
     setEditavel(false);
   };
 
   useEffect(() => {
     setFrmEditData(route.params.consulta);
-    console.log(route.params.idUsuario);
-    if (route.params != undefined) {
+    if (route.params) {
       ProntuarioInfo(perfilUsuario);
     }
   }, [route.params]);
 
   const InserirExame = async () => {
     const formData = new FormData();
-    formData.append("ConsultaId", route.params.consulta.id);
     formData.append("Imagem", {
       uri: foto,
       name: `image.${foto.split(".").pop()}`,
       type: `image/${foto.split(".").pop()}`,
     });
 
-    await api
-      .post(`/Exame`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((retornoApi) => {
-        //vai somando todos os arquivos enviados
-        setDescricaoExame(
-          descricaoExame + "\n" + retornoApi.data.descricao
-        ).then(() => {});
-      })
+    await api.post(`/Exame/TranscreverTextoOCR`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }).then((retornoApi) => {
+      //vai somando todos os arquivos enviados
+      setResultadosOCR(
+        resultadosOCR + "\n" + retornoApi.data
+      )
+    })
       .catch((error) => {
         console.log(error);
       });
@@ -175,51 +185,85 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
     }
   }, [foto]);
 
-//   const  CadastroExame =  async()=>{
-//   try {
-//       retornoGet = await api.post(`/Exame`,{
-//           ConsultaId: route.params.consulta.id,
-//           Imagem:
 
-//       })
+  useEffect(() => {
+    ProntuarioInfo(perfilUsuario);
+  }, [route.params])
 
-//   } catch (error) {
+  const CadastrarExame = async () => {
+    setEnableButtonOCR(false)
+    setMostrarLoadingOCR(true)
+    await api.post(`/Exame?idConsulta=${route.params.consulta.id}&descricaoExame=${resultadosOCR}`).then(() => {
+      setDescricaoExame(descricaoExame + "\n" + resultadosOCR)
+      alert("Exame cadastrado")
+    }).catch(erro => {
+      console.log(erro);
+    })
+    setMostrarLoadingOCR(false)
+    setEnableButtonOCR(true)
+    setResultadosOCR("")
+  }
 
-//   }
-//   }
+  const CancelarEnvioExame = () => {
+    setFoto("")
+    setResultadosOCR("")
+  }
 
-    useEffect(()=>{
-        ProntuarioInfo(perfilUsuario);
+  function PreencherDescricaoExame() {
+    let resultadoForEach = ""
 
-    },[route.params])
+    route.params.consulta.exames.forEach(exame => {
+      resultadoForEach = resultadoForEach + "\n" + exame.descricao
+    })
+
+    return resultadoForEach
+  }
+
+  useEffect(() => {
+    const examesConsulta = PreencherDescricaoExame()
+    if (examesConsulta !== descricaoExame) {
+
+      setDescricaoExame(descricaoExame + "\n" + examesConsulta)
+    }
+  }, [])
+
+  useEffect(() => {
+    if(frmEditData !== null){
+      setEnableButton(verificarCamposFormulario(frmEditData))
+    }
+  }, [frmEditData])
 
   return consulta !== null ? (
     <>
       <ContainerProntuario>
 
-        <UserImagePerfil
-          source={require("../../assets/images/user1-image.png")}
-        />
+        <ContainerImagePerfil>
+          {fotoProntuario !== "" ?
+            <UserImagePerfil
+              source={{ uri: fotoProntuario }}
+            />
+            : null}
 
+        </ContainerImagePerfil>
         <ProntuarioBox>
-
-
-          <UserNamePerfilText editavel={true}>{nome}</UserNamePerfilText>
+          <UserNamePerfilText editavel={true}>{
+            `${(perfilUsuario === "Medico" ? "" : "Dr(a)")} ${nome}`
+          }</UserNamePerfilText>
           <UserDataApointment>
-            <AgeUserText>{ perfilUsuario == "Medico" ?
-            Math.round(idadePaciente) + " anos"
-            :
-            especialidade
-            } 
-            </AgeUserText> 
+            <AgeUserText>{perfilUsuario == "Medico" ?
+              Math.round(idadePaciente) + " anos"
+              :
+              especialidade
+            }
+            </AgeUserText>
             <EmailUserText editavel={true}>
-                {
-                perfilUsuario == "Medico"?
-                email
-                :
-                "CRM-" + crm
-                
-                }
+              {
+                perfilUsuario == "Medico" ?
+                  email
+                  :
+                  "CRM-" + crm
+
+              }
             </EmailUserText>
           </UserDataApointment>
 
@@ -228,7 +272,7 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
               apointment={perfilUsuario === "Medico" && editavel ? true : false}
               inputPerfil={!editavel ? true : false}
               fieldHeight="84"
-              placeholderText={"Descrição"}
+              placeholderText={"Ainda não há descrição para esta consulta"}
               labelText={"Descrição da consulta"}
               fieldValue={editavel ? frmEditData.descricao : consulta.descricao}
               onChangeText={(txt) =>
@@ -239,7 +283,8 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
             <BoxInputField
               apointment={perfilUsuario === "Medico" && editavel ? true : false}
               inputPerfil={!editavel ? true : false}
-              placeholderText={"Diagnóstico"}
+              fieldHeight="84"
+              placeholderText={"Ainda não há diagnósticos para esta consulta"}
               labelText={"Diagnóstico do paciente"}
               fieldValue={
                 editavel ? frmEditData.diagnostico : consulta.diagnostico
@@ -253,30 +298,38 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
               apointment={perfilUsuario === "Medico" && editavel ? true : false}
               inputPerfil={!editavel ? true : false}
               fieldHeight="84"
-              placeholderText={"Prescrição médica"}
+              editable={editavel}
+              placeholderText={"Ainda não há prescrições médicas para esta consulta"}
               labelText={"Prescrição médica"}
-              fieldValue={medicamento}
-              editable={false}
+              fieldValue={editavel ? frmEditData.medicamento : medicamento}
+              onChangeText={(text) => setFrmEditData({
+                ...frmEditData,
+                medicamento: text
+              })}
             />
           </ApointmentFormBox>
 
           {/* Botões para alterar o usuário (só para médicos) */}
           {perfilUsuario === "Medico" ? (
             editavel ? (
-              <>
-                <Button onPress={() => EditProntuario()}>
-                  <ButtonTitle>Salvar Edições</ButtonTitle>
+              <EditProntuarioButton>
+                <Button disable={!enableButton} onPress={enableButton ? () => EditProntuario() : null}>
+                  {mostrarLoading ?
+                    <ActivityIndicator color={"#FBFBFB"} />
+                    :
+                    <ButtonTitle>Salvar Edições</ButtonTitle>
+                  }
                 </Button>
                 <LinkCancel onPress={() => AbortarEdicaoProntuario()}>
                   Cancelar
                 </LinkCancel>
-              </>
+              </EditProntuarioButton>
             ) : (
-              <>
+              <EditProntuarioButton>
                 <Button onPress={() => showUpdateForm(consulta)}>
                   <ButtonTitle>Editar</ButtonTitle>
                 </Button>
-              </>
+              </EditProntuarioButton>
             )
           ) : null}
 
@@ -285,12 +338,18 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
               <ImageInputBox>
                 <InputLabel>Exames médicos:</InputLabel>
                 <ImageInputBoxField>
-                  <MaterialCommunityIcons
-                    name="file-upload-outline"
-                    size={24}
-                    color="#4E4B59"
-                  />
-                  <ImageInputBoxText>Nenhuma foto informada</ImageInputBoxText>
+                  {resultadosOCR !== "" ?
+                    <ResultadosOCRText>{resultadosOCR}</ResultadosOCRText>
+                    :
+                    <NenhumaImagemBox>
+                      <MaterialCommunityIcons
+                        name="file-upload-outline"
+                        size={24}
+                        color="#4E4B59"
+                      />
+                      <ImageInputBoxText>Nenhuma foto informada</ImageInputBoxText>
+                    </NenhumaImagemBox>
+                  }
                 </ImageInputBoxField>
               </ImageInputBox>
               <ImageSubmitBox>
@@ -299,7 +358,9 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
                   activeOpacity={1}
                   onPress={() => setOpenModalCamera(true)}
                 >
-                  <ButtonImageSubmitContent>
+                  <ButtonImageSubmitContent
+
+                  >
                     <MaterialCommunityIcons
                       name="camera-plus-outline"
                       size={24}
@@ -308,32 +369,41 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
                     <ButtonImageSubmitText>Enviar</ButtonImageSubmitText>
                   </ButtonImageSubmitContent>
                 </ButtonImageSubmit>
-                <CancelImageSubmit>Cancelar</CancelImageSubmit>
+                <CancelImageSubmit onPress={() => CancelarEnvioExame()}>Cancelar</CancelImageSubmit>
               </ImageSubmitBox>
 
-              <View
-                style={{
-                  height: 2,
-                  backgroundColor: "#8C8A97",
-                  width: "100%",
-                  borderRadius: 5,
-                }}
-              ></View>
-
-              <Input
-                inputPerfil
-                placeholderText={"Resultados..."}
-                fieldHeight="60"
-                fieldvalue={descricaoExame}
-              />
-
-              {descricaoExame != "" ? (
-                <Button>
-                  <ButtonTitle>ENVIAR EXAMES</ButtonTitle>
-                </Button>
+              {resultadosOCR != "" ? (
+                <>
+                  <Button disable={!enableButtonOCR} onPress={enableButtonOCR ? CadastrarExame : null}>
+                    {mostrarLoadingOCR ?
+                    <ActivityIndicator color={"#FBFBFB"} />
+                    : 
+                    <ButtonTitle onPress={CadastrarExame}>Enviar exames</ButtonTitle>
+                    }
+                  </Button>
+                </>
               ) : null}
             </SendImageOCRBox>
           ) : null}
+
+          <View
+            style={{
+              height: 2,
+              backgroundColor: "#8C8A97",
+              width: "100%",
+              borderRadius: 5,
+              marginBottom: 10,
+              marginTop: 20
+            }}
+          ></View>
+
+          <BoxInputField
+            labelText={"Resultados dos Exames"}
+            inputPerfil
+            placeholderText={"Ainda não há resultados de exames submetidos"}
+            fieldHeight="60"
+            fieldValue={descricaoExame}
+          />
           {/* Campos Para envio de Exames (só para pacientes) */}
 
           {/* Link Para voltar para a Home */}

@@ -7,6 +7,11 @@ namespace WebAPI.Contexts;
 
 public partial class VitalContext : DbContext
 {
+    private readonly string ServerCasa = "NOTEBOOKFAMILIA";
+
+    private readonly string ServerSenai = "NOTE07-SALA19";
+
+
     public VitalContext()
     {
     }

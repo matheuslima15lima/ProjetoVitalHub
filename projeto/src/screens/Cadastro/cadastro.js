@@ -12,7 +12,7 @@ import {
   TitleCadastro,
 } from "../../components/Text/style";
 import { api, apiViaCep } from "../../services/service";
-import { ScrollView } from "react-native";
+import { ActivityIndicator, ScrollView } from "react-native";
 import { Scroll } from "../../components/Scroll/style";
 import {
   desmascararCep,
@@ -23,6 +23,8 @@ import {
   mascararData,
   mascararRg,
 } from "../../utils/StringMask";
+import { validarData, verificarCamposFormulario } from "../../utils/funcoesUteis";
+import { ErrorModal } from "../../components/Modal";
 
 export const Cadastro = ({ navigation }) => {
   const [conta, setConta] = useState({
@@ -30,51 +32,82 @@ export const Cadastro = ({ navigation }) => {
     senha: "",
     nome: "",
     rg: "",
-    numero: 0,
+    numero: "",
     logradouro: "",
     cep: "",
     cidade: "",
     dataNascimento: ""
   });
 
+  const [mostrarLoading, setMostrarLoading] = useState(false)
+
   const [senhaConfirma, setSenhaConfirma] = useState("");
 
-  const BuscarEnderecoPorCep = async () => {
-    if (conta.cep.length < 8) {
-      return null;
-    }else{
-      // alert("pronto para buscar o cep")
-    await apiViaCep
-      .get(`${conta.cep}/json/`)
-      .then((retornoApi) => {
-        setConta({
-          ...conta,
-          logradouro: retornoApi.data.logradouro,
-          cidade: retornoApi.data.localidade
-        })
+  const [enableButton, setEnableButton] = useState(true)
 
-        console.log(conta);
-        // console.log(retornoApi.data);
-      })
-      .catch((error) => {
-        console.log(error);
-        alert(error);
-      });
+  const [showModalError, setShowModalError] = useState(false)
+
+  const [textModal, setTextModal] = useState({title: "", content: ""})
+
+  const [passwordError, setPasswordError] = useState(false)
+
+  const [cepError, setCepError] = useState(false)
+
+  const [dateError, setDateError] = useState(false)
+
+  const BuscarEnderecoPorCep = async () => {
+    if (conta.cep.length < 9) {
+      return null;
+    } else {
+      // alert("pronto para buscar o cep")
+      await apiViaCep
+        .get(`${desmascararCep(conta.cep)}/json/`)
+        .then((retornoApi) => {
+          setConta({
+            ...conta,
+            logradouro: retornoApi.data.logradouro,
+            cidade: retornoApi.data.localidade
+          })
+          // console.log(retornoApi.data);
+          setCepError(false)
+        })
+        .catch((error) => {
+          console.log(error);
+          ChamarModalErro("CEP Inválido", "Informe um valor válido para o campo de CEP no formulário")
+          setCepError(true)
+        });
     }
   };
+
+  useEffect(() => {
+    setEnableButton(verificarCamposFormulario(conta))
+  }, [conta])
 
   useEffect(() => {
     BuscarEnderecoPorCep();
   }, [conta.cep]);
 
   const CriarConta = async () => {
+    setEnableButton(false)
+
     if (senhaConfirma === conta.senha) {
+
+      if(!validarData(conta.dataNascimento)){
+        setDateError(true)
+        ChamarModalErro("Data de Nascimento Inválida", "Informe uma data de nascimento válida para os dias atuais")
+        return
+      }
+
+      setPasswordError(true)
       const arrayDataNascimento = conta.dataNascimento.split("/")
 
       const dataNascimentoFormatada = `${arrayDataNascimento[2]}-${arrayDataNascimento[1]}-${arrayDataNascimento[0]}`
 
+      // const idTipoPaciente = "EDBDD738-C3AF-4A4E-A396-340CFBDD1BD7";
+      const idTipoPaciente = "2C48012E-32A6-4FC6-85D4-42C009E9F4D8";
+
       const form = new FormData();
-      form.append("cpf", `${conta.cpf}`)
+      form.append("cpf", `${desmascararCpf(conta.cpf)}`)
       form.append("nome", `${conta.nome}`);
       form.append("email", `${conta.email}`);
       form.append("senha", `${conta.senha}`);
@@ -84,54 +117,63 @@ export const Cadastro = ({ navigation }) => {
       form.append("cep", `${desmascararCep(conta.cep)}`);
       form.append("cidade", `${conta.cidade}`)
       form.append("dataNascimento", `${dataNascimentoFormatada}`)
-      form.append("idTipoUsuario", `42EAB83A-A42C-4C0D-AE47-2C7D47468164`);
+      form.append("idTipoUsuario", `${idTipoPaciente}`);
 
-      const response = await api.post("/Pacientes", form, {
+      setMostrarLoading(true)
+      await api.post("/Pacientes", form, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      });
-      console.log(response);
-      if (response.data.sucess) {
+      }).then(() => {
         console.log("cadastrado com sucesso!!!");
-      }
-      navigation.replace("Login");
+        navigation.replace("Login");
+      }).catch(error => {
+        alert(error)
+      })
+      setMostrarLoading(false)
 
       // return null
     } else {
-      try {
-        alert("Senhas não são iguais");
+      setPasswordError(true)
+      ChamarModalErro("Senhas inválidas", "As senhas informadas nos campos não são iguais.")
 
-        // if (retornoApi.status == 201) {
-        //   alert("usuário criado");
-        // } else {
-        //   alert("erro ao criar");
-        // }
-      } catch (error) {
-        console.log(error);
-      }
+      // if (retornoApi.status == 201) {
+      //   alert("usuário criado");
+      // } else {
+      //   alert("erro ao criar");
+      // }
     }
+    setEnableButton(true)
   };
+
+  const ChamarModalErro = (titulo, descricao) => {
+    setTextModal({
+      title: titulo,
+      content: descricao
+    })
+    setShowModalError(true)
+  }
 
   return (
     <ContainerApp>
       <LogoVitalHub />
       <TitleCadastro>Criar conta</TitleCadastro>
       <TextRegular>
-        Insira seu endereço de e-mail e senha para realizar seu cadastro.
+        Insira suas informações de cadastro para criar seu perfil na plataforma.
       </TextRegular>
-
       <Scroll>
         <BoxInput>
           <Input
             placeholderText={"Digite seu nome:"}
             fieldvalue={conta.nome}
             editable
+            multiline={false}
             onChangeText={(text) => setConta({ ...conta, nome: text })}
           />
           <Input
             placeholderText={"Usuário ou email"}
             fieldvalue={conta.email}
+            multiline={false}
             editable
             onChangeText={(text) => setConta({ ...conta, email: text })}
           />
@@ -139,28 +181,36 @@ export const Cadastro = ({ navigation }) => {
             editable
             placeholderText={"Senha"}
             fieldvalue={conta.senha}
+            multiline={false}
+            error={passwordError}
+            secure
             onChangeText={(text) => setConta({ ...conta, senha: text })}
           />
           <Input
             editable
             placeholderText={"Confirmar Senha"}
             fieldvalue={senhaConfirma}
+            multiline={false}
+            error={passwordError}
+            secure
             onChangeText={(text) => setSenhaConfirma(text)}
           />
           <Input
             editable
             placeholderText={"Rg"}
+            keyType="numeric"
             fieldvalue={mascararRg(conta.rg)}
             onChangeText={(text) =>
-              setConta({ ...conta, rg: text})
+              setConta({ ...conta, rg: text })
             }
           />
           <Input
             editable
             placeholderText={"Cpf"}
+            keyType="numeric"
             fieldvalue={mascararCpf(conta.cpf)}
             onChangeText={(text) =>
-              setConta({ ...conta, cpf: text})
+              setConta({ ...conta, cpf: text })
             }
           />
 
@@ -168,33 +218,17 @@ export const Cadastro = ({ navigation }) => {
             <Input
               inputWidth={47}
               editable
+              error={cepError}
               keyType="numeric"
               placeholderText={"Cep"}
-              fieldvalue={conta.cep}
+              fieldvalue={mascararCep(conta.cep)}
               onChangeText={(text) => setConta({ ...conta, cep: text })}
             />
-
-            <Input
-              inputWidth={47}
-              placeholderText={"Cidade"}
-              fieldvalue={conta.cidade}
-            />
-          </BoxInputRow>
-
-          <BoxInputRow>
             <Input
               inputWidth={47}
               editable
-              placeholderText={"Numero"}
-              fieldValue={conta.senha}
-              onChangeText={(text) => setConta({
-                ...conta,
-                numero: text
-                })}
-            />
-            <Input
-              inputWidth={47}
-              editable
+              error={dateError}
+              keyType="numeric"
               placeholderText={"Data de nascimento"}
               fieldvalue={mascararData(conta.dataNascimento)}
               onChangeText={(text) => setConta({
@@ -204,23 +238,58 @@ export const Cadastro = ({ navigation }) => {
             />
           </BoxInputRow>
 
-          <Input 
-            placeholderText={`${conta.logradouro}`} 
-            fieldvalue={conta.logradouro} 
+          <Input
+            placeholderText={`Logradouro`}
+            fieldvalue={conta.logradouro}
+            editable
           />
+
+          <BoxInputRow>
+            <Input
+              inputWidth={47}
+              editable
+              placeholderText={"Nº da Residência"}
+              keyType="numeric"
+              fieldValue={conta.senha}
+              onChangeText={(text) => setConta({
+                ...conta,
+                numero: text
+              })}
+            />
+            <Input
+              inputWidth={47}
+              placeholderText={"Cidade"}
+              fieldvalue={conta.cidade}
+              editable
+            />
+          </BoxInputRow>
+
+
         </BoxInput>
         <Button //</ContainerApp>onPress={() => navigation.replace("Login")}
-          onPress={() => CriarConta()}
+          onPress={enableButton ? () => CriarConta() : (!mostrarLoading ? () => {
+            ChamarModalErro("Formulário inválidos", "Preencha todos os campos para continuar")
+            setPasswordError(false)
+            setDateError(false)
+        } : null)}
+          disable={!enableButton}
         >
-          <ButtonTitle //onPress={() => navigation.replace("Login")}
-          >
-            Cadastrar
-          </ButtonTitle>
+          {mostrarLoading ?
+            <ActivityIndicator color={"#FBFBFB"} />
+            :
+            <ButtonTitle>Cadastrar</ButtonTitle>
+          }
         </Button>
       </Scroll>
       <LinkCancel onPress={() => navigation.replace("Login")}>
         Cancelar
       </LinkCancel>
+
+      <ErrorModal
+        visible={showModalError}
+        setShowModalError={setShowModalError}
+        textModal={textModal}
+      />
     </ContainerApp>
   );
 };

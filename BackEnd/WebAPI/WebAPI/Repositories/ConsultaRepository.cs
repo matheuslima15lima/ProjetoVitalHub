@@ -51,11 +51,11 @@ namespace WebAPI.Repositories
                 if (buscada.ReceitaId != null)
                 {
                     buscada.Receita = consulta.Receita;
-
                 }
                 else
                 {
-                    ctx.Add(consulta.Receita);
+                    ctx.Receitas.Add(consulta.Receita!);
+                    buscada.ReceitaId = consulta.Receita!.Id;
                 }
 
                 ctx.Update(buscada);

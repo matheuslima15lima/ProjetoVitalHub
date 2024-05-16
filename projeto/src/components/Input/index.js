@@ -9,11 +9,12 @@ import React, { useEffect, useState } from "react";
 import moment from "moment";
 
 export const Input = ({
-    placeholderText, keyType = "default", onChangeText = null, maxLength, fieldvalue = null, verifyEmail = false, inputPerfil = false, editable = false, fieldHeight = "16", apointment = false, center = false, multiline = true, secure = false, inputWidth = "100"
+    placeholderText, keyType = "default", onChangeText = null, maxLength, fieldvalue = null, verifyEmail = false, inputPerfil = false, editable = false, fieldHeight = "16", apointment = false, center = false, multiline = true, secure = false, inputWidth = "100", error = false
 }) => {
     if (verifyEmail) {
         return (
             <InputVirifyEmail
+                error={error}
                 inputWidth={inputWidth}
                 secureTextEntry={secure}
                 multiline={multiline}
@@ -59,6 +60,7 @@ export const Input = ({
     } else {
         return (
             <InputField
+                error={error}
                 inputWidth={inputWidth}
                 secureTextEntry={secure}
                 multiline={multiline}
@@ -68,7 +70,7 @@ export const Input = ({
                 maxLength={maxLength}
                 value={fieldvalue}
                 editable={editable}
-                center={center}
+                center={center} 
             />
         )
     }
