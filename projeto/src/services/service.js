@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // const ip = "192.168.1.12";
-const ip = "192.168.21.95";
+const ip = "192.168.21.87";
 
 const portaApi = "4466";
 

@@ -12,7 +12,7 @@ import { LinkCancel } from "../../components/Link";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { ActivityIndicator, Image, View } from "react-native";
 import { Input } from "../../components/Input";
-import { ModalCamera } from "../../components/Modal";
+import { ErrorModal, ModalCamera } from "../../components/Modal";
 import { ObjetoEstaVazio, verificarCamposFormulario } from "../../utils/funcoesUteis";
 import { useFocusEffect } from "@react-navigation/native";
 import codegenNativeCommands from "react-native/Libraries/Utilities/codegenNativeCommands";
@@ -57,6 +57,12 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
   const [enableButton, setEnableButton] = useState(true)
 
   const [enableButtonOCR, setEnableButtonOCR] = useState(true)
+
+
+
+  
+  const [textModal, setTextModal] = useState({title: "", content: ""})
+  const [showModalError, setShowModalError] = useState(false)
 
   useEffect(() => {
     setConsulta(route.params.consulta);
@@ -142,7 +148,7 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
         console.log(erro);
       })
     } catch (error) {
-      console.log(error);
+      ChamarModalErro("Erro ao editar!" ,"tente novamente mais tarde" )
     }
     setMostrarLoading(false)
     setEnableButton(true)
@@ -232,6 +238,16 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
       setEnableButton(verificarCamposFormulario(frmEditData))
     }
   }, [frmEditData])
+
+
+  const ChamarModalErro = (titulo, descricao) => {
+    setTextModal({
+      title: titulo,
+      content: descricao
+    })
+    setShowModalError(true)
+  }
+
 
   return consulta !== null ? (
     <>
@@ -411,6 +427,12 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
             Voltar Para a Home
           </LinkCancel>
         </ProntuarioBox>
+
+        <ErrorModal
+  visible={showModalError}
+  setShowModalError={setShowModalError}
+  textModal={textModal}
+/>
       </ContainerProntuario>
 
       {/* Modal Para abrir a câmera (só para paciente) */}
@@ -426,4 +448,7 @@ export const PaginaDeProntuario = ({ navigation, route }) => {
   ) : (
     <LoadingContainer />
   );
+
+
+  
 };
