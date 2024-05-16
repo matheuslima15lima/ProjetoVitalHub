@@ -571,7 +571,7 @@ export const ErrorModal = ({ textModal, visible, setShowModalError, ...rest }) =
 
 
                     <ButtonModal onPress={() => setShowModalError(false)}>
-                        <ButtonTitle onPress={() => setShowModalError(false)}>Tentar novamente</ButtonTitle>
+                        <ButtonTitle onPress={() => setShowModalError(false)}>Voltar</ButtonTitle>
                     </ButtonModal>
                 </ModalContent>
             </PatientModal>

@@ -171,7 +171,7 @@ export const Cadastro = ({ navigation }) => {
             onChangeText={(text) => setConta({ ...conta, nome: text })}
           />
           <Input
-            placeholderText={"Usuário ou email"}
+            placeholderText={"Digite seu email"}
             fieldvalue={conta.email}
             multiline={false}
             editable

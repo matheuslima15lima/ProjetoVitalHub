@@ -10,6 +10,7 @@ import { IconCntainer, IconImage } from "../../components/NavigationIcons/style"
 import { IconContainer } from "../../components/NavigationIcons/style";
 import { useEffect, useState } from "react";
 import { api } from "../../services/service";
+import { ErrorModal } from "../../components/Modal";
 
 export const VerificarEmail = ({ navigation, route }) => {
 
@@ -24,6 +25,14 @@ export const VerificarEmail = ({ navigation, route }) => {
 
     const [enableButton, setEnableButton] = useState(false)
 
+    const [showModalError, setShowModalError] = useState(false)
+    const [inputError, setInputError] = useState(false)
+
+    const [textModal, setTextModal] = useState({
+        title: "",
+        content: ""
+    })
+
     const HandlePress = async () => {
         const codigoCompleto = `${primeiroCodigo}${segundoCodigo}${terceiroCodigo}${quartoCodigo}`
         setEnableButton(false)
@@ -32,7 +41,9 @@ export const VerificarEmail = ({ navigation, route }) => {
             .then(() => {
                 navigation.replace("RedefinirSenha", { userEmail: email })
             }).catch(erro => {
-                alert(erro)
+
+                setInputError(true)
+                ChamarModalErro("Código inválido", "O código informado é inválido, tente novamente com o código correto ou requisite um novo código por email")
             })
         setMostrarLoading(false)
         setEnableButton(true)
@@ -41,9 +52,9 @@ export const VerificarEmail = ({ navigation, route }) => {
     const ReenviarEmail = async (email) => {
         await api.post(`/RecuperarSenha?email=${email}`)
             .then(() => {
-                alert("Email reenviado!")
+                ChamarModalErro("Email Reenviado", "Verifique sua caixa de email e insira o novo código nos campos indicados")
             }).catch(error => {
-                alert(error)
+                ChamarModalErro("Erro ao Reenviar Email", "Ocorreu um erro ao tentar reenviar um novo código ao email informado, tente novamente mais tarde")
             })
     }
 
@@ -62,6 +73,14 @@ export const VerificarEmail = ({ navigation, route }) => {
     useEffect(() => {
 
     })
+
+    const ChamarModalErro = (titulo, descricao) => {
+        setTextModal({
+          title: titulo,
+          content: descricao
+        })
+        setShowModalError(true)
+      }
 
     return (
         <ContainerProfile>
@@ -83,6 +102,7 @@ export const VerificarEmail = ({ navigation, route }) => {
                     placeholderText={"0"}
                     fieldWidth={"20"}
                     verifyEmail
+                    error={inputError}
                     maxLength={1}
                     fieldvalue={primeiroCodigo}
                     editable
@@ -91,6 +111,7 @@ export const VerificarEmail = ({ navigation, route }) => {
                 <Input
                     placeholderText={"0"}
                     fieldWidth={"20"}
+                    error={inputError}
                     verifyEmail
                     maxLength={1}
                     fieldvalue={segundoCodigo}
@@ -100,6 +121,7 @@ export const VerificarEmail = ({ navigation, route }) => {
                 <Input
                     placeholderText={"0"}
                     fieldWidth={"20"}
+                    error={inputError}
                     verifyEmail
                     maxLength={1}
                     fieldvalue={terceiroCodigo}
@@ -109,6 +131,7 @@ export const VerificarEmail = ({ navigation, route }) => {
                 <Input
                     placeholderText={"0"}
                     fieldWidth={"20"}
+                    error={inputError}
                     verifyEmail
                     maxLength={1}
                     fieldvalue={quartoCodigo}
@@ -125,6 +148,12 @@ export const VerificarEmail = ({ navigation, route }) => {
 
             </Button>
             <LinkReenviarEmail onPress={() => ReenviarEmail(route.params.userEmail)}>Reenviar Código</LinkReenviarEmail>
+
+            <ErrorModal
+                visible={showModalError}
+                setShowModalError={setShowModalError}
+                textModal={textModal}
+            />
         </ContainerProfile>
     )
 }

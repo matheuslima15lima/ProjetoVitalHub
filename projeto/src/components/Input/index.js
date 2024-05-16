@@ -9,11 +9,13 @@ import React, { useEffect, useState } from "react";
 import moment from "moment";
 
 export const Input = ({
-    placeholderText, keyType = "default", onChangeText = null, maxLength, fieldvalue = null, verifyEmail = false, inputPerfil = false, editable = false, fieldHeight = "16", apointment = false, center = false, multiline = true, secure = false, inputWidth = "100", error = false
+    placeholderText, keyType = "default", onChangeText = null, maxLength, fieldvalue = null, verifyEmail = false, inputPerfil = false, editable = false, fieldHeight = "16", apointment = false, center = false, multiline = true, secure = false, inputWidth = "100", error = false, onFocus = null, onBlur = null
 }) => {
     if (verifyEmail) {
         return (
             <InputVirifyEmail
+                onFocus={onFocus}
+                onBlur={onBlur}
                 error={error}
                 inputWidth={inputWidth}
                 secureTextEntry={secure}

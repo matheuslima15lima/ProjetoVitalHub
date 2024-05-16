@@ -9,6 +9,7 @@ import { ButtonTitle, TextRegular, TitleRedefinirSenha } from "../../components/
 import { api } from "../../services/service";
 import { faL } from "@fortawesome/free-solid-svg-icons";
 import { ActivityIndicator } from "react-native";
+import { ErrorModal } from "../../components/Modal";
 
 export const RedefinirSenha = ({ navigation, route }) => {
     const [email, setEmail] = useState("")
@@ -18,6 +19,8 @@ export const RedefinirSenha = ({ navigation, route }) => {
     const [enableButton, setEnableButton] = useState(true)
 
     const [mostrarLoading, setMostrarLoading] = useState(false)
+    const [showModalError, setShowModalError] = useState(false)
+    const [inputError, setInputError] = useState(false)
 
     useEffect(() => {
         setEmail(route.params.userEmail)
@@ -39,7 +42,8 @@ export const RedefinirSenha = ({ navigation, route }) => {
             setMostrarLoading(false)
             setEnableButton(true)
         } else {
-            alert("As senhas não coincidem")
+            setShowModalError(true)
+            setInputError(true)
         }
     }
 
@@ -59,6 +63,7 @@ export const RedefinirSenha = ({ navigation, route }) => {
                 <Input
                     placeholderText={"Nova senha"}
                     editable
+                    error={inputError}
                     fieldvalue={senha}
                     onChangeText={text => setSenha(text)}
                     multiline={false}
@@ -67,6 +72,7 @@ export const RedefinirSenha = ({ navigation, route }) => {
                 <Input
                     placeholderText={"confirmar nova senha"}
                     editable
+                    error={inputError}
                     fieldvalue={confirmaSenha}
                     onChangeText={text => setConfirmaSenha(text)}
                     multiline={false}
@@ -81,6 +87,12 @@ export const RedefinirSenha = ({ navigation, route }) => {
                 }
 
             </Button>
+
+            <ErrorModal
+                visible={showModalError}
+                setShowModalError={setShowModalError}
+                textModal={{title: "Senhas inválidas", content: "As senhas informadas nos campos não são iguais."}}
+            />
         </ContainerProfile>
     )
 }

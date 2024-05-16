@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BoxInput } from "../../components/Box/style";
 import { Button } from "../../components/Button/styled";
 import { ContainerProfile } from "../../components/Container/style";
@@ -21,7 +21,6 @@ export const ReceberEmail = ({ navigation }) => {
     const [showModalError, setShowModalError] = useState(false)
     const [inputError, setInputError] = useState(false)
 
-    const [textModal, setTextModal] = useState({title: "", content: ""})
 
     const HandlePrees = async () => {
         setEnableButton(false)
@@ -30,11 +29,20 @@ export const ReceberEmail = ({ navigation }) => {
             .then(() => {
                 navigation.replace("VerificarEmail", { userEmail: email })
             }).catch(error => {
-                alert(error)
+                setShowModalError(true)
+                setInputError(true)
             })
         setMostrarLoading(false)
         setEnableButton(true)
     }
+
+    useEffect(() => {
+        if(email === ""){
+            setEnableButton(false)
+        }else{
+            setEnableButton(true)
+        }
+    }, [email])
 
     return (
         <ContainerProfile>
@@ -54,6 +62,7 @@ export const ReceberEmail = ({ navigation }) => {
                     editable
                     fieldvalue={email}
                     onChangeText={text => setEmail(text)}
+                    error={inputError}
                 />
             </BoxInput>
             <Button disable={!enableButton} onPress={enableButton ? () => HandlePrees() : null}>
@@ -67,7 +76,7 @@ export const ReceberEmail = ({ navigation }) => {
             <ErrorModal
                 visible={showModalError}
                 setShowModalError={setShowModalError}
-                textModal={textModal}
+                textModal={{title: "Usuário não encontrado", content: "Não há usuário cadastrado em nossa plataforma com o email informado, tente novamente com um email cadastrado"}}
             />
         </ContainerProfile>
     )
