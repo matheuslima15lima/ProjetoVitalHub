@@ -1,11 +1,10 @@
 import styled, { css } from "styled-components";
 
 export const InputField = styled.TextInput.attrs({
-    placeholderTextColor: `
-    ${props=> props.error? "#eb483d" :"#49B3BA"}`
+    placeholderTextColor: `${props => props.error ? "#EB483D" : '#49B3BA'}`
 })`
+    border: 2px solid ${props => props.error ? "#EB483D" : "#49B3BA"};
     /* border: 2px solid #49B3BA; */
-    border : 2px solid ${props => props.error ?"#eb483d" :"#49B3BA"};
     border-radius: 5px;
     width: ${props => `${props.inputWidth}%`};
     padding: 16px;
@@ -13,12 +12,14 @@ export const InputField = styled.TextInput.attrs({
         justify-content: center;
         align-items: center;
     `}
+    color: "#49B3BA";
 `
 
 export const InputVirifyEmail = styled(InputField)`
     align-items: center;
     justify-content: center;
     padding: 5px 20px;
+    height: 70px;
     text-align: center;
     font-size: 40px;
     font-family: "Quicksand_600SemiBold";
@@ -40,9 +41,8 @@ export const PerfilInputField = styled(InputField).attrs({
 `
 
 export const ApointmentInputField = styled(InputField).attrs({
-    placeholderTextColor: "#34898F"
-})
-`
+    placeholderTextColor: "#49B3BA"
+})`
     background-color: transparent;
     border-color: #49B3BA;
     padding-bottom: ${props => `${props.fieldHeight}px`};

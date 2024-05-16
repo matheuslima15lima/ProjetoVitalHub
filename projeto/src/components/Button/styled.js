@@ -2,9 +2,9 @@ import styled, { css } from "styled-components";
 
 export const Button = styled.TouchableOpacity`
     padding: 12px 8px;
-    border: 1px solid ${props => props.modal ? "#60BFC5" : "#496bba"};
+    border: 1px solid ${props => props.modal ? "#60BFC5" : ( props.disable ? "#A9A9A9" : "#496bba")};
     width: ${props => (props.width != null) ? `${props.width}%` : `100%`};
-    background-color: ${props => props.modal ? "#60BFC5" : "#496bba"};
+    background-color: ${props => props.modal ? "#60BFC5" : ( props.disable ? "#A9A9A9" : "#496bba")};
     align-items: center;
     justify-content: center;
     border-radius: 5px;

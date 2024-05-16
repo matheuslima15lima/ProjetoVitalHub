@@ -7,9 +7,11 @@ import { AntDesign } from '@expo/vector-icons';
 import { ContainerProfile } from "../../components/Container/style";
 import { Button, ButtonGoogle } from "../../components/Button/styled";
 import { LinkSemiBold } from "../../components/Link/style";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { api } from "../../services/service";
+import { ActivityIndicator } from "react-native";
+import { verificarCamposFormulario } from "../../utils/funcoesUteis";
 import { ErrorModal } from "../../components/Modal";
 
 export const Login = ({ navigation }) => {
@@ -18,13 +20,16 @@ export const Login = ({ navigation }) => {
         senha: ""
     });
 
+    const [mostrarLoading, setMostrarLoading] = useState(false)
+    const [enableButton, setEnableButton] = useState(true)
 
+    const [inputError, setInputError] = useState(false)
 
-    
-    const [showModalError, setShowModalError]= useState(false);
-    const [inputError , setInputError] = useState(false);
+    const [showModalError, setShowModalError] = useState(false)
 
     const Login = async () => {
+        setEnableButton(false)
+        setMostrarLoading(true)
         await api.post("/Login", {
             email: dadosLogin.email,
             senha: dadosLogin.senha
@@ -32,11 +37,16 @@ export const Login = ({ navigation }) => {
             await AsyncStorage.setItem("token", JSON.stringify(response.data))
             navigation.replace("Main")
         }).catch(error => {
-            
-            setShowModalError(true)
             setInputError(true)
+            setShowModalError(true)
         })
+        setEnableButton(true)
+        setMostrarLoading(false)
     }
+
+    useEffect(() => {
+        setEnableButton(verificarCamposFormulario(dadosLogin))
+    }, [dadosLogin])
 
     return (
         <ContainerProfile>
@@ -44,8 +54,7 @@ export const Login = ({ navigation }) => {
             <TitleLogin>Entrar ou criar conta</TitleLogin>
             <BoxInput>
                 <Input
-                
-                     error={inputError}
+                    error={inputError}
                     placeholderText={"Usuário ou email"}
                     fieldvalue={dadosLogin.email}
                     onChangeText={(text) => setDadosLogin({...dadosLogin, email: text})}
@@ -63,23 +72,31 @@ export const Login = ({ navigation }) => {
                 <LinkRedefinirSenha onPress={() => navigation.navigate("ReceberEmail")}>Esqueceu sua senha?</LinkRedefinirSenha>
             </BoxInput>
             <BoxButton>
-                <Button onPress={() => Login()}>
+                <Button 
+                    onPress={enableButton ? () => Login() : (!mostrarLoading ? () => alert("Preencha todos os campos") : null)}
+                    // onPress={() => Login()}
+                    disable={!enableButton}
+                >
+                    {mostrarLoading ?
+                    <ActivityIndicator color={"#FBFBFB"} />
+                    : 
                     <ButtonTitle>Entrar</ButtonTitle>
+                    }
                 </Button>
-                <ButtonGoogle onPress={() => Login()}>
+                {/* <ButtonGoogle onPress={() => Login()}>
                     <AntDesign name="google" size={20} color={"#496BBA"} />
                     <ButtonTitleLight>Entrar com Google</ButtonTitleLight>
-                </ButtonGoogle>
+                </ButtonGoogle> */}
             </BoxButton>
             <ContentAccount>
                 <TextAccount>Não tem conta?</TextAccount>
                 <LinkSemiBold onPress={() => navigation.replace("Cadastro")} > Crie sua conta aqui</LinkSemiBold>
             </ContentAccount>
 
-
             <ErrorModal
                 visible={showModalError}
                 setShowModalError={setShowModalError}
+                textModal={{title: "Erro ao logar", content: "Email ou senha icorretos, digite novamente"}}
             />
         </ContainerProfile>
     )

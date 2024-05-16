@@ -20,7 +20,27 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromForm] ExameViewModel exameViewModel)
+        public IActionResult Post(Guid idConsulta, string descricaoExame)
+        {
+            try
+            {
+                Exame novoExame = new Exame();
+
+                novoExame.ConsultaId = idConsulta;
+                novoExame.Descricao = descricaoExame;
+
+                _exameRepository.Cadastrar(novoExame);
+
+                return Ok("Exame cadastrado com sucesso");
+            }
+            catch (Exception error)
+            {
+                return BadRequest(error);
+            }
+        }
+
+        [HttpPost("TranscreverTextoOCR")]
+        public async Task<IActionResult> PostImageOCR([FromForm] ExameViewModel exameViewModel)
         {
             try
             {
@@ -33,17 +53,7 @@ namespace WebAPI.Controllers
                 {
                     var result = await _ocrService.RecognizeTextAsync(stream);
 
-                    exameViewModel.Descricao = result;
-
-                    Exame exame = new Exame()
-                    {
-                        Descricao = exameViewModel.Descricao,
-                        ConsultaId = exameViewModel.ConsultaId
-                    };
-
-                    _exameRepository.Cadastrar(exame);
-
-                    return Ok(exame);
+                    return Ok(result);
                 }
             }
             catch (Exception erro)

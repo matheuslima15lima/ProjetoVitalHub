@@ -9,21 +9,21 @@ import { LinkCancel } from "../../components/Link";
 import { ActivityIndicator, View } from "react-native";
 import { LoadProfile, UserLogout } from "../../utils/Auth";
 import { api, apiViaCep } from "../../services/service";
-import { ObjetoEstaVazio } from "../../utils/funcoesUteis";
+import { ObjetoEstaVazio, verificarCamposFormulario } from "../../utils/funcoesUteis";
 import moment from "moment";
 import { LoadingIndicator } from "../../components/LoadingIndicator";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import * as MediaLibrary from 'expo-media-library';
-import * as ImagePicker from 'expo-image-picker';
-import {ModalCamera}  from "../../components/Modal";
+import * as MediaLibrary from 'expo-media-library'
+import * as ImagePicker from 'expo-image-picker'
+import { ModalCamera } from "../../components/Modal";
 
-import {mascararCep, mascararCpf, mascararRg, desmascararCep, desmascararRg, desmascararCpf, mascararData} from "../../utils/StringMask"
+import { mascararCep, mascararCpf, mascararRg, desmascararCep, desmascararRg, desmascararCpf, mascararData } from "../../utils/StringMask"
 
 export const PerfilDeUsuario = ({ navigation }) => {
     const [editavel, setEditavel] = useState(false)
 
-    const [cep, setCep] = useState("") 
+    const [cep, setCep] = useState("")
 
     const [perfilUsuario, setPerfilUsuario] = useState("")
     const [idUsuario, setIdUsurio] = useState("");
@@ -36,6 +36,13 @@ export const PerfilDeUsuario = ({ navigation }) => {
 
     const [logradouro, setLogradouro] = useState("")
     const [cidade, setCidade] = useState("")
+
+    const [mostrarLoading, setMostrarLoading] = useState(false)
+    const [enableButton, setEnableButton] = useState(true)
+
+    useEffect(() => {
+        setEnableButton(verificarCamposFormulario(dadosAtualizarUsuario))
+    }, [dadosAtualizarUsuario])
 
     useEffect(() => {
         LoadProfile()
@@ -86,8 +93,12 @@ export const PerfilDeUsuario = ({ navigation }) => {
     }
 
     const AtualizarUsuario = async (idUsuario) => {
+        setEnableButton(false)
+        setMostrarLoading(true)
         const arrayData = dadosAtualizarUsuario.dataNascimento.split("/")
         const dataAtalizada = `${arrayData[2]}-${arrayData[1]}-${arrayData[0]}`
+
+        const tipoUsuario = "2C48012E-32A6-4FC6-85D4-42C009E9F4D8"
 
         await api.put(`/Pacientes?idUsuario=${idUsuario}`, {
             rg: desmascararRg(dadosAtualizarUsuario.rg),
@@ -98,15 +109,17 @@ export const PerfilDeUsuario = ({ navigation }) => {
             numero: parseInt(dadosAtualizarUsuario.endereco.numero),
             cidade: cidade,
             nome: dadosAtualizarUsuario.idNavigation.nome,
-            idTipoUsuario: "2C48012E-32A6-4FC6-85D4-42C009E9F4D8"
+            idTipoUsuario: tipoUsuario
         }).then(() => {
             CarregarDadosUsuario(idUsuario, perfilUsuario)
-            .then(() => {
-                setEditavel(false)
-            })
+                .then(() => {
+                    setEditavel(false)
+                })
         }).catch(error => {
             alert(error)
         })
+        setMostrarLoading(false)
+        setEnableButton(true)
 
         setEditavel(false)
     }
@@ -131,7 +144,6 @@ export const PerfilDeUsuario = ({ navigation }) => {
                 "Content-Type": "multipart/form-data"
             }
         }).then(response => {
-            console.log(response);
         }).catch(erro => {
             console.log(erro);
         })
@@ -150,13 +162,12 @@ export const PerfilDeUsuario = ({ navigation }) => {
         }
 
         await apiViaCep.get(`${desmascararCpf(cep)}/json/`)
-        .then(retornoApi => {
-            setLogradouro(retornoApi.data.logradouro)
-            setCidade(retornoApi.data.localidade)
-        }).catch(error => {
-            console.log(error); 
-            alert(error)
-        })
+            .then(retornoApi => {
+                setLogradouro(retornoApi.data.logradouro)
+                setCidade(retornoApi.data.localidade)
+            }).catch(error => {
+                console.log(error);
+            })
     }
 
     useEffect(() => {
@@ -232,7 +243,7 @@ export const PerfilDeUsuario = ({ navigation }) => {
                                     placeholderText={"Data de nascimento do paciente"}
                                     editable={editavel}
                                     inputPerfil
-                                    fieldValue={editavel ? dadosAtualizarUsuario.dataNascimento : moment(dadosUsuario.dataNascimento).format("DD/MM/YYYY")}
+                                    fieldValue={editavel ? mascararData(dadosAtualizarUsuario.dataNascimento) : moment(dadosUsuario.dataNascimento).format("DD/MM/YYYY")}
                                     onChangeText={text => setDadosAtualizarUsuario({
                                         ...dadosAtualizarUsuario,
                                         dataNascimento: text
@@ -303,8 +314,12 @@ export const PerfilDeUsuario = ({ navigation }) => {
                         </BoxInputRow>
                         {perfilUsuario === "Paciente" ? (editavel ?
                             <>
-                                <Button onPress={() => AtualizarUsuario(idUsuario)}>
-                                    <ButtonTitle>Salvar Edições</ButtonTitle>
+                                <Button disable={!enableButton} onPress={enableButton ? () => AtualizarUsuario(idUsuario) : null}>
+                                    {mostrarLoading ?
+                                        <ActivityIndicator color={"#FBFBFB"} /> :
+                                        <ButtonTitle>Salvar Edições</ButtonTitle>
+                                        
+                                    }
                                 </Button>
                             </>
                             : <Button onPress={() => ModoEdicaoUsuario()}>

@@ -54,7 +54,8 @@ namespace WebAPI.Repositories
                 }
                 else
                 {
-                    ctx.Add(consulta.Receita);
+                    ctx.Receitas.Add(consulta.Receita!);
+                    buscada.ReceitaId = consulta.Receita!.Id;
                 }
 
                 ctx.Update(buscada);
@@ -66,7 +67,6 @@ namespace WebAPI.Repositories
                 throw;
             }
         }
-
 
         public void EditarStatus(Guid idConsulta, string status)
         {

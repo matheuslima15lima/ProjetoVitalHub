@@ -9,28 +9,7 @@ import { LoadProfile } from '../../utils/Auth';
 import { TouchableOpacity } from 'react-native';
 import { api } from '../../services/service';
 
-export const Header = ({nomeUsuario, idUsuario}) => {
-    const [fotoUsuario, setFotoUsuario] = useState("")
-
-    const BuscarImagemUsuario = async (idUsuario) => {
-        await api.get(`/Usuario/BuscarPorId?id=${idUsuario}`)
-        .then(retornoApi => {
-            setFotoUsuario(retornoApi.data.foto)
-        }).catch(error => {
-            alert(error)
-        })
-    }
- 
-    useEffect(() => {
-        BuscarImagemUsuario(idUsuario)
-    }, [])
-
-    useEffect(() => {
-        if(idUsuario !== ""){
-            BuscarImagemUsuario(idUsuario)
-        }
-    }, [idUsuario])
-
+export const Header = ({nomeUsuario, fotoUsuario}) => {
     return (nomeUsuario !== null && fotoUsuario !== "" ? (
         <ContainerHeader>
             <HeaderContent>
