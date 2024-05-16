@@ -554,7 +554,7 @@ export const ModalImageCamera = ({ visible, setShowModalImage, setShowModalCamer
     )
 }
 
-export const ErrorModal = ({ visible, setShowModalError, ...rest }) => {
+export const ErrorModal = ({ textModal, visible, setShowModalError, ...rest }) => {
     return (
         <Modal {...rest}
             visible={visible}
@@ -563,8 +563,10 @@ export const ErrorModal = ({ visible, setShowModalError, ...rest }) => {
         >
             <PatientModal>
                 <ModalContent>
-                    <Title>Email ou senha incorretos</Title>
-                    <ModalText>email ou senha icorretos, digite novamente</ModalText>
+                    {/* <Title>Email ou senha incorretos</Title> */}
+                    <Title>{textModal.title}</Title>
+                    {/* <ModalText>email ou senha icorretos, digite novamente</ModalText> */}
+                    <ModalText>{textModal.content}</ModalText>
 
 
 

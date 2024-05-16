@@ -37,8 +37,8 @@ export const Login = ({ navigation }) => {
             await AsyncStorage.setItem("token", JSON.stringify(response.data))
             navigation.replace("Main")
         }).catch(error => {
-            alert(error)
             setInputError(true)
+            setShowModalError(true)
         })
         setEnableButton(true)
         setMostrarLoading(false)
@@ -96,6 +96,7 @@ export const Login = ({ navigation }) => {
             <ErrorModal
                 visible={showModalError}
                 setShowModalError={setShowModalError}
+                textModal={{title: "Erro ao logar", content: "Email ou senha icorretos, digite novamente"}}
             />
         </ContainerProfile>
     )

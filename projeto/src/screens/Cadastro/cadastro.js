@@ -23,7 +23,8 @@ import {
   mascararData,
   mascararRg,
 } from "../../utils/StringMask";
-import { verificarCamposFormulario } from "../../utils/funcoesUteis";
+import { validarData, verificarCamposFormulario } from "../../utils/funcoesUteis";
+import { ErrorModal } from "../../components/Modal";
 
 export const Cadastro = ({ navigation }) => {
   const [conta, setConta] = useState({
@@ -44,6 +45,16 @@ export const Cadastro = ({ navigation }) => {
 
   const [enableButton, setEnableButton] = useState(true)
 
+  const [showModalError, setShowModalError] = useState(false)
+
+  const [textModal, setTextModal] = useState({title: "", content: ""})
+
+  const [passwordError, setPasswordError] = useState(false)
+
+  const [cepError, setCepError] = useState(false)
+
+  const [dateError, setDateError] = useState(false)
+
   const BuscarEnderecoPorCep = async () => {
     if (conta.cep.length < 9) {
       return null;
@@ -58,10 +69,12 @@ export const Cadastro = ({ navigation }) => {
             cidade: retornoApi.data.localidade
           })
           // console.log(retornoApi.data);
+          setCepError(false)
         })
         .catch((error) => {
           console.log(error);
-          alert(error);
+          ChamarModalErro("CEP Inválido", "Informe um valor válido para o campo de CEP no formulário")
+          setCepError(true)
         });
     }
   };
@@ -74,10 +87,18 @@ export const Cadastro = ({ navigation }) => {
     BuscarEnderecoPorCep();
   }, [conta.cep]);
 
-  const CriarConta = async () => {    
+  const CriarConta = async () => {
     setEnableButton(false)
 
     if (senhaConfirma === conta.senha) {
+
+      if(!validarData(conta.dataNascimento)){
+        setDateError(true)
+        ChamarModalErro("Data de Nascimento Inválida", "Informe uma data de nascimento válida para os dias atuais")
+        return
+      }
+
+      setPasswordError(true)
       const arrayDataNascimento = conta.dataNascimento.split("/")
 
       const dataNascimentoFormatada = `${arrayDataNascimento[2]}-${arrayDataNascimento[1]}-${arrayDataNascimento[0]}`
@@ -110,11 +131,11 @@ export const Cadastro = ({ navigation }) => {
         alert(error)
       })
       setMostrarLoading(false)
-      setEnableButton(true)
 
       // return null
     } else {
-      alert("Senhas não são iguais");
+      setPasswordError(true)
+      ChamarModalErro("Senhas inválidas", "As senhas informadas nos campos não são iguais.")
 
       // if (retornoApi.status == 201) {
       //   alert("usuário criado");
@@ -122,16 +143,25 @@ export const Cadastro = ({ navigation }) => {
       //   alert("erro ao criar");
       // }
     }
+    setEnableButton(true)
   };
+
+  const ChamarModalErro = (titulo, descricao) => {
+    setTextModal({
+      title: titulo,
+      content: descricao
+    })
+    setShowModalError(true)
+  }
 
   return (
     <ContainerApp>
       <LogoVitalHub />
-        <TitleCadastro>Criar conta</TitleCadastro>
-        <TextRegular>
-          Insira suas informações de cadastro para criar seu perfil na plataforma.
-        </TextRegular>
-        <Scroll>
+      <TitleCadastro>Criar conta</TitleCadastro>
+      <TextRegular>
+        Insira suas informações de cadastro para criar seu perfil na plataforma.
+      </TextRegular>
+      <Scroll>
         <BoxInput>
           <Input
             placeholderText={"Digite seu nome:"}
@@ -152,6 +182,7 @@ export const Cadastro = ({ navigation }) => {
             placeholderText={"Senha"}
             fieldvalue={conta.senha}
             multiline={false}
+            error={passwordError}
             secure
             onChangeText={(text) => setConta({ ...conta, senha: text })}
           />
@@ -160,6 +191,7 @@ export const Cadastro = ({ navigation }) => {
             placeholderText={"Confirmar Senha"}
             fieldvalue={senhaConfirma}
             multiline={false}
+            error={passwordError}
             secure
             onChangeText={(text) => setSenhaConfirma(text)}
           />
@@ -186,6 +218,7 @@ export const Cadastro = ({ navigation }) => {
             <Input
               inputWidth={47}
               editable
+              error={cepError}
               keyType="numeric"
               placeholderText={"Cep"}
               fieldvalue={mascararCep(conta.cep)}
@@ -194,6 +227,7 @@ export const Cadastro = ({ navigation }) => {
             <Input
               inputWidth={47}
               editable
+              error={dateError}
               keyType="numeric"
               placeholderText={"Data de nascimento"}
               fieldvalue={mascararData(conta.dataNascimento)}
@@ -207,6 +241,7 @@ export const Cadastro = ({ navigation }) => {
           <Input
             placeholderText={`Logradouro`}
             fieldvalue={conta.logradouro}
+            editable
           />
 
           <BoxInputRow>
@@ -225,13 +260,18 @@ export const Cadastro = ({ navigation }) => {
               inputWidth={47}
               placeholderText={"Cidade"}
               fieldvalue={conta.cidade}
+              editable
             />
           </BoxInputRow>
 
 
         </BoxInput>
         <Button //</ContainerApp>onPress={() => navigation.replace("Login")}
-          onPress={enableButton ? () => CriarConta() : (!mostrarLoading ? () => alert("Preencha todos os campos para continuar") : null)}
+          onPress={enableButton ? () => CriarConta() : (!mostrarLoading ? () => {
+            ChamarModalErro("Formulário inválidos", "Preencha todos os campos para continuar")
+            setPasswordError(false)
+            setDateError(false)
+        } : null)}
           disable={!enableButton}
         >
           {mostrarLoading ?
@@ -244,6 +284,12 @@ export const Cadastro = ({ navigation }) => {
       <LinkCancel onPress={() => navigation.replace("Login")}>
         Cancelar
       </LinkCancel>
+
+      <ErrorModal
+        visible={showModalError}
+        setShowModalError={setShowModalError}
+        textModal={textModal}
+      />
     </ContainerApp>
   );
 };

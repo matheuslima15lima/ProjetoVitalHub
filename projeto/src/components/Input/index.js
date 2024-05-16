@@ -70,7 +70,7 @@ export const Input = ({
                 maxLength={maxLength}
                 value={fieldvalue}
                 editable={editable}
-                center={center}
+                center={center} 
             />
         )
     }

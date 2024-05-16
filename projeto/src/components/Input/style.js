@@ -12,6 +12,7 @@ export const InputField = styled.TextInput.attrs({
         justify-content: center;
         align-items: center;
     `}
+    color: "#49B3BA";
 `
 
 export const InputVirifyEmail = styled(InputField)`
@@ -41,8 +42,7 @@ export const PerfilInputField = styled(InputField).attrs({
 
 export const ApointmentInputField = styled(InputField).attrs({
     placeholderTextColor: "#49B3BA"
-})
-`
+})`
     background-color: transparent;
     border-color: #49B3BA;
     padding-bottom: ${props => `${props.fieldHeight}px`};
