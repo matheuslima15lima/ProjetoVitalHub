@@ -23,6 +23,8 @@ export const VerificarEmail = ({ navigation, route }) => {
 
     const [mostrarLoading, setMostrarLoading] = useState(false)
 
+    const [mostrarLoadingEmail, setMostrarLoadingEmail] = useState(false)
+
     const [enableButton, setEnableButton] = useState(false)
 
     const [showModalError, setShowModalError] = useState(false)
@@ -50,12 +52,14 @@ export const VerificarEmail = ({ navigation, route }) => {
     }
 
     const ReenviarEmail = async (email) => {
+        setMostrarLoadingEmail(true)
         await api.post(`/RecuperarSenha?email=${email}`)
             .then(() => {
                 ChamarModalErro("Email Reenviado", "Verifique sua caixa de email e insira o novo código nos campos indicados")
             }).catch(error => {
                 ChamarModalErro("Erro ao Reenviar Email", "Ocorreu um erro ao tentar reenviar um novo código ao email informado, tente novamente mais tarde")
             })
+        setMostrarLoading(false)
     }
 
     useEffect(() => {
@@ -147,7 +151,12 @@ export const VerificarEmail = ({ navigation, route }) => {
                 }
 
             </Button>
+            {mostrarLoadingEmail ?
+            <ActivityIndicator/>
+            : 
             <LinkReenviarEmail onPress={() => ReenviarEmail(route.params.userEmail)}>Reenviar Código</LinkReenviarEmail>
+            }
+            
 
             <ErrorModal
                 visible={showModalError}

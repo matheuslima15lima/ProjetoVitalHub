@@ -17,6 +17,10 @@ import { VisualizarPrescricao } from './src/screens/VisualizarPrescricao/visuali
 import Main from './src/screens/Main/Main';
 import { ReceberEmail } from './src/screens/ReceberEmail/receberEmail';
 
+import { LogBox } from 'react-native';
+
+LogBox.ignoreAllLogs();
+
 //instância de um objeto da classe Native Stack Navigator para acessar seus métodos
 const Stack = createNativeStackNavigator();
 

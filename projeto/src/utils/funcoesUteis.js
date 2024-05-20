@@ -65,7 +65,7 @@ export const validarData = valor => {
     
     // Regras de validação:
     // Mês deve estar entre 1 e 12, e o dia deve ser maior que zero
-    if (mes < 1 || mes > 12 || dia < 1 || ano < anoMinimo ) {
+    if (mes < 1 || mes > 12 || dia < 1 || ano > anoMinimo ) {
       return false
     }
     // Valida número de dias do mês

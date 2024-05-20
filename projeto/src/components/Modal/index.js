@@ -89,11 +89,11 @@ export const ApointmentModal = ({
     useEffect(() => {
         const data = moment(informacoes.dataConsulta, "YYYY-MM-DD HH:mm")
 
-        if(moment() > data){    
-            setEnableButton(true)
-        }else{
-            setEnableButton(false)
-        }
+        // if(moment() > data){    
+        //     setEnableButton(true)
+        // }else{
+        //     setEnableButton(false)
+        // }
 
     }, [informacoes.dataConsulta])
 

@@ -9,7 +9,7 @@ import { LinkCancel } from "../../components/Link";
 import { ActivityIndicator, View } from "react-native";
 import { LoadProfile, UserLogout } from "../../utils/Auth";
 import { api, apiViaCep } from "../../services/service";
-import { ObjetoEstaVazio, verificarCamposFormulario } from "../../utils/funcoesUteis";
+import { ObjetoEstaVazio, validarData, verificarCamposFormulario } from "../../utils/funcoesUteis";
 import moment from "moment";
 import { LoadingIndicator } from "../../components/LoadingIndicator";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -101,6 +101,12 @@ export const PerfilDeUsuario = ({ navigation }) => {
     const AtualizarUsuario = async (idUsuario) => {
       setEnableButton(false);
       setMostrarLoading(true);
+
+      if(!validarData(dadosAtualizarUsuario.dataNascimento)){
+        ChamarModalErro("Data de Nascimento Inválida", "Informe uma data de nascimento válida para os dias atuais")
+        return
+      }
+
       const arrayData = dadosAtualizarUsuario.dataNascimento.split("/");
       const dataAtalizada = `${arrayData[2]}-${arrayData[1]}-${arrayData[0]}`;
   
@@ -359,7 +365,7 @@ export const PerfilDeUsuario = ({ navigation }) => {
             <BoxInputRow>
               <BoxInputField
                 labelText={"CEP:"}
-                placeholderText={"09432-530"}
+                placeholderText={"Cep de sua Residência"}
                 fieldWidth={47}
                 keyType={"numeric"}
                 multiline={false}
